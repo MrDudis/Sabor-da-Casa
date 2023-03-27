@@ -5,9 +5,9 @@ export default function Login() {
     return (
         <div className={styles.loginBackground}>
 
-            <div className="w-full h-full flex flex-col justify-center items-center" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
+            <div className="w-full h-full flex flex-col justify-center items-center background-fade-in" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
 
-                <div className="w-full md:w-[500px] h-full md:h-fit bg-white md:rounded-md border border-neutral-500 shadow-2xl transition-all">
+                <div className="w-full md:w-[500px] h-full md:h-fit bg-white md:rounded-md border border-neutral-500 shadow-2xl transition-all fade-in-zoom-out">
 
                     <div className="w-full h-full flex flex-col justify-center items-start gap-7 px-10 py-12">
 

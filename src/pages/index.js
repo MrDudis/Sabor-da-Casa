@@ -1,7 +1,5 @@
 import Head from "next/head";
 
-import styles from "@/styles/Index.module.css";
-
 import HeroSection from "@/components/index/HeroSection";
 import MenuSection from "@/components/index/MenuSection";
 import ReviewsSection from "@/components/index/ReviewsSection";

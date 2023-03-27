@@ -19,9 +19,9 @@ export default function HeroSection() {
     return (
         <div className={styles.heroBackground}>
 
-            <div className="w-full h-full flex flex-col justify-between items-center" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
+            <div className="w-full h-full flex flex-col justify-between items-center background-fade-in" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
 
-                <div className="w-full px-6 sm:px-8 xl:px-16 py-10 flex flex-row justify-between items-center">
+                <div className="w-full px-6 sm:px-8 xl:px-16 py-10 flex flex-row justify-between items-center slide-down">
 
                     <div className="cursor-pointer">
                         <h1 className="font-august text-white text-4xl px-4">Sabor da Casa</h1>
@@ -64,8 +64,8 @@ export default function HeroSection() {
 
                 <div className="flex flex-col justify-center items-center gap-2 px-4 md:px-10">
 
-                    <h1 className="font-sinoreta text-white text-center text-6xl">Descubra a sua próxima refeição.</h1>
-                    <p className="font-lgc text-white text-center text-2xl">Aqui você encontra o melhor da culinária brasileira.</p>
+                    <h1 className="font-sinoreta text-white text-center text-6xl fade-in">Descubra a sua próxima refeição.</h1>
+                    <p className="font-lgc text-white text-center text-2xl fade-in">Aqui você encontra o melhor da culinária brasileira.</p>
 
                 </div>
 
