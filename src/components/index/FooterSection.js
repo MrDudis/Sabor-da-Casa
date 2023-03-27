@@ -42,11 +42,12 @@ export default function FooterSection() {
                     <div className="w-full flex flex-row sm:justify-end items-start gap-2 pr-[10%]">
 
                         <div className="flex flex-col sm:items-end gap-1">
-                            <a className="font-lgc text-neutral-300 text-lg cursor-pointer hover:text-neutral-100 transition-all">Contato</a>
-                            <a className="font-lgc text-neutral-300 text-lg cursor-pointer hover:text-neutral-100 transition-all">Empregos</a>
-                            <a className="font-lgc text-neutral-300 text-lg cursor-pointer hover:text-neutral-100 transition-all">Localização</a>
-                            <a className="font-lgc text-neutral-300 text-lg cursor-pointer hover:text-neutral-100 transition-all">Cardápio</a>
-                            <a className="font-lgc text-neutral-300 text-lg cursor-pointer hover:text-neutral-100 transition-all">Ajuda</a>
+                            <a className="font-lgc text-neutral-400 text-lg cursor-pointer hover:text-white transition-all" href="/login">Área Restrita</a>
+                            <a className="font-lgc text-neutral-400 text-lg cursor-pointer hover:text-white transition-all">Empregos</a>
+                            <a className="font-lgc text-neutral-400 text-lg cursor-pointer hover:text-white transition-all">Cardápio</a>
+                            <a className="font-lgc text-neutral-400 text-lg cursor-pointer hover:text-white transition-all">Avaliar</a>
+                            <a className="font-lgc text-neutral-400 text-lg cursor-pointer hover:text-white transition-all">Localização</a>
+                            <a className="font-lgc text-neutral-400 text-lg cursor-pointer hover:text-white transition-all">Contato</a>
                         </div>
 
                     </div>

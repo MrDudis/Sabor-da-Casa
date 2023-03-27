@@ -41,7 +41,7 @@ export default function HeroSection() {
 
                     <div className="hidden lg:block pl-8">
 
-                        <button className="flex flex-row gap-2 justify-center items-center bg-white px-4 py-2 font-lgc text-black shadow-lg rounded-md hover:bg-neutral-200 hover:scale-[102%] transition-all">
+                        <button className="flex flex-row gap-2 justify-center items-center bg-white px-4 py-2 font-lgc text-black shadow-lg rounded-md hover:bg-neutral-200 hover:scale-[102%] transition-all" onClick={() => { window.location.href = "/login" }}>
                             <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 96 960 960" width="20">
                                 <path d="M478.087 920.131V837.13h266.391V314.87H478.087v-83.001h266.391q34.483 0 58.742 24.259t24.259 58.742v522.26q0 34.483-24.259 58.742t-58.742 24.259H478.087Zm-77.261-164.652-58.892-58.414L421.5 617.5H132.521v-83H421.5l-79.566-79.565 58.892-58.414L580.304 576 400.826 755.479Z"/>
                             </svg>

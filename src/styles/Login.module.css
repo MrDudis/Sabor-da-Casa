@@ -1,0 +1,56 @@
+.loginBackground {
+    @apply w-full h-screen;
+    background-image: url("/images/menu-restaurant-vintage-table.png");
+    background-color: #FFFFFF;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.formDiv {
+    @apply w-full h-[40px];
+}
+
+.formInput {
+    width: 100%;
+    padding: 8px 10px;
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 16px;
+    background-color: transparent;
+    outline: none;
+    border: 1.2px #3d3d3d solid;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.formInput:focus {
+    border: 1.2px #1a73e8 solid;
+}   
+
+.formLabel {
+    position: relative;
+    top: -34px;
+    left: 7.5px;
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 15.6px;
+    user-select: none;
+    transition: all 0.14s ease;
+    cursor: text;
+}
+
+.formInput:focus + .formLabel,
+.formInput:not(:placeholder-shown) + .formLabel {
+    top: -58px;
+    left: 7.5px;
+    font-size: 13.6px;
+}
+
+.formInput:focus + .formLabel {
+    color: #1a73e8;
+}
+
+.formInputSpan {
+    padding: 0 5px;
+    background-color: #FFFFFF;
+}
