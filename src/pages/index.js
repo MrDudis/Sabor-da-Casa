@@ -66,7 +66,10 @@ export default function Index({ reviews }) {
         <>
 
             <Head>
-                <title>Restaurante Sabor da Casa</title>
+                <title>Restaurante | Sabor da Casa</title>
+                <meta property="og:title" content="Restaurante | Sabor da Casa" key="title" />
+                <meta name="og:description" content="O melhor restaurante da cidade, com comida caseira e muito sabor." />
+                <meta name="theme-color" content="#ed3434"></meta>
             </Head>
 
             <HeroSection></HeroSection>
