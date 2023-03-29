@@ -1,5 +1,50 @@
 import styles from "@/styles/Index.module.css";
-import ReviewBox from "./reviewSection/ReviewBox";
+
+function ReviewStar() {
+
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 96 960 960" width="20" className="fill-yellow-400">
+            <path d="M286.283 941.696q-14.913 11.195-29.587.5-14.674-10.696-9.196-27.848l73.478-240.196-191.674-136.956q-14.674-10.435-8.956-27.848 5.717-17.413 23.869-17.413h236.196l75.717-251.913q2.479-8.718 9.196-12.816 6.717-4.097 14.674-4.097t14.554 4.097q6.598 4.098 9.076 12.816l75.957 251.913h236.196q18.152 0 23.869 17.413 5.718 17.413-8.956 27.848L639.022 674.152l73.717 240.196q5.479 17.152-9.076 27.848-14.554 10.695-29.467-.5L480.239 793.978 286.283 941.696Z"/>
+        </svg>
+    );
+
+};
+
+function ReviewBox({ review }) {
+
+    return (
+        <div className="w-[100%] lg:w-[45%] max-w-[768px] lg:max-w-xl h-fit rounded-lg bg-white">
+                            
+            <div className="flex flex-col justify-center items-start gap-2 px-6 py-4">
+
+                <div className="flex flex-row w-full justify-between items-center">
+
+                    <div>
+                        <h2 className="font-lgc font-bold text-neutral-800 text-md">{review.author}</h2>
+                    </div>
+
+                    <div className="flex flex-row gap-[1px]">
+
+                        {
+                            [...Array(review.rate)].map((star, index) => {
+                                return <ReviewStar></ReviewStar>
+                            })
+                        }
+                        
+                    </div>
+
+                </div>
+
+                <div>
+                    <p className="font-lgc text-neutral-900 text-md">{review.description}</p>
+                </div>
+
+            </div>
+
+        </div>
+    );
+
+};
 
 export default function ReviewsSection({ reviews }) {
     

@@ -58,7 +58,7 @@
 
     .fade-in-zoom-out {
         animation: fade-in 0.5s ease-in-out, zoom-out 0.5s ease-in-out;
-        animation-fill-mode: forwards;
+        animation-fill-mode: none;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 

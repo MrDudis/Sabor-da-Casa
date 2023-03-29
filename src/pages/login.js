@@ -7,12 +7,12 @@ export default function Login() {
 
             <div className="w-full h-full flex flex-col justify-center items-center background-fade-in" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
 
-                <div className="w-full md:w-[500px] h-full md:h-fit bg-white md:rounded-md border border-neutral-500 shadow-2xl transition-all fade-in-zoom-out">
+                <div className="w-full md:w-[500px] h-full md:h-fit bg-white md:rounded-md border border-neutral-500 shadow-2xl transition-all md:fade-in-zoom-out">
 
-                    <div className="w-full h-full flex flex-col justify-center items-start gap-7 px-10 py-12">
+                    <div className="w-full h-full flex flex-col justify-center items-start gap-7 px-10 py-12 max-md:fade-in">
 
                         <div className="w-full flex items-center justify-center">
-                            <h1 className="font-august text-black text-5xl cursor-pointer" onClick={() => { window.location.href = "/" }}>Sabor da Casa</h1>
+                            <h1 className="font-august text-black text-5xl text-center cursor-pointer" onClick={() => { window.location.href = "/" }}>Sabor da Casa</h1>
                         </div>
 
                         <div className="w-full flex flex-col justify-center items-start gap-5">
@@ -20,12 +20,12 @@ export default function Login() {
 
                             <div className={styles.formDiv}>
                                 <input className={styles.formInput} id="cpf" type="text" placeholder=" "></input>
-                                <label className={styles.formLabel} for="cpf"><span className={styles.formInputSpan}>E-mail ou CPF</span></label>
+                                <label className={styles.formLabel} htmlFor="cpf"><span className={styles.formInputSpan}>E-mail ou CPF</span></label>
                             </div>
 
                             <div className={styles.formDiv}>
                                 <input className={styles.formInput} id="password" type="password" placeholder=" "></input>
-                                <label className={styles.formLabel} for="password"><span className={styles.formInputSpan}>Senha</span></label>
+                                <label className={styles.formLabel} htmlFor="password"><span className={styles.formInputSpan}>Senha</span></label>
                             </div>
                         </div>
 
