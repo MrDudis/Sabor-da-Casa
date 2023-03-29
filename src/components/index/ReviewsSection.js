@@ -27,7 +27,7 @@ function ReviewBox({ review }) {
 
                         {
                             [...Array(review.rate)].map((star, index) => {
-                                return <ReviewStar></ReviewStar>
+                                return <ReviewStar key={index}></ReviewStar>
                             })
                         }
                         
@@ -65,9 +65,9 @@ export default function ReviewsSection({ reviews }) {
                     <div className="w-full max-w-[1800px] flex flex-row justify-center gap-12 lg:gap-12 px-[5%] flex-wrap">
 
                             {
-                                reviews.map((review) => {
+                                reviews.map((review, index) => {
                                     return (
-                                        <ReviewBox review={review}></ReviewBox>
+                                        <ReviewBox key={index} review={review}></ReviewBox>
                                     );
                                 })
                             }
