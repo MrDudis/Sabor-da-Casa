@@ -41,7 +41,7 @@ export default function Login() {
                             </div>
 
                             <div className="w-full flex flex-row justify-center items-center mt-2">
-                                <button className="w-full flex flex-row justify-center items-center gap-3 md:w-[50%] font-lgc font-bold text-lg p-2 bg-[#1a73e8] hover:bg-[#3483eb] text-white rounded-md transition-all">
+                                <button className="w-full flex flex-row justify-center items-center gap-3 md:w-[50%] font-lgc font-bold text-lg p-2 bg-[#1a73e8] hover:bg-[#3483eb] text-white rounded-md transition-all" onClick={() => { window.location.href = "/painel"; }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
                                         <path d="M361.761 754.652q-12.674-14.434-12.674-33.087 0-18.652 12.674-31.326L430.5 621.5H154.022q-19.153 0-32.327-13.174T108.521 576q0-19.152 13.174-32.326t32.327-13.174H430.5l-68.979-68.978q-13.434-13.435-13.315-32.087.12-18.653 13.555-32.087 12.674-13.435 31.445-13.435 18.772 0 31.446 12.674l147.826 147.587q6.718 6.717 9.576 14.793 2.859 8.076 2.859 17.033t-2.859 17.033q-2.858 8.076-9.576 14.793L424.413 755.652q-13.435 13.435-31.707 12.555-18.271-.881-30.945-13.555Zm161.826 189.479q-19.152 0-32.326-13.174t-13.174-32.327q0-19.152 13.174-32.326t32.326-13.174h236.891V298.87H523.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.153 13.174-32.327t32.326-13.174h236.891q37.783 0 64.392 26.609 26.609 26.609 26.609 64.392v554.26q0 37.783-26.609 64.392-26.609 26.609-64.392 26.609H523.587Z"/>
                                     </svg>
