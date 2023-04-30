@@ -18,6 +18,10 @@
         white-space: nowrap;
     }
 
+    .login-shadow {
+        box-shadow: 0px 5px 50px;
+    }
+
 }
 
 @font-face {

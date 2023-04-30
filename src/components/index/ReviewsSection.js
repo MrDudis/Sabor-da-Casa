@@ -14,8 +14,8 @@ function ReviewBox({ review }) {
 
     return (
         <div className="w-[100%] lg:w-[45%] max-w-[768px] lg:max-w-xl h-fit rounded-lg bg-white">
-                            
-            <div className="flex flex-col justify-center items-start gap-2 px-6 py-4">
+
+            <div className="flex flex-col justify-center items-start gap-2 px-7 py-5">
 
                 <div className="flex flex-row w-full justify-between items-center">
 

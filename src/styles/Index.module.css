@@ -1,6 +1,7 @@
 .heroBackground {
     width: 100%;
     height: 100vh;
+    background-color: #734108;
     background-image: url("/images/hero-background.png");
     background-size: cover;
     background-position: center;

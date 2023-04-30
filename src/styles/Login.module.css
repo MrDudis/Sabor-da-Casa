@@ -1,11 +1,35 @@
+@keyframes moveBackground {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 400px -400px;
+    }
+}
+
+.loginBackgroundMove {
+    animation: moveBackground 30s linear infinite;
+}
+
 .loginBackground {
-    @apply w-full h-screen;
-    background-image: url("/images/menu-restaurant-vintage-table.png");
+    @apply w-full h-screen flex justify-center items-center loginBackgroundMove;
+    background-image: url("/images/seamless-pattern-with-kitchen-tools-doodles.jpg");
+    background-color: #FFFFFF;
+    background-size: contain;
+    background-position: center;
+    background-repeat: repeat;
+    background-size: 400px 400px;
+}
+
+.loginImage {
+    @apply w-full h-full;
+    background-image: url("/images/culinaria-mineira-cpt.jpg");
     background-color: #FFFFFF;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
 }
 
 .formDiv {
@@ -25,7 +49,7 @@
 }
 
 .formInput:focus {
-    border: 1.2px #1a73e8 solid;
+    border: 1.2px red solid;
 }   
 
 .formLabel {
@@ -41,13 +65,13 @@
 
 .formInput:focus + .formLabel,
 .formInput:not(:placeholder-shown) + .formLabel {
-    top: -58px;
+    top: -56px;
     left: 7.5px;
     font-size: 13.6px;
 }
 
 .formInput:focus + .formLabel {
-    color: #1a73e8;
+    color: red;
 }
 
 .formInputSpan {
