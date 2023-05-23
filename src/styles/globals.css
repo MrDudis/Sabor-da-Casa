@@ -6,11 +6,36 @@
 
     * {
         -webkit-tap-highlight-color: transparent;
+        scrollbar-width: 8px;
+        scrollbar-color: #FFFFFF #999999;
+    }
+
+    *::-webkit-scrollbar {
+        width: 8px;
+    }
+      
+    *::-webkit-scrollbar-track {
+        background: #FFFFFF;
+        border-radius: 5px;
+    }
+    
+    *::-webkit-scrollbar-thumb {
+        @apply transition-all;
+        background-color: #BBBBBB;
+        border-radius: 14px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #777777;
     }
 
 }
 
 @layer components {
+
+    .transition-delay-300 {
+        transition-delay: 300ms;
+    }
 
     .truncate {
         overflow: hidden;

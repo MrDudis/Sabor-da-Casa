@@ -2,7 +2,7 @@ export default function FooterSection() {
 
     return (
 
-        <div className="w-full bg-neutral-900">
+        <div className="w-full bg-gradient-to-b from-neutral-800 to-neutral-950">
 
             <div className="w-[90%] max-w-[1800px] py-12 m-auto flex flex-col sm:flex-row gap-10 sm:gap-4">
 

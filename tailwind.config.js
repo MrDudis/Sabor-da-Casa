@@ -10,7 +10,11 @@ module.exports = {
         august: ["August July", "sans-serif"],
         lgc: ["Louis George Cafe", "sans-serif"],
         sinoreta: ["Sinoreta", "sans-serif"]
-      }
+      },
+      screens: {
+        "2xs": "340px",
+        "xs": "420px",
+      },
     },
   },
   plugins: [],

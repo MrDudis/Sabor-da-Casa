@@ -1,0 +1,81 @@
+.basicInput {
+    width: 100%;
+    padding: 6px 8px;
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 16px;
+    background-color: transparent;
+    outline: none;
+    border: 1.2px #3d3d3d solid;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.basicSelect {
+    width: 100%;
+    padding: 8px 8px;
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 16px;
+    background-color: transparent;
+    outline: none;
+    border: 1.2px #3d3d3d solid;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.basicOption {
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 16px;
+    background-color: transparent;
+    outline: none;
+}
+
+.basicInput:focus {
+    border: 1.2px red solid;
+}
+
+.formDiv {
+    @apply w-full h-[40px] mt-1;
+}
+
+.formInput {
+    width: 100%;
+    padding: 8px 10px;
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 16px;
+    background-color: transparent;
+    outline: none;
+    border: 1.2px #3d3d3d solid;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.formInput:focus {
+    border: 1.2px red solid;
+}   
+
+.formLabel {
+    position: relative;
+    top: -34px;
+    left: 7.5px;
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 15.6px;
+    user-select: none;
+    transition: all 0.14s ease;
+    cursor: text;
+}
+
+.formInput:focus + .formLabel,
+.formInput:not(:placeholder-shown) + .formLabel {
+    top: -56px;
+    left: 7.5px;
+    font-size: 13.6px;
+}
+
+.formInput:focus + .formLabel {
+    color: red;
+}
+
+.formInputSpan {
+    @apply bg-neutral-100;
+    padding: 0 5px;
+}
