@@ -1,10 +1,12 @@
-import { useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import Head from "next/head";
 
 import UserContext from "@/components/painel/user/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
+
+import ProductBox from "@/components/painel/produtos/ProductBox";
 
 export function getServerSideProps({ req, res }) {
 
@@ -23,6 +25,17 @@ function Produtos() {
 
     const { user } = useContext(UserContext);
 
+    const [products, setProducts] = useState(Array(15).fill(null));
+
+    const baseAnimationDelay = 400;
+    const animationDelay = 50;
+
+    useEffect(() => {
+
+        setProducts([true , true , true , true , true , true , true , true , true , true , true , true , true ]);
+
+    }, [])
+
     return (
         <>
 
@@ -35,6 +48,16 @@ function Produtos() {
 
             <div className="w-full flex flex-col justify-center items-start border-b border-neutral-800 scale-right-to-left">
                 <h1 className="font-lgc text-3xl sm:text-4xl pr-4 pb-3 text-left slide-up-fade-in opacity-0" style={{ animationDelay: "0.4s" }}>Produtos</h1>
+            </div>
+
+            <div className="w-full grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 my-6 gap-6">
+
+                {
+                    products.map((product, index) => {
+                        return <ProductBox product={product} animationDelay={baseAnimationDelay + (animationDelay * index)} key={index}></ProductBox>
+                    })
+                }
+
             </div>
 
         </>

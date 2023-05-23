@@ -1,3 +1,14 @@
+@tailwind components;
+
+.basicInputDiv {
+    @apply w-full flex flex-col gap-1;
+}
+
+.basicInputLabel {
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 16px;
+}
+
 .basicInput {
     width: 100%;
     padding: 6px 8px;
@@ -11,7 +22,6 @@
 }
 
 .basicSelect {
-    width: 100%;
     padding: 8px 8px;
     font-family: 'Louis George Cafe', sans-serif;
     font-size: 16px;

@@ -44,8 +44,6 @@ export default function Account() {
                     <p className="text-white text-[15px] font-lgc truncate">{user?.name}</p>
                 </div>
 
-                
-                
             </div>
 
             <div className="flex items-center pr-1" onClick={() => { setShowDropdown(!showDropdown) }}>

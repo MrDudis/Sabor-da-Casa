@@ -41,6 +41,31 @@
         }
     }
 
+    @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+    }
+
+    .shimmer {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .shimmer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, #E8E8E8 50%, transparent 100%);
+        animation: shimmer 1.2s infinite;
+    }
+
     .background-fade-in {
         animation: background-fade-in 0.5s ease-in-out;
         animation-fill-mode: forwards;

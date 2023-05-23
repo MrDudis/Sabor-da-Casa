@@ -39,7 +39,7 @@
     flex flex-row sm:flex-col justify-between items-start
     w-full min-w-[240px] sm:w-[80px] sm:min-w-[80px] lg:w-[256px] lg:min-w-[256px]
     h-[72px] sm:h-full sm:min-h-screen sm:max-h-screen
-    bg-gradient-to-b from-neutral-800 to-neutral-950 px-0 sm:pt-14 sm:pb-6 gap-8 overflow-auto
+    bg-gradient-to-b from-neutral-800 to-neutral-900 px-0 sm:pt-14 sm:pb-6 gap-8 overflow-auto
     slide-up sm:slide-right transition-all z-50;
 }
 
