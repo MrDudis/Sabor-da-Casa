@@ -119,7 +119,7 @@ function create_db() {
     
     });
 
-    console.log("> Database created.\n");
+    console.log("> Database created.");
 
 };
 

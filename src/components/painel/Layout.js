@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import UserContext from "@/components/painel/user/UserContext";
 
-import styles from "@/styles/painel/Sidebar.module.css";
+import styles from "@/styles/painel/Layout.module.css";
 
 export default function Dashboard({ children, activePage }) {
 

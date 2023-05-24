@@ -7,10 +7,10 @@ import UserContext from "@/components/painel/user/UserContext";
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import update from "@/lib/user/update";
-
-import styles from "@/styles/painel/Conta.module.css";
+import updateUser from "@/lib/user/update";
 import updatePassword from "@/lib/auth/password";
+
+import input from "@/styles/Input.module.css";
 
 const cargos = [
     "Cliente",
@@ -44,7 +44,7 @@ function Conta() {
 
         let newUser = Object.fromEntries(formData.entries());
 
-        let response = await update(newUser);
+        let response = await updateUser(newUser);
 
         if (response.status === 200) {
             window.location.reload();
@@ -92,7 +92,7 @@ function Conta() {
 
                 <div className="w-full md:w-[60%] flex flex-col gap-6">
 
-                     <div className="w-full flex flex-row items-center gap-2 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                    <div className="w-full flex flex-row items-center gap-2 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                             <path d="M400-489.609q-74.479 0-126.849-52.37-52.369-52.37-52.369-126.849 0-74.478 52.369-126.565 52.37-52.088 126.849-52.088 74.479 0 126.849 52.088 52.369 52.087 52.369 126.565 0 74.479-52.369 126.849-52.37 52.37-126.849 52.37ZM113.782-131.172q-22.087 0-37.544-15.457-15.456-15.457-15.456-37.544v-79.348q0-41.479 22.37-74.436 22.369-32.956 52.369-47.956 51-26 119.24-44.848Q323-449.609 400-449.609h18.805q10.804 0 19.065 2-9.13 18-19.718 48.239-10.587 30.24-13.022 55.762-3.304 30.348-2.434 52.869.869 22.522 8.174 53.565 6.565 30.044 22.217 57.61 15.653 27.565 31.609 48.392H113.782Zm582.045-102.61q30.739 0 53.108-22.652 22.37-22.653 22.37-53.392 0-30.739-22.37-53.108-22.369-22.37-53.108-22.37-30.739 0-53.391 22.37-22.652 22.369-22.652 53.108 0 30.739 22.652 53.392 22.652 22.652 53.391 22.652Zm-59.914 70.174q-9.739-3.869-19.108-9.087-9.37-5.217-18.674-11.521l-40.739 12.434q-9.261 3.131-17.804-.5-8.544-3.63-13.109-11.891l-25.131-41.696q-5.13-8.261-3.348-18.087 1.783-9.826 9.479-16.522l31.304-26.739q-2.565-11.174-2.283-22.326.283-11.152 2.283-22.326l-31.304-27.304q-7.696-6.696-9.479-16.239-1.782-9.544 3.348-17.805l25.131-42.261q4.565-8.261 13.109-11.609 8.543-3.348 17.804-.217l40.739 12.434q9.304-6.304 18.674-11.521 9.369-5.218 19.108-9.087l8.435-41.174q2.565-9.261 9.544-15.457 6.978-6.195 16.239-6.195h50.826q9.261 0 16.24 6.195 6.978 6.196 9.543 15.457l8.435 41.174q9.739 3.869 19.391 9.304 9.652 5.435 18.957 13.304l39.173-13.869q9.261-4.131 18.305-.283 9.044 3.848 14.174 12.109l24.565 43.696q4.566 8.261 3.283 17.805-1.283 9.543-8.978 16.239l-31.739 27.304q2.565 9.739 2.282 21.326-.282 11.587-2.282 21.326l31.304 26.739q7.696 6.696 9.478 16.522 1.783 9.826-3.348 18.087l-25.13 41.696q-4.565 8.261-13.109 11.891-8.544 3.631-17.805.5l-40.173-12.434q-9.305 6.304-18.957 11.521-9.652 5.218-19.391 9.087l-8.435 41.174q-2.565 9.261-9.543 15.457-6.979 6.195-16.24 6.195h-50.826q-9.261 0-16.239-6.195-6.979-6.196-9.544-15.457l-8.435-41.174Z"/>
                         </svg>
@@ -150,41 +150,41 @@ function Conta() {
                         </div>
                         
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={styles.basicInputDiv}>
-                                <label className={styles.basicInputLabel} htmlFor="name">Nome Completo</label>
-                                <input className={styles.basicInput} id="name" name="name" type="text" placeholder={user?.name} defaultValue={user?.name}></input>
+                            <div className={input.basicInputDiv}>
+                                <input className={input.basicInput} id="name" name="name" type="text" placeholder={user?.name} defaultValue={user?.name}></input>
+                                <label className={input.basicInputLabel} htmlFor="name">Nome Completo</label>
                             </div>
 
-                            <div className={styles.basicInputDiv}>
-                                <label className={styles.basicInputLabel} htmlFor="cpf">CPF</label>
-                                <input className={styles.basicInput} id="cpf" name="cpf" type="text" placeholder={user?.cpf} defaultValue={user?.cpf}></input>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={styles.basicInputDiv}>
-                                <label className={styles.basicInputLabel} htmlFor="email">E-mail</label>
-                                <input className={styles.basicInput} id="email" name="email" type="text" placeholder={user?.email} defaultValue={user?.email}></input>
-                            </div>
-
-                            <div className={styles.basicInputDiv}>
-                                <label className={styles.basicInputLabel} htmlFor="phone">Telefone</label>
-                                <input className={styles.basicInput} id="phone" name="phone" type="text" placeholder={user?.phone} defaultValue={user?.phone}></input>
+                            <div className={input.basicInputDiv}>
+                                <input className={input.basicInput} id="cpf" name="cpf" type="text" placeholder={user?.cpf} defaultValue={user?.cpf}></input>
+                                <label className={input.basicInputLabel} htmlFor="cpf">CPF</label>
                             </div>
                         </div>
 
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={styles.basicInputDiv}>
-                                <label className={styles.basicInputLabel} htmlFor="birthdate">Data de Nascimento</label>
-                                <input className={styles.basicInput} id="birthdate" name="birthdate" type="text" placeholder={user?.birthdate} defaultValue={user?.birthdate}></input>
+                            <div className={input.basicInputDiv}>
+                                <input className={input.basicInput} id="email" name="email" type="text" placeholder={user?.email} defaultValue={user?.email}></input>
+                                <label className={input.basicInputLabel} htmlFor="email">E-mail</label>
                             </div>
 
-                            <div className={styles.basicInputDiv}>
-                                <label className={styles.basicInputLabel} htmlFor="gender">Sexo</label>
-                                <select className={styles.basicSelect} id="gender" name="gender">
-                                    <option className={styles.basicOption} value={Gender.MALE} selected={user?.gender == Gender.MALE ? "selected" : ""}>Masculino</option>
-                                    <option className={styles.basicOption} value={Gender.FEMALE} selected={user?.gender == Gender.FEMALE ? "selected" : ""}>Feminino</option>
+                            <div className={input.basicInputDiv}>
+                                <input className={input.basicInput} id="phone" name="phone" type="text" placeholder={user?.phone} defaultValue={user?.phone}></input>
+                                <label className={input.basicInputLabel} htmlFor="phone">Telefone</label>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col xl:flex-row gap-5">
+                            <div className={input.basicInputDiv}>
+                                <input className={input.basicInput} id="birthdate" name="birthdate" type="text" placeholder={user?.birthdate} defaultValue={user?.birthdate}></input>
+                                <label className={input.basicInputLabel} htmlFor="birthdate">Data de Nascimento</label>
+                            </div>
+
+                            <div className={input.basicInputDiv}>
+                                <select className={input.basicSelect} id="gender" name="gender">
+                                    <option className={input.basicOption} value={Gender.MALE} selected={user?.gender == Gender.MALE ? "selected" : ""}>Masculino</option>
+                                    <option className={input.basicOption} value={Gender.FEMALE} selected={user?.gender == Gender.FEMALE ? "selected" : ""}>Feminino</option>
                                 </select>
+                                <label className={input.basicInputLabel} htmlFor="gender">Sexo</label>
                             </div>
                         </div>
 
@@ -220,19 +220,19 @@ function Conta() {
                         </div>
 
                         <div className="w-full flex flex-col gap-6 my-6">
-                            <div className={styles.formDiv}>
-                                <input className={styles.formInput} id="currentPassword" name="currentPassword" type="password" placeholder=" "></input>
-                                <label className={styles.formLabel} htmlFor="currentPassword"><span className={styles.formInputSpan}>Senha Atual</span></label>
+                            <div className={input.advancedInputDiv}>
+                                <input className={input.advancedInput} id="currentPassword" name="currentPassword" type="password" placeholder=" "></input>
+                                <label className={input.advancedInputLabel} htmlFor="currentPassword"><span className="px-1 bg-neutral-100">Senha Atual</span></label>
                             </div>
 
-                            <div className={styles.formDiv}>
-                                <input className={styles.formInput} id="newPassword" name="newPassword" type="password" placeholder=" "></input>
-                                <label className={styles.formLabel} htmlFor="newPassword"><span className={styles.formInputSpan}>Senha Nova</span></label>
+                            <div className={input.advancedInputDiv}>
+                                <input className={input.advancedInput} id="newPassword" name="newPassword" type="password" placeholder=" "></input>
+                                <label className={input.advancedInputLabel} htmlFor="newPassword"><span className="px-1 bg-neutral-100">Senha Nova</span></label>
                             </div>
 
-                            <div className={styles.formDiv}>
-                                <input className={styles.formInput} id="confirmNewPassword" name="confirmNewPassword" type="password" placeholder=" "></input>
-                                <label className={styles.formLabel} htmlFor="confirmNewPassword"><span className={styles.formInputSpan}>Confirmar Senha Nova</span></label>
+                            <div className={input.advancedInputDiv}>
+                                <input className={input.advancedInput} id="confirmNewPassword" name="confirmNewPassword" type="password" placeholder=" "></input>
+                                <label className={input.advancedInputLabel} htmlFor="confirmNewPassword"><span className="px-1 bg-neutral-100">Confirmar Senha Nova</span></label>
                             </div>
                         </div>
 

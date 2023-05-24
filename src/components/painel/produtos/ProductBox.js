@@ -22,7 +22,7 @@ export default function ProductBox({ product, animationDelay }) {
     };
 
     return (
-        <Link href="/painel/produtos/id" className="w-full min-w-[190px] max-w-md h-72 flex flex-col gap-2 cursor-pointer hover:bg-neutral-50 hover:shadow-xl transition-all rounded-md bg-neutral-100 border border-neutral-400 fast-fade-in">
+        <Link href={`/painel/produtos/${product?.id}`} className="w-full min-w-[190px] max-w-md h-72 flex flex-col gap-2 cursor-pointer hover:bg-neutral-50 hover:shadow-xl transition-all rounded-md bg-neutral-100 border border-neutral-400 fast-fade-in">
 
             <div className="w-full h-[45%] bg-center bg-cover bg-neutral-200 rounded-t-md"
                 style={{ backgroundImage: `url('${product?.image}')` }}
