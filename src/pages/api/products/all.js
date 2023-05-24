@@ -1,6 +1,6 @@
 import nextConnect from "next-connect";
 
-import { deleteToken } from "@/database/tokens/delete";
+import { getAll } from "@/database/products/get";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -12,22 +12,15 @@ const handler = nextConnect({
     }
 });
 
-handler.post(async (req, res) => {
+handler.all(async (req, res) => {
 
-    const token = req?.cookies?.token;
-
-    if (!token) {
-        return res.status(400).json({ status: 400, message: "Envie um token para fazer logout.", code: "MISSING_TOKEN" });
-    };
-
-    const deletedToken = await deleteToken(token);
-
-    if (!deletedToken) {
+    const products = await getAll();
+    
+    if (!products) {
         return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
     };
 
-    res.setHeader("Set-Cookie", `token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`);
-    res.status(200).json({ status: 200, message: "OK", code: "OK" });
+    res.status(200).json({ status: 200, message: "OK", code: "OK", products });
 
 });
 

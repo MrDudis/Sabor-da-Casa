@@ -4,7 +4,7 @@ import UserContext from "@/components/painel/user/UserContext";
 
 import User from "@/models/User";
 
-import me from "@/lib/auth/me";
+import me from "@/lib/user/me";
 import logout from "@/lib/auth/logout";
 
 const UserProvider = ({ children }) => {

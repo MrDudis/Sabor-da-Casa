@@ -8,6 +8,8 @@ import Account from "@/components/painel/Account";
 
 import ProductBox from "@/components/painel/produtos/ProductBox";
 
+import getAll from "@/lib/products/all";
+
 export function getServerSideProps({ req, res }) {
 
     if (!req.cookies.token) {
@@ -30,11 +32,19 @@ function Produtos() {
     const baseAnimationDelay = 400;
     const animationDelay = 50;
 
-    useEffect(() => {
+    const fetchProduts = async () => {
+            
+        let response = await getAll();
 
-        setProducts([true , true , true , true , true , true , true , true , true , true , true , true , true ]);
+        if (response.status === 200) {console.log(response)
+            setTimeout(() => { setProducts(response.products); }, 1800);
+        } else {
+            alert(response.message ?? "Erro desconhecido.");
+        };
 
-    }, [])
+    };
+
+    useEffect(() => { fetchProduts(); }, [])
 
     return (
         <>

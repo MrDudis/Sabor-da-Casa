@@ -1,20 +1,19 @@
-import crypto from "crypto";
-
 import db from "../db.js";
+
 import User from "@/models/User.js";
 
-function sha256Hash(input) {
-    const hash = crypto.createHash('sha256');
-    hash.update(input);
-    return hash.digest('hex');
-};
+import hashSHA256 from "@/utils/hash.js";
 
 export async function getById(id) {
 
     const query = `
-        SELECT *
-        FROM pessoa
-        WHERE id = ?
+        SELECT p.*, c.id_pessoa AS cliente_id, f.id_pessoa AS funcionario_id, g.id_pessoa AS gerente_id, a.id_pessoa AS administrador_id
+        FROM pessoa p
+        LEFT JOIN cliente c ON p.id = c.id_pessoa
+        LEFT JOIN funcionario f ON p.id = f.id_pessoa
+        LEFT JOIN gerente g ON p.id = g.id_pessoa
+        LEFT JOIN administrador a ON p.id = a.id_pessoa
+        WHERE p.id = ?
         LIMIT 1
     `;
 
@@ -35,13 +34,17 @@ export async function getById(id) {
 export async function getByCredentials(userinfo, password) {
     
     const query = `
-        SELECT *
-        FROM pessoa
-        WHERE (email = ? OR cpf = ?) AND senha = ?
+        SELECT p.*, c.id_pessoa AS cliente_id, f.id_pessoa AS funcionario_id, g.id_pessoa AS gerente_id, a.id_pessoa AS administrador_id
+        FROM pessoa p
+        LEFT JOIN cliente c ON p.id = c.id_pessoa
+        LEFT JOIN funcionario f ON p.id = f.id_pessoa
+        LEFT JOIN gerente g ON p.id = g.id_pessoa
+        LEFT JOIN administrador a ON p.id = a.id_pessoa
+        WHERE (p.email = ? OR p.cpf = ?) AND p.senha = ?
         LIMIT 1
     `;
 
-    const hashedPassword = sha256Hash(password);
+    const hashedPassword = hashSHA256(password);
 
     return new Promise((resolve, reject) => {
     

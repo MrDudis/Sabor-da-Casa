@@ -31,7 +31,15 @@ export default function Login() {
         let response = await login(formData.get("userinfo"), formData.get("password"));
 
         if (response.status === 200) {
-            window.location.href = "/painel";
+
+            let urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.get("r")) {
+                window.location.href = urlParams.get("r");
+            } else {
+                window.location.href = "/painel";
+            };
+
         } else {
             setErrorMessage(response?.message ?? "Erro desconhecido.");
 
@@ -69,7 +77,7 @@ export default function Login() {
                             <div className={styles.loginImage}></div>
                         </div>
 
-                        <form className="w-full lg:w-[55%] h-full flex flex-col justify-center items-start gap-4 px-10 py-12 max-md:fade-in" onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} className="w-full lg:w-[55%] h-full flex flex-col justify-center items-start gap-4 px-10 py-12 max-md:fade-in">
 
                             <div className="w-full flex items-center justify-center mb-4">
                                 <h1 className="font-august text-black text-5xl text-center cursor-pointer" onClick={() => { window.location.href = "/" }}>Sabor da Casa</h1>

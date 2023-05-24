@@ -1,16 +1,21 @@
 export const Gender = {
     MALE: 0,
     FEMALE: 1,
-}
+};
+
+export const Role = {
+    ADMIN: 0,
+    MANAGER: 1,
+    CASHIER: 2,
+    EMPLOYEE: 3,
+    CUSTOMER: 4
+};
 
 export default class User {
 
     constructor(data) {
-
         this.id = data.id;
-        
         this.patch(data);
-
     };
 
     patch(data) {
@@ -55,6 +60,16 @@ export default class User {
             this.gender = data.gender || data.sexo;
         } else {
             this.gender ??= null;
+        };
+
+        if (data.administrador_id) {
+            this.role = Role.ADMIN;
+        } else if (data.funcionario_id) {
+            this.role = Role.EMPLOYEE;
+        } else  if (data.gerente_id) {
+            this.role = Role.MANAGER;
+        } else {
+            this.role = Role.CUSTOMER;
         };
 
     }

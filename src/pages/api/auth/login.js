@@ -6,10 +6,10 @@ import { create } from "@/database/tokens/create"
 const handler = nextConnect({
     onError: (error, req, res, next) => {
         console.error(error.stack);
-        res.status(500).json({ status: 500, message: "Internal Server Error", code: "INTERNAL_SERVER_ERROR" });
+        res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
     },
     onNoMatch: (req, res) => {
-        res.status(404).json({ status: 404, message: "Not Found", code: "NOT_FOUND" });
+        res.status(404).json({ status: 404, message: "Não encontrado.", code: "NOT_FOUND" });
     }
 });
 
