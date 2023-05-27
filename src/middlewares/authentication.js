@@ -1,5 +1,5 @@
-import { getById } from "@/database/users/get";
-import { getUserIdByToken } from "@/database/tokens/get"
+import * as usersDb from "@/database/managers/users";
+import * as tokensDb from "@/database/managers/tokens";
 
 export default async function authenticate(req, res, next) {
 
@@ -9,13 +9,13 @@ export default async function authenticate(req, res, next) {
         return res.status(401).json({ status: 401, message: "Não autorizado.", code: "UNAUTHORIZED" });
     };
 
-    const userId = await getUserIdByToken(token);
+    const userId = await tokensDb.get(token);
 
     if (!userId) {
         return res.status(401).json({ status: 401, message: "Não autorizado.", code: "UNAUTHORIZED" });
     };
 
-    const user = await getById(userId);
+    const user = await usersDb.getById(userId);
 
     if (!user) {
         return res.status(401).json({ status: 401, message: "Não autorizado.", code: "UNAUTHORIZED" });

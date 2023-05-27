@@ -1,15 +1,6 @@
 import Link from "next/link";
 
-const parsePrice = (price) => {
-    if (!price) return "0,00";
-    const priceString = price.toString();
-    const priceArray = priceString.split(".");
-    const priceInteger = priceArray[0];
-    const priceDecimal = priceArray[1] || "00";
-    const priceDecimalFormatted = priceDecimal.length === 1 ? `${priceDecimal}0` : priceDecimal;
-    const priceFormatted = `${priceInteger},${priceDecimalFormatted}`;
-    return priceFormatted;
-};
+import parsePrice from "@/utils/format/price";
 
 export default function ProductBox({ product, animationDelay }) {
 

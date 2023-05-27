@@ -1,7 +1,7 @@
 import nextConnect from "next-connect";
 
-import { getByCredentials } from "@/database/users/get";
-import { create } from "@/database/tokens/create"
+import * as usersDb from "@/database/managers/users";
+import * as tokensDb from "@/database/managers/tokens";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -21,13 +21,13 @@ handler.post(async (req, res) => {
         return res.status(400).json({ status: 400, message: "Preencha todos os campos.", code: "MISSING_CREDENTIALS" });
     };
     
-    const user = await getByCredentials(userinfo, password);
+    const user = await usersDb.getByCredentials(userinfo, password);
 
     if (!user) {
         return res.status(401).json({ status: 401, message: "Credenciais inválidas.", code: "INVALID_CREDENTIALS" });
     };
 
-    const token = await create(user.id);
+    const token = await tokensDb.insert(user.id);
     
     if (!token) {
         return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });

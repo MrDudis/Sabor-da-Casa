@@ -1,13 +1,20 @@
 import { useState, useEffect, useContext } from "react";
+
 import Link from "next/link";
 import Head from "next/head";
 
-import UserContext from "@/components/painel/user/UserContext";
+import UserContext from "@/components/painel/auth/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import input from "@/styles/Input.module.css";
+import { AdvancedInput } from "@/components/elements/Input";
+
+import Product from "@/models/Product";
+
+import * as productsLib from "@/lib/products";
+
+import parsePrice from "@/utils/format/price";
 
 export function getServerSideProps({ req, res }) {
 
@@ -26,8 +33,34 @@ function AdicionarProduto() {
 
     const { user } = useContext(UserContext);
 
+    const [productPreview, setProductPreview] = useState({});
+
+    const [productCreateErrors, setProductCreateErrors] = useState({});
+
+    const handleProductCreateInputChange = (event) => {
+        let newProductCreateErrors = productCreateErrors[event.target.name] = null;
+        setProductCreateErrors({ ...productCreateErrors, ...newProductCreateErrors });
+
+        const { name, value } = event.target;
+        setProductPreview({ ...productPreview, [name]: value });
+    };
+
     const handleUpdateSubmit = async (event) => {
         event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        let newProductValues = Object.fromEntries(formData.entries());
+        let newProduct = new Product(newProductValues);
+        
+        let response = await productsLib.create(newProduct);
+
+        if (response.status === 200) {
+            window.location.href = `/painel/produtos/${response.productId}`;
+        } else {
+            alert(response.message ?? "Erro desconhecido.");
+        };
+
     };
 
     return (
@@ -47,7 +80,14 @@ function AdicionarProduto() {
                     </svg>
                     <p className="font-lgc text-lg">Voltar</p>
                 </Link>
-                <h1 className="font-lgc text-3xl sm:text-4xl pr-4 pb-3 text-left slide-up-fade-in opacity-0" style={{ animationDelay: "0.6s" }}>Adicionar um Produto</h1>
+                <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
+                    <h1 className="font-lgc text-3xl sm:text-4xl slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>Adicionar um Produto</h1>
+                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                        <Link href="/painel" className="hover:font-bold">Painel</Link> <p className="cursor-default">{" > "}</p> 
+                        <Link href="/painel/produtos" className="hover:font-bold">Produtos</Link> <p className="cursor-default">{" > "}</p> 
+                        <p className="cursor-default truncate">Adicionar um Produto</p>
+                    </p>
+                </div>
             </div>
 
             <div className="flex flex-col md:flex-row justify-start items-start gap-6 py-6">
@@ -71,21 +111,12 @@ function AdicionarProduto() {
                         </div>
                         
                         <div className="flex flex-col gap-8">
-                            <div className="flex flex-col xl:flex-row gap-5">
-                                <div className={input.advancedInputDiv}>
-                                    <input className={input.advancedInput} id="name" name="name" type="text" placeholder=" "></input>
-                                    <label className={input.advancedInputLabel} htmlFor="name"><span className="px-1 bg-neutral-100">Nome</span></label>
-                                </div>
-
-                                <div className={input.advancedInputDiv}>
-                                    <input className={input.advancedInput} id="price" name="price" type="text" placeholder=" "></input>
-                                    <label className={input.advancedInputLabel} htmlFor="price"><span className="px-1 bg-neutral-100">Preço</span></label>
-                                </div>
-                            </div>
-
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="description" name="description" type="text" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="description"><span className="px-1 bg-neutral-100">Descrição</span></label>
+                            <AdvancedInput name="name" label="Nome" type="text" onChange={handleProductCreateInputChange} error={productCreateErrors?.name} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="description" label="Descrição" type="text" onChange={handleProductCreateInputChange} error={productCreateErrors?.description} bgColor="bg-neutral-100"></AdvancedInput>
+                            
+                            <div className="flex flex-col xl:flex-row gap-8">
+                                <AdvancedInput name="price" label="Preço" type="text" onChange={handleProductCreateInputChange} error={productCreateErrors?.price} bgColor="bg-neutral-100"></AdvancedInput>
+                                <AdvancedInput name="stock" label="Estoque" type="text" onChange={handleProductCreateInputChange} error={productCreateErrors?.stock} bgColor="bg-neutral-100"></AdvancedInput>
                             </div>
                         </div>
 
@@ -111,28 +142,35 @@ function AdicionarProduto() {
                         <h1 className="font-lgc text-2xl font-bold">Cartão do Produto</h1>
                     </div>
 
-                    <div className="w-full xl:max-w-sm flex flex-col items-start justify-start h-96 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
+                    <div className="relative w-full xl:max-w-sm flex flex-col items-start justify-start h-96 bg-neutral-100 rounded-md border border-neutral-400 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
 
-                    <div className="w-full h-[45%] bg-center bg-cover bg-neutral-200 rounded-t-md"
-                        style={{ backgroundImage: `url('')` }}
-                    ></div>
-
-                    <div className="w-full h-[55%] flex flex-col items-start justify-start px-6 py-5 gap-4">
-                        <div className="w-full truncate-4-line">
-                            <h2 className="font-lgc font-bold">NOME</h2>
-                            <p className="font-lgc text-[16px] text-neutral-800">Nome do Produto</p>
+                        <div className="absolute flex flex-row justify-center items-center px-2 py-1 gap-1 rounded-lg bg-neutral-100 -top-2 -left-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14">
+                                <path d="M168.479 0q-36.392 0-62.435-26.044Q80-52.087 80-88.479q0-36.391 26.044-62.717 26.043-26.327 62.435-26.327h623.042q36.392 0 62.435 26.327Q880-124.87 880-88.479q0 36.392-26.044 62.435Q827.913 0 791.521 0H168.479Zm36.043-257.523q-22.087 0-37.544-15.456-15.457-15.457-15.457-37.544v-86.783q0-10.826 3.848-20.304 3.848-9.479 12.109-17.74l351.696-352.261 162.435 162.436-352.261 351.696q-8.261 8.261-17.739 12.108-9.479 3.848-20.305 3.848h-86.782Zm514.174-404.869-161.87-162.436 75.956-75.956q13.827-14.827 34.218-14.609 20.391.217 34.218 14.609l94 94q13.826 13.826 13.826 33.435t-13.826 34.435l-76.522 76.522Z"/>
+                            </svg>
+                            <p className="font-lgc font-bold text-sm">Edit Mode</p>
                         </div>
 
-                        <div className="w-full truncate-4-line">
-                            <h2 className="font-lgc font-bold">DESCRIÇÃO</h2>
-                            <p className="font-lgc text-[16px] text-neutral-800">Descrição do Produto</p>
-                        </div>
+                        <div className="w-full h-[45%] bg-center bg-cover bg-neutral-200 rounded-t-md"
+                            style={{ backgroundImage: `url('')` }}
+                        ></div>
 
-                        <div className="w-full truncate-4-line">
-                            <h2 className="font-lgc font-bold">PREÇO</h2>
-                            <p className="font-lgc text-[16px] text-neutral-800">Preço do Produto</p>
+                        <div className="w-full h-[55%] flex flex-col items-start justify-start px-6 py-5 gap-4">
+                            <div className="w-full truncate-4-line">
+                                <h2 className="font-lgc font-bold">NOME</h2>
+                                <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.name || "--"}</p>
+                            </div>
+
+                            <div className="w-full truncate-4-line">
+                                <h2 className="font-lgc font-bold">DESCRIÇÃO</h2>
+                                <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.description || "--"}</p>
+                            </div>
+
+                            <div className="w-full truncate-4-line">
+                                <h2 className="font-lgc font-bold">PREÇO</h2>
+                                <p className="font-lgc text-[16px] text-neutral-800">R$ {parsePrice(productPreview?.price) || "--"}</p>
+                            </div>
                         </div>
-                    </div>
 
                     </div>
 

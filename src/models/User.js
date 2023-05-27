@@ -11,14 +11,21 @@ export const Role = {
     CUSTOMER: 4
 };
 
+export const roleNames = {
+    [Role.CUSTOMER]: "Cliente",
+    [Role.EMPLOYEE]: "Funcionário",
+    [Role.CASHIER]: "Caixa",
+    [Role.MANAGER]: "Gerente",
+    [Role.ADMIN]: "Administrador"
+};
+
 export default class User {
 
     constructor(data) {
-        this.id = data.id;
-        this.patch(data);
+        this._patch(data);
     };
 
-    patch(data) {
+    _patch(data) {
 
         if (data.id) {
             this.id = data.id;
@@ -56,18 +63,24 @@ export default class User {
             this.phone ??= null;
         };
         
-        if ("sexo" in data || "gender" in data) {
-            this.gender = data.gender || data.sexo;
+        if ("sexo" in data) {
+            this.gender = data.sexo;
+        } else if ("gender" in data) {
+            this.gender = data.gender;
         } else {
             this.gender ??= null;
         };
-
-        if (data.administrador_id) {
+        
+        if ("role" in data) {
+            this.role = data.role;
+        } else if (data.administrador_id) {
             this.role = Role.ADMIN;
         } else if (data.funcionario_id) {
             this.role = Role.EMPLOYEE;
-        } else  if (data.gerente_id) {
+        } else if (data.gerente_id) {
             this.role = Role.MANAGER;
+        } else if (data.caixa_id) {
+            this.role = Role.CASHIER;
         } else {
             this.role = Role.CUSTOMER;
         };

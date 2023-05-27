@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import UserContext from "@/components/painel/user/UserContext";
+import UserContext from "@/components/painel/auth/UserContext";
 
 import User from "@/models/User";
 
-import me from "@/lib/user/me";
-import logout from "@/lib/auth/logout";
+import * as meLib from "@/lib/me";
+import * as authLib from "@/lib/auth";
 
 const UserProvider = ({ children }) => {
 
@@ -13,7 +13,7 @@ const UserProvider = ({ children }) => {
 
   const fetchUser = async () => {
 
-    const response = await me();
+    const response = await meLib.get();
 
     if (response.status === 200) {
 
@@ -21,7 +21,7 @@ const UserProvider = ({ children }) => {
 
     } else if (response.status === 401) {
 
-      logout(document).then(() => { window.location.href = "/login"; });
+      authLib.logout(document).then(() => { window.location.href = "/login"; });
 
     } else {
 
@@ -31,9 +31,7 @@ const UserProvider = ({ children }) => {
 
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  useEffect(() => fetchUser, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

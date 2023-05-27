@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-import logout from "@/lib/auth/logout";
+import * as authLib from "@/lib/auth";
 
 export default function Dropdown({ showDropdown, setShowDropdown }) {
 
@@ -25,7 +25,7 @@ export default function Dropdown({ showDropdown, setShowDropdown }) {
     }, [showDropdown]);
 
     const handleLogout = async () => {
-        let response = await logout(document);
+        let response = await authLib.logout(document);
 
         if (response.status === 200) {
             window.location.href = "/login";

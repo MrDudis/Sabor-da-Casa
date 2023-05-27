@@ -15,6 +15,9 @@ module.exports = {
         "2xs": "340px",
         "xs": "420px",
       },
+      backgroundSize: {
+        "500": "500px 500px",
+      }
     },
   },
   plugins: [],

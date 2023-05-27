@@ -1,24 +1,19 @@
-import { useContext, useEffect } from "react";
-import Head from "next/head";
+import { useContext, useState, useEffect } from "react";
 
-import { Gender } from "@/models/User";
-import UserContext from "@/components/painel/user/UserContext";
+import Head from "next/head";
+import Link from "next/link";
+
+import { roleNames, Gender } from "@/models/User";
+import UserContext from "@/components/painel/auth/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import updateUser from "@/lib/user/update";
-import updatePassword from "@/lib/auth/password";
+import { BasicInput, AdvancedInput, BasicSelect } from "@/components/elements/Input";
 
-import input from "@/styles/Input.module.css";
+import * as meLib from "@/lib/me";
 
-const cargos = [
-    "Cliente",
-    "Funcionário",
-    "Caixa",
-    "Gerente",
-    "Administrador"
-];
+import parseDate from "@/utils/format/date";
 
 export function getServerSideProps({ req, res }) {
 
@@ -36,6 +31,13 @@ export function getServerSideProps({ req, res }) {
 function Conta() {
 
     const { user } = useContext(UserContext);
+
+    const [userUpdateErrors, setUserUpdateErrors] = useState({});
+
+    const handleUserInputChange = (event) => {
+        let newUserUpdateErrors = userUpdateErrors[event.target.name] = null;
+        setUserUpdateErrors({ ...userUpdateErrors, ...newUserUpdateErrors });
+    };
     
     const handleUserUpdateSubmit = async (event) => {
         event.preventDefault();
@@ -44,14 +46,21 @@ function Conta() {
 
         let newUser = Object.fromEntries(formData.entries());
 
-        let response = await updateUser(newUser);
+        let response = await meLib.updateUser(newUser);
 
         if (response.status === 200) {
             window.location.reload();
         } else {
-            alert(response.message);
+            setUserUpdateErrors(response?.errors ?? { name: "Algo deu errado." });
         };
 
+    };
+
+    const [passwordErrors, setPasswordErrors] = useState({});
+
+    const handlePasswordInputChange = (event) => {
+        let newPasswordErrors = passwordErrors[event.target.name] = null;
+        setPasswordErrors({ ...passwordErrors, ...newPasswordErrors });
     };
 
     const handlePasswordUpdateSubmit = async (event) => {
@@ -60,16 +69,15 @@ function Conta() {
         const formData = new FormData(event.target);
 
         if (formData.get("newPassword") !== formData.get("confirmNewPassword")) {
-            alert("As senhas não coincidem.");
-            return;
+            return setPasswordErrors({ confirmNewPassword: "As senhas não coincidem." });
         };
 
-        let response = await updatePassword(formData.get("currentPassword"), formData.get("newPassword"));
+        let response = await meLib.updatePassword(formData.get("currentPassword"), formData.get("newPassword"));
 
         if (response.status === 200) {
             window.location.reload();
         } else {
-            alert(response.message);
+            setPasswordErrors(response?.errors ?? { currentPassword: "Erro desconhecido." });
         };
 
     };
@@ -85,7 +93,13 @@ function Conta() {
             </Head>
             
             <div className="w-full flex flex-col justify-center items-start border-b border-neutral-800 scale-right-to-left">
-                <h1 className="font-lgc text-3xl sm:text-4xl pr-4 pb-3 text-left slide-up-fade-in opacity-0" style={{ animationDelay: "0.4s" }}>Minha Conta</h1>
+                <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
+                    <h1 className="font-lgc text-3xl sm:text-4xl text-left slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>Minha Conta</h1>
+                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                        <Link href="/painel" className="hover:font-bold">Painel</Link> <p className="cursor-default">{" > "}</p> 
+                        <p className="cursor-default truncate">Minha Conta</p>
+                    </p>
+                </div>
             </div>
 
             <div className="flex flex-col md:flex-row justify-start items-start gap-6 py-6">
@@ -117,7 +131,7 @@ function Conta() {
                             </svg>
                             <div className="w-full flex flex-col items-start justify-center">
                                 <p className="font-lgc text-lg font-bold">Cargo</p>
-                                <p className="font-lgc text-lg">{cargos[user?.role]}</p>
+                                <p className="font-lgc text-lg">{roleNames[user?.role]}</p>
                             </div>
                         </div>
 
@@ -149,43 +163,23 @@ function Conta() {
                             <p className="font-lgc text-black">Não esqueça de salvar as informações quando terminar a edição.</p>
                         </div>
                         
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="name" name="name" type="text" placeholder={user?.name} defaultValue={user?.name}></input>
-                                <label className={input.basicInputLabel} htmlFor="name">Nome Completo</label>
-                            </div>
-
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="cpf" name="cpf" type="text" placeholder={user?.cpf} defaultValue={user?.cpf}></input>
-                                <label className={input.basicInputLabel} htmlFor="cpf">CPF</label>
-                            </div>
+                        <div className="flex flex-col items-start xl:flex-row gap-5">
+                            <BasicInput name="name" label="Nome Completo" type="text" placeholder={user?.name} defaultValue={user?.name} error={userUpdateErrors?.name} onChange={handleUserInputChange}></BasicInput>
+                            <BasicInput name="cpf" label="CPF" type="text" placeholder={user?.cpf} defaultValue={user?.cpf} error={userUpdateErrors?.cpf} onChange={handleUserInputChange}></BasicInput>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="email" name="email" type="text" placeholder={user?.email} defaultValue={user?.email}></input>
-                                <label className={input.basicInputLabel} htmlFor="email">E-mail</label>
-                            </div>
-
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="phone" name="phone" type="text" placeholder={user?.phone} defaultValue={user?.phone}></input>
-                                <label className={input.basicInputLabel} htmlFor="phone">Telefone</label>
-                            </div>
+                        <div className="flex flex-col items-start xl:flex-row gap-5">
+                            <BasicInput name="email" label="E-mail" type="text" placeholder={user?.email} defaultValue={user?.email} error={userUpdateErrors?.email} onChange={handleUserInputChange}></BasicInput>
+                            <BasicInput name="phone" label="Telefone" type="text" placeholder={user?.phone} defaultValue={user?.phone} error={userUpdateErrors?.phone} onChange={handleUserInputChange}></BasicInput>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="birthdate" name="birthdate" type="text" placeholder={user?.birthdate} defaultValue={user?.birthdate}></input>
-                                <label className={input.basicInputLabel} htmlFor="birthdate">Data de Nascimento</label>
-                            </div>
+                        <div className="flex flex-col items-start xl:flex-row gap-5">
+                            <BasicInput name="birthdate" label="Data de Nascimento" type="text" placeholder={parseDate(user?.birthdate)} defaultValue={parseDate(user?.birthdate)} error={userUpdateErrors?.birthdate} onChange={handleUserInputChange}></BasicInput>
 
-                            <div className={input.basicInputDiv}>
-                                <select className={input.basicSelect} id="gender" name="gender">
-                                    <option className={input.basicOption} value={Gender.MALE} selected={user?.gender == Gender.MALE ? "selected" : ""}>Masculino</option>
-                                    <option className={input.basicOption} value={Gender.FEMALE} selected={user?.gender == Gender.FEMALE ? "selected" : ""}>Feminino</option>
-                                </select>
-                                <label className={input.basicInputLabel} htmlFor="gender">Sexo</label>
-                            </div>
+                            <BasicSelect name="gender" label="Sexo"
+                                options={[ { label: "Masculino", value: Gender.MALE }, { label: "Feminino", value: Gender.FEMALE } ]}
+                                defaultValue={user?.gender}
+                            ></BasicSelect>
                         </div>
 
                         <div className="w-full flex flex-row justify-end items-center mt-2">
@@ -220,20 +214,9 @@ function Conta() {
                         </div>
 
                         <div className="w-full flex flex-col gap-6 my-6">
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="currentPassword" name="currentPassword" type="password" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="currentPassword"><span className="px-1 bg-neutral-100">Senha Atual</span></label>
-                            </div>
-
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="newPassword" name="newPassword" type="password" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="newPassword"><span className="px-1 bg-neutral-100">Senha Nova</span></label>
-                            </div>
-
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="confirmNewPassword" name="confirmNewPassword" type="password" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="confirmNewPassword"><span className="px-1 bg-neutral-100">Confirmar Senha Nova</span></label>
-                            </div>
+                            <AdvancedInput name="currentPassword" label="Senha Atual" type="text" onChange={handlePasswordInputChange} error={passwordErrors?.currentPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="newPassword" label="Senha Nova" type="text" onChange={handlePasswordInputChange} error={passwordErrors?.newPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="confirmNewPassword" label="Confirmar Senha Nova" type="text" onChange={handlePasswordInputChange} error={passwordErrors?.confirmNewPassword} bgColor="bg-neutral-100"></AdvancedInput>
                         </div>
 
                         <div className="w-full flex flex-row justify-center items-center mt-2">

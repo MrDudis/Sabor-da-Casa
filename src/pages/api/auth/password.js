@@ -2,8 +2,7 @@ import nextConnect from "next-connect";
 
 import authentication from "@/middlewares/authentication";
 
-import { validatePassword } from "@/database/users/validate";
-import { updatePassword } from "@/database/users/update";
+import * as usersDb from "@/database/managers/users";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -21,17 +20,37 @@ handler.patch(async (req, res) => {
 
     const { currentPassword, newPassword } = req.body;
 
+    let errors = {};
+
     if (!currentPassword || !newPassword) {
-        return res.status(400).json({ status: 400, message: "Preencha todos os campos.", code: "MISSING_PASSWORDS" });
+        errors = {
+            ...errors,
+            currentPassword: !currentPassword ? "Digite sua senha atual." : null,
+            newPassword: !newPassword ? "Digite sua nova senha." : null
+        };
     };
 
-    const validPassword = await validatePassword(req.user, currentPassword);
-
-    if (!validPassword) {
-        return res.status(400).json({ status: 400, message: "Senha atual incorreta.", code: "INVALID_PASSWORD" });
+    if (newPassword && newPassword.length < 7) {
+        errors = {
+            ...errors,
+            newPassword: "Sua senha deve conter no mínimo 7 caracteres."
+        };
     };
 
-    const updatedUser = await updatePassword(req.user, newPassword);
+    const validPassword = await usersDb.validatePassword(req.user, currentPassword);
+
+    if (!validPassword && currentPassword != "") {
+        errors = {
+            ...errors,
+            currentPassword: "Senha incorreta."
+        };
+    };
+
+    if (Object.keys(errors).length > 0) {
+        return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });
+    };
+
+    const updatedUser = await usersDb.updatePassword(req.user, newPassword);
 
     if (!updatedUser) {
         return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });

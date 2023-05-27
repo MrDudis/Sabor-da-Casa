@@ -1,13 +1,21 @@
 import { useState, useEffect, useContext } from "react";
-import Link from "next/link";
-import Head from "next/head";
 
-import UserContext from "@/components/painel/user/UserContext";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+import UserContext from "@/components/painel/auth/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import input from "@/styles/Input.module.css";
+import { BasicInput } from "@/components/elements/Input";
+
+import Product from "@/models/Product";
+
+import * as productsLib from "@/lib/products";
+
+import parsePrice from "@/utils/format/price";
 
 export function getServerSideProps({ req, res }) {
 
@@ -24,12 +32,83 @@ export function getServerSideProps({ req, res }) {
 
 function Produto() {
 
+    const router = useRouter();
+
     const { user } = useContext(UserContext);
 
     const [product, setProduct] = useState(null);
 
+    const fetchProduct = async () => {
+
+        const id = router.query?.id;
+
+        let response = await productsLib.get(id);
+
+        if (response.status === 200) {
+            setProduct(new Product(response.product));
+        } else {
+            alert(response.message ?? "Erro desconhecido.");
+        };
+
+    };
+
+    useEffect(() => fetchProduct, []);
+
+    const [productPreview, setProductPreview] = useState({});
+    useEffect(() => setProductPreview({ name: product?.name, description: product?.description, price: product?.price }), [product]);
+
+    const [productUpdateErrors, setProductUpdateErrors] = useState({});
+
+    const handleProductInputChange = (event) => {
+        let newProductUpdateErrors = productUpdateErrors[event.target.name] = null;
+        setProductUpdateErrors({ ...productUpdateErrors, ...newProductUpdateErrors });
+
+        const { name, value } = event.target;
+        setProductPreview({ ...productPreview, [name]: value });
+    };
+
+    const isEdited = (product, preview) => {
+        return product.name !== preview.name || product.description !== preview.description || parsePrice(product.price) !== parsePrice(preview.price);
+    };
+
     const handleUpdateSubmit = async (event) => {
         event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        let newProduct = Object.fromEntries(formData.entries());
+
+        let response = await productsLib.update(product?.id, newProduct);
+
+        if (response.status === 200) {
+            window.location.reload();
+        } else {
+            setProductUpdateErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
+        };
+
+    };
+
+    const handleDeleteSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!confirm("Tem certeza que deseja excluir este produto?")) {
+            return;
+        };
+
+        let response = await productsLib.deleteProduct(product.id);
+
+        if (response.status === 200) {
+            window.location.href = "/painel/produtos";
+        } else {
+            alert(response.message ?? "Erro desconhecido.");
+        };
+
+    };
+
+    if (!product) {
+        return (
+            <></>
+        );
     };
 
     return (
@@ -49,7 +128,14 @@ function Produto() {
                     </svg>
                     <p className="font-lgc text-lg">Voltar</p>
                 </Link>
-                <h1 className="font-lgc text-3xl sm:text-4xl pr-4 pb-3 text-left slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>Nome do Produto</h1>
+                <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
+                    <h1 className="font-lgc text-3xl sm:text-4xl slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>{product?.name}</h1>
+                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                        <Link href="/painel" className="hover:font-bold">Painel</Link> <p className="cursor-default">{" > "}</p> 
+                        <Link href="/painel/produtos" className="hover:font-bold">Produtos</Link> <p className="cursor-default">{" > "}</p> 
+                        <p className="cursor-default truncate">{product?.name || router.query?.id}</p>
+                    </p>
+                </div>
             </div>
 
             <div className="flex flex-col md:flex-row justify-start items-start gap-6 py-6">
@@ -81,7 +167,7 @@ function Produto() {
                             </svg>
                             <div className="w-full flex flex-col items-start justify-center">
                                 <p className="font-lgc text-lg font-bold">Estoque</p>
-                                <p className="font-lgc text-lg">14</p>
+                                <p className="font-lgc text-lg">{product?.stock}</p>
                             </div>
                         </div>
 
@@ -114,26 +200,16 @@ function Produto() {
                         </div>
                         
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="name" name="name" type="text" placeholder={product?.name} defaultValue={product?.name}></input>
-                                <label className={input.basicInputLabel} htmlFor="name">Nome do Produto</label>
-                            </div>
-
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="price" name="price" type="text" placeholder={product?.price} defaultValue={product?.price}></input>
-                                <label className={input.basicInputLabel} htmlFor="price">Preço</label>
-                            </div>
+                            <BasicInput name="name" label="Nome do Produto" type="text" placeholder={product?.name} defaultValue={product?.name} onChange={handleProductInputChange} error={productUpdateErrors?.name}></BasicInput>
+                            <BasicInput name="price" label="Preço" type="text" placeholder={"R$ " + parsePrice(product?.price)} defaultValue={"R$ " + parsePrice(product?.price)} onChange={handleProductInputChange} error={productUpdateErrors?.price}></BasicInput>
                         </div>
 
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.basicInputDiv}>
-                                <input className={input.basicInput} id="description" name="description" type="text" placeholder={product?.description} defaultValue={product?.description}></input>
-                                <label className={input.basicInputLabel} htmlFor="description">Descrição</label>
-                            </div>
+                            <BasicInput name="description" label="Descrição" type="text" placeholder={product?.description} defaultValue={product?.description} onChange={handleProductInputChange} error={productUpdateErrors?.description}></BasicInput>
                         </div>
 
                         <div className="w-full flex flex-row justify-end items-center mt-2">
-                            <button className="w-full xl:w-[35%] lg::max-w-sm flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
+                            <button disabled={!isEdited(product, productPreview)} className="w-full xl:w-[35%] lg::max-w-sm flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 disabled:opacity-75 disabled:bg-red-600 text-white rounded-md transition-all" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
                                     <path d="M206.783 955.218q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153V302.783q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848h437.391q21.087 0 40.392 7.978 19.304 7.978 34.261 22.935l109.478 109.478q14.957 14.957 22.935 34.261 7.978 19.305 7.978 40.392v437.391q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H206.783ZM480 809.217q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM299.784 502.783h253.998q22.088 0 37.544-15.457 15.457-15.456 15.457-37.544v-53.998q0-22.088-15.457-37.544-15.456-15.457-37.544-15.457H299.784q-22.088 0-37.544 15.457-15.457 15.456-15.457 37.544v53.998q0 22.088 15.457 37.544 15.456 15.457 37.544 15.457Z"/>
                                 </svg>
@@ -157,7 +233,7 @@ function Produto() {
                         </div>
 
                         <div className="w-full xl:w-[35%] flex flex-row justify-center items-center mt-2">
-                            <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
+                            <button onClick={handleDeleteSubmit} className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
                                     <path d="m480-394.391 69.217 69.217q14.261 13.261 33.305 13.261 19.043 0 32.304-13.261 14.261-14.261 14.261-33.304 0-19.044-14.261-32.305L545.609-460l69.217-69.217q14.261-14.261 14.261-33.305 0-19.043-14.261-32.304-12.696-13.696-32.022-13.696t-33.022 13.696L480-525.609l-69.217-69.217q-13.261-14.261-32.305-14.261-19.043 0-33.304 14.261-12.696 12.696-12.696 32.022t12.696 33.022L414.391-460l-69.217 69.217q-13.261 13.261-13.261 32.305 0 19.043 13.261 33.304 14.261 13.261 33.304 13.261 19.044 0 32.305-13.261L480-394.391ZM273.782-100.782q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-506.999q-22.087 0-37.544-15.457-15.457-15.457-15.457-37.544 0-22.087 15.457-37.544 15.457-15.457 37.544-15.457h179.784q0-22.087 15.456-37.544 15.457-15.456 37.544-15.456h158.87q22.087 0 37.544 15.456 15.456 15.457 15.456 37.544h179.784q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457v506.999q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H273.782Z"/>
                                 </svg>
@@ -178,30 +254,48 @@ function Produto() {
                         <h1 className="font-lgc text-2xl font-bold">Cartão do Produto</h1>
                     </div>
 
-                    <div className="relative w-full xl:max-w-sm flex flex-col items-start justify-start h-96 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
+                    <div className="relative w-full xl:max-w-sm flex flex-col items-start justify-start h-fit bg-neutral-100 rounded-md border border-neutral-400 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
 
-                        <div className="absolute flex justify-center items-center px-4 py-1 rounded-lg bg-neutral-100 top-3 right-3">
-                            <p className="font-lgc text-lg">ID</p>
+                        {
+                            isEdited(product, productPreview) ? (
+                                <div className="absolute flex flex-row justify-center items-center px-2 py-1 gap-1 rounded-lg bg-neutral-100 -top-2 -left-2 fast-fade-in">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14">
+                                        <path d="M168.479 0q-36.392 0-62.435-26.044Q80-52.087 80-88.479q0-36.391 26.044-62.717 26.043-26.327 62.435-26.327h623.042q36.392 0 62.435 26.327Q880-124.87 880-88.479q0 36.392-26.044 62.435Q827.913 0 791.521 0H168.479Zm36.043-257.523q-22.087 0-37.544-15.456-15.457-15.457-15.457-37.544v-86.783q0-10.826 3.848-20.304 3.848-9.479 12.109-17.74l351.696-352.261 162.435 162.436-352.261 351.696q-8.261 8.261-17.739 12.108-9.479 3.848-20.305 3.848h-86.782Zm514.174-404.869-161.87-162.436 75.956-75.956q13.827-14.827 34.218-14.609 20.391.217 34.218 14.609l94 94q13.826 13.826 13.826 33.435t-13.826 34.435l-76.522 76.522Z"/>
+                                    </svg>
+                                    <p className="font-lgc font-bold text-sm">Edit Mode</p>
+                                </div>
+                            ) : (
+                                <div className="absolute flex flex-row justify-center items-center px-2 py-1 gap-1 rounded-lg bg-neutral-100 -top-2 -left-2 fast-fade-out">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14">
+                                        <path d="M168.479 0q-36.392 0-62.435-26.044Q80-52.087 80-88.479q0-36.391 26.044-62.717 26.043-26.327 62.435-26.327h623.042q36.392 0 62.435 26.327Q880-124.87 880-88.479q0 36.392-26.044 62.435Q827.913 0 791.521 0H168.479Zm36.043-257.523q-22.087 0-37.544-15.456-15.457-15.457-15.457-37.544v-86.783q0-10.826 3.848-20.304 3.848-9.479 12.109-17.74l351.696-352.261 162.435 162.436-352.261 351.696q-8.261 8.261-17.739 12.108-9.479 3.848-20.305 3.848h-86.782Zm514.174-404.869-161.87-162.436 75.956-75.956q13.827-14.827 34.218-14.609 20.391.217 34.218 14.609l94 94q13.826 13.826 13.826 33.435t-13.826 34.435l-76.522 76.522Z"/>
+                                    </svg>
+                                    <p className="font-lgc font-bold text-sm">Edit Mode</p>
+                                </div>
+                            )
+                        }
+
+                        <div className="absolute flex justify-center items-center px-4 py-1 rounded-lg bg-neutral-100 top-3 right-3 opacity-75">
+                            <p className="font-lgc text-lg">{product?.id}</p>
                         </div>
 
-                        <div className="w-full h-[45%] bg-center bg-cover bg-neutral-200 rounded-t-md"
+                        <div className="w-full min-h-[196px] bg-center bg-cover bg-neutral-200 rounded-t-md"
                             style={{ backgroundImage: `url('${product?.image}')` }}
                         ></div>
 
-                        <div className="w-full h-[55%] flex flex-col items-start justify-start px-6 py-5 gap-4">
-                            <div className="w-full truncate-4-line">
+                        <div className="w-full h-fit flex flex-col items-start justify-start px-6 py-5 gap-4">
+                            <div className="w-full">
                                 <h2 className="font-lgc font-bold">NOME</h2>
-                                <p className="font-lgc text-[16px] text-neutral-800">Nome do Produto</p>
+                                <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.name}</p>
                             </div>
 
-                            <div className="w-full truncate-4-line">
+                            <div className="w-full">
                                 <h2 className="font-lgc font-bold">DESCRIÇÃO</h2>
-                                <p className="font-lgc text-[16px] text-neutral-800">Descrição do Produto</p>
+                                <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.description}</p>
                             </div>
 
-                            <div className="w-full truncate-4-line">
+                            <div className="w-full">
                                 <h2 className="font-lgc font-bold">PREÇO</h2>
-                                <p className="font-lgc text-[16px] text-neutral-800">Preço do Produto</p>
+                                <p className="font-lgc text-[16px] text-neutral-800">R$ {parsePrice(productPreview?.price)}</p>
                             </div>
                         </div>
 

@@ -1,6 +1,10 @@
 import nextConnect from "next-connect";
 
-import * as productsDb from "@/database/managers/products";
+import authentication from "@/middlewares/authentication";
+
+import { Role } from "@/models/User";
+
+import * as usersDb from "@/database/managers/users";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -12,15 +16,21 @@ const handler = nextConnect({
     }
 });
 
+handler.use(authentication);
+
 handler.get(async (req, res) => {
 
-    const products = await productsDb.getAll();
+    if (req.user.role > Role.CASHIER) {
+        return res.status(403).json({ status: 403, message: "Você não tem permissão para acessar esse recurso.", code: "UNAUTHORIZED" });
+    };
+
+    const users = await usersDb.getAll();
     
-    if (!products) {
+    if (!users) {
         return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
     };
 
-    res.status(200).json({ status: 200, message: "OK", code: "OK", products });
+    res.status(200).json({ status: 200, message: "OK", code: "OK", users });
 
 });
 

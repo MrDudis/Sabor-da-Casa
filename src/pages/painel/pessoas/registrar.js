@@ -2,14 +2,16 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import Head from "next/head";
 
-import UserContext from "@/components/painel/user/UserContext";
+import UserContext from "@/components/painel/auth/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import { Gender } from "@/models/User";
+import { AdvancedInput, AdvancedSelect } from "@/components/elements/Input";
 
-import input from "@/styles/Input.module.css";
+import User, { Role, Gender } from "@/models/User";
+
+import * as usersLib from "@/lib/users";
 
 export function getServerSideProps({ req, res }) {
 
@@ -28,8 +30,29 @@ function RegistrarPessoa() {
 
     const { user } = useContext(UserContext);
 
-    const handleUpdateSubmit = async (event) => {
+    const [userRegisterErrors, setUserRegisterErrors] = useState({});
+
+    const handleUserRegisterInputChange = (event) => {
+        let newUserRegisterErrors = userRegisterErrors[event.target.name] = null;
+        setUserRegisterErrors({ ...userRegisterErrors, ...newUserRegisterErrors });
+    };
+
+    const handleUserRegisterSubmit = async (event) => {
         event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        let newUserValues = Object.fromEntries(formData.entries());
+        let newUser = new User(newUserValues);
+        
+        let response = await usersLib.register(newUser);
+
+        if (response.status === 200) {
+            window.location.href = `/painel/pessoas/${response.userId}`;
+        } else {
+            alert(response.message ?? "Erro desconhecido.");
+        };
+
     };
 
     return (
@@ -49,7 +72,14 @@ function RegistrarPessoa() {
                     </svg>
                     <p className="font-lgc text-lg">Voltar</p>
                 </Link>
-                <h1 className="font-lgc text-3xl sm:text-4xl pr-4 pb-3 text-left slide-up-fade-in opacity-0" style={{ animationDelay: "0.6s" }}>Registrar Pessoa</h1>
+                <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
+                    <h1 className="font-lgc text-3xl sm:text-4xl slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>Registrar Pessoa</h1>
+                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                        <Link href="/painel" className="hover:font-bold">Painel</Link> <p className="cursor-default">{" > "}</p> 
+                        <Link href="/painel/pessoas" className="hover:font-bold">Pessoas</Link> <p className="cursor-default">{" > "}</p> 
+                        <p className="cursor-default truncate">Registrar Pessoa</p>
+                    </p>
+                </div>
             </div>
 
             <div className="flex flex-col justify-start items-start gap-6 py-6">
@@ -61,7 +91,7 @@ function RegistrarPessoa() {
                     <h1 className="font-lgc text-2xl font-bold">Informações Pessoais</h1>
                 </div>
 
-                <form onSubmit={handleUpdateSubmit} className="w-full max-w-2xl flex flex-col gap-8 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1000ms" }}>
+                <form onSubmit={handleUserRegisterSubmit} className="w-full max-w-2xl flex flex-col gap-6 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1000ms" }}>
 
                     <div className="w-full flex flex-row items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24">
@@ -70,44 +100,38 @@ function RegistrarPessoa() {
                         <h1 className="font-lgc font-bold text-xl">Adicionar Informações</h1>
                     </div>
                     
-                    <div className="flex flex-col gap-8">
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="name" name="name" type="text" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="name"><span className="px-1 bg-neutral-100">Nome Completo</span></label>
-                            </div>
-
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="cpf" name="cpf" type="text" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="cpf"><span className="px-1 bg-neutral-100">CPF</span></label>
-                            </div>
+                    <div className="flex flex-col gap-6">
+                        <div className="flex flex-col xl:flex-row gap-6">
+                            <AdvancedInput name="name" label="Nome Completo" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.name} bgColor="bg-neutral-100"></AdvancedInput>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="email" name="email" type="text" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="email"><span className="px-1 bg-neutral-100">E-mail</span></label>
-                            </div>
-
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="phone" name="phone" type="text" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="phone"><span className="px-1 bg-neutral-100">Telefone</span></label>
-                            </div>
+                        <div className="flex flex-col xl:flex-row gap-6">
+                            <AdvancedInput name="cpf" label="CPF" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.cpf} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="email" label="E-mail" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.email} bgColor="bg-neutral-100"></AdvancedInput>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <div className={input.advancedInputDiv}>
-                                <input className={input.advancedInput} id="birthdate" name="birthdate" type="text" placeholder=" "></input>
-                                <label className={input.advancedInputLabel} htmlFor="birthdate"><span className="px-1 bg-neutral-100">Data de Nascimento</span></label>
-                            </div>
+                        <div className="flex flex-col xl:flex-row gap-6">
+                            <AdvancedInput name="phone" label="Telefone" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.phone} bgColor="bg-neutral-100"></AdvancedInput>
+                            
+                            <AdvancedSelect name="role" label="Cargo" bgColor="bg-neutral-100"
+                                options={[
+                                    { value: Role.CUSTOMER, label: "Cliente" },
+                                    { value: Role.EMPLOYEE, label: "Funcionário" },
+                                    { value: Role.CASHIER, label: "Caixa" },
+                                    { value: Role.MANAGER, label: "Gerente" },
+                                    { value: Role.ADMIN, label: "Administrador" }
+                                ]}
+                                defaultValue={Role.CUSTOMER}
+                            ></AdvancedSelect>
+                        </div>
 
-                            <div className={input.advancedInputDiv}>
-                                <select className={input.advancedInput} style={{ height: "40px" }} id="gender" name="gender">
-                                    <option className={input.basicOption} value={Gender.MALE}>Masculino</option>
-                                    <option className={input.basicOption} value={Gender.FEMALE}>Feminino</option>
-                                </select>
-                                <label className={input.advancedInputLabel} htmlFor="gender"><span className="px-1 bg-neutral-100">Sexo</span></label>
-                            </div>
+                        <div className="flex flex-col xl:flex-row gap-6">
+                            <AdvancedInput name="birthdate" label="Data de Nascimento" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.birthdate} bgColor="bg-neutral-100"></AdvancedInput>
+                            
+                            <AdvancedSelect name="gender" label="Sexo" bgColor="bg-neutral-100"
+                                options={[ { label: "Masculino", value: Gender.MALE }, { label: "Feminino", value: Gender.FEMALE } ]}
+                                defaultValue={Gender.MALE}
+                            ></AdvancedSelect>
                         </div>
                     </div>
 

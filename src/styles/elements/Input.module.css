@@ -1,12 +1,13 @@
 @tailwind components;
 
 .basicInputDiv {
-    @apply w-full flex flex-col gap-1;
+    @apply w-full flex flex-col-reverse gap-1;
 }
 
 .basicInputLabel {
     font-family: 'Louis George Cafe', sans-serif;
     font-size: 16px;
+    transition: all 0.3s ease;
 }
 
 .basicInput {
@@ -19,6 +20,10 @@
     border: 1.2px #3d3d3d solid;
     border-radius: 3px;
     transition: all 0.3s ease;
+}
+
+.basicInput:focus + .basicInputLabel {
+    color: red;
 }
 
 .basicSelect {
@@ -43,11 +48,11 @@
     border: 1.2px red solid;
 }
 
-.formDiv {
-    @apply w-full h-[40px] mt-1;
+.advancedInputDiv {
+    @apply w-full h-[40px];
 }
 
-.formInput {
+.advancedInput {
     width: 100%;
     padding: 8px 10px;
     font-family: 'Louis George Cafe', sans-serif;
@@ -59,11 +64,15 @@
     transition: all 0.3s ease;
 }
 
-.formInput:focus {
+.advancedInputError {
+    border: 1.2px red solid;
+}
+
+.advancedInput:focus {
     border: 1.2px red solid;
 }   
 
-.formLabel {
+.advancedInputLabel {
     position: relative;
     top: -34px;
     left: 7.5px;
@@ -74,18 +83,13 @@
     cursor: text;
 }
 
-.formInput:focus + .formLabel,
-.formInput:not(:placeholder-shown) + .formLabel {
+.advancedInput:focus + .advancedInputLabel,
+.advancedInput:not(:placeholder-shown) + .advancedInputLabel {
     top: -56px;
     left: 7.5px;
     font-size: 13.6px;
 }
 
-.formInput:focus + .formLabel {
+.advancedInput:focus + .advancedInputLabel {
     color: red;
-}
-
-.formInputSpan {
-    @apply bg-neutral-100;
-    padding: 0 5px;
 }

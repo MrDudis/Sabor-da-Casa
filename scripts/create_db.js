@@ -31,7 +31,7 @@ function create_db() {
         db.run(`
             CREATE TABLE cliente (
                 id_pessoa INTEGER  PRIMARY KEY,
-                data_reg DATETIME NOT NULL,
+                data_reg DATETIME,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);
@@ -39,8 +39,8 @@ function create_db() {
         db.run(`
             CREATE TABLE funcionario (
                 id_pessoa INTEGER  PRIMARY KEY,
-                data_vinc DATETIME NOT NULL,
-                salario DOUBLE NOT NULL,
+                data_vinc DATETIME,
+                salario DOUBLE,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);
@@ -80,7 +80,7 @@ function create_db() {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome VARCHAR(50) NOT NULL,
                 descricao TEXT NOT NULL,
-                imagem VARCHAR(128) NOT NULL,
+                imagem VARCHAR(128),
                 preco DOUBLE NOT NULL,
                 estoque INTEGER NOT NULL
             );
@@ -89,8 +89,10 @@ function create_db() {
         db.run(`
             INSERT INTO pessoa (cpf, nome, data_nasc, sexo, telefone, email, senha) VALUES 
             ("00000000000", "Administrador", "2000-01-01", 0, "00000000000", "admin", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");
+        `);
 
-            INSERT INTO administrador (id_pessoa) VALUES ("1");
+        db.run(`
+            INSERT INTO administrador (id_pessoa) VALUES (1);
         `);
 
         db.run(`
@@ -119,7 +121,7 @@ function create_db() {
     
     });
 
-    console.log("> Database created.");
+    console.log("> Database created.\n");
 
 };
 

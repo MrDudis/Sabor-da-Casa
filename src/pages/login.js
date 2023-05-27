@@ -1,9 +1,9 @@
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
-import styles from "@/styles/Login.module.css";
+import { AdvancedInput } from "@/components/elements/Input";
 
-import login from "@/lib/auth/login";
+import * as authLib from "@/lib/auth";
 
 export function getServerSideProps({ req, res }) {
 
@@ -28,7 +28,7 @@ export default function Login() {
       
         const formData = new FormData(event.target);
       
-        let response = await login(formData.get("userinfo"), formData.get("password"));
+        let response = await authLib.login(formData.get("userinfo"), formData.get("password"));
 
         if (response.status === 200) {
 
@@ -67,14 +67,14 @@ export default function Login() {
                 <meta name="theme-color" content="#ed3434"></meta>
             </Head>
 
-            <div className={styles.loginBackground}>
+            <div className="w-full h-screen flex justify-center items-center loginBackgroundMove bg-white bg-500 bg-center bg-repeat" style={{ backgroundImage: `url("/images/seamless-pattern-with-kitchen-tools-doodles.jpg")` }}>
 
                 <div className="w-full h-full flex flex-col justify-center items-center" style={{ background: "rgba(255, 255, 255, 0.6)" }}>
                 
                     <div className="w-full md:w-[443px] lg:w-[986px] h-screen md:h-[548px] flex flex-row bg-white md:rounded-md transition-all md:fade-in-zoom-out border-2 lg:border-0 lg:login-shadow">
 
                         <div className="w-0 lg:w-[45%] h-full">
-                            <div className={styles.loginImage}></div>
+                            <div className="w-full h-full bg-white bg-cover bg-center bg-no-repeat rounded-l-md" style={{ backgroundImage: `url("/images/culinaria-mineira-cpt.jpg")` }}></div>
                         </div>
 
                         <form onSubmit={handleSubmit} className="w-full lg:w-[55%] h-full flex flex-col justify-center items-start gap-4 px-10 py-12 max-md:fade-in">
@@ -97,16 +97,12 @@ export default function Login() {
                                     <p className="font-lgc text-white text-lg">{errorMessage}</p>
                                 </div>
 
-                                <div className={styles.formDiv}>
-                                    <input className={styles.formInput} id="cpf" name="userinfo" type="text" placeholder=" "></input>
-                                    <label className={styles.formLabel} htmlFor="cpf"><span className={styles.formInputSpan}>E-mail ou CPF</span></label>
+                                <div className="w-full flex flex-col gap-2 mt-7">
+                                    <AdvancedInput name="userinfo" label="E-mail ou CPF" type="text" bgColor="bg-white"></AdvancedInput>
                                 </div>
 
-                                <div className="w-full flex flex-col gap-2">
-                                    <div className={styles.formDiv}>
-                                        <input className={styles.formInput} id="password" name="password" type="password" placeholder=" "></input>
-                                        <label className={styles.formLabel} htmlFor="password"><span className={styles.formInputSpan}>Senha</span></label>
-                                    </div>
+                                <div className="w-full flex flex-col gap-2 mt-7">
+                                    <AdvancedInput name="password" label="Senha" type="password" bgColor="bg-white"></AdvancedInput>
 
                                     <div className="w-full flex flex-row justify-end items-center">
                                         <a className="font-lgc text-neutral-900 text-md hover:text-red-600 hover:underline" href="#">Esqueceu a senha?</a>

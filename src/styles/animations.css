@@ -32,6 +32,21 @@
         }
     }
 
+    @keyframes fast-fade-out {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    .fast-fade-out {
+        animation: fast-fade-out 0.6s ease-in-out;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     .slide-down {
         animation: slide-down 0.8s ease-in-out;
         animation-fill-mode: forwards;
@@ -76,6 +91,19 @@
         animation: background-fade-in 0.5s ease-in-out;
         animation-fill-mode: forwards;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes moveBackground {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: 400px -400px;
+        }
+    }
+
+    .loginBackgroundMove {
+        animation: moveBackground 30s linear infinite;
     }
 
     @keyframes zoom-out {
