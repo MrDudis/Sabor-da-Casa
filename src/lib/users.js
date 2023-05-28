@@ -71,6 +71,31 @@ export async function getAll() {
 
 };
 
+export async function update(id, user) {
+
+    try {
+
+        const response = await fetch(`/api/users/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ user })
+        });
+
+        const data = await response.json();
+        return data
+
+    } catch (error) {
+        return {
+            status: 400,
+            message: "Falha ao enviar requisição.",
+            code: "FETCH_ERROR"
+        };
+    };
+
+};
+
 export async function deleteUser(id) {
 
     try {

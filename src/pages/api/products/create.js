@@ -7,6 +7,8 @@ import Product from "@/models/Product";
 
 import * as productsDb from "@/database/managers/products";
 
+import { validateProductData } from "@/utils/validation/api/products";
+
 const handler = nextConnect({
     onError: (error, req, res, next) => {
         console.error(error.stack);
@@ -22,24 +24,16 @@ handler.use(authentication);
 handler.post(async (req, res) => {
 
     if (req.user.role > Role.MANAGER) {
-        return res.status(403).json({ status: 403, message: "Você não tem permissão para acessar esse recurso.", code: "UNAUTHORIZED" });
+        return res.status(403).json({ status: 403, message: "Você não tem permissão para criar um produto.", code: "UNAUTHORIZED" });
     };
     
     let newProduct = new Product(req.body.product);
 
-    if (!newProduct.name) {
-        return res.status(400).json({ status: 400, message: "Nome é obrigatório.", code: "MISSING_NAME" });
-    };
+    let errors = validateProductData(newProduct);
 
-    if (!newProduct.description) {
-        return res.status(400).json({ status: 400, message: "Descrição é obrigatória.", code: "MISSING_DESCRIPTION" });
+    if (Object.keys(errors).length > 0) {
+        return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });
     };
-
-    if (!newProduct.price) {
-        return res.status(400).json({ status: 400, message: "Preço é obrigatório.", code: "MISSING_PRICE" });
-    };
-
-    if (newProduct.stock == null) { newProduct.stock = 0; };
 
     let newProductId = await productsDb.insert(newProduct);
 

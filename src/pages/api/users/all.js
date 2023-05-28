@@ -21,7 +21,7 @@ handler.use(authentication);
 handler.get(async (req, res) => {
 
     if (req.user.role > Role.CASHIER) {
-        return res.status(403).json({ status: 403, message: "Você não tem permissão para acessar esse recurso.", code: "UNAUTHORIZED" });
+        return res.status(403).json({ status: 403, message: "Você não tem permissão para buscar usuários.", code: "UNAUTHORIZED" });
     };
 
     const users = await usersDb.getAll();

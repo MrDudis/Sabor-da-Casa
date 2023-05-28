@@ -13,6 +13,10 @@ import User, { Role, Gender } from "@/models/User";
 
 import * as usersLib from "@/lib/users";
 
+import { validateInputCPFChange, parseInputCPF } from "@/utils/validation/client/cpf";
+import { validateInputDateChange, parseInputDate } from "@/utils/validation/client/date";
+import { validateInputPhoneChange, parseInputPhone } from "@/utils/validation/client/phone";
+
 export function getServerSideProps({ req, res }) {
 
     if (!req.cookies.token) {
@@ -35,6 +39,18 @@ function RegistrarPessoa() {
     const handleUserRegisterInputChange = (event) => {
         let newUserRegisterErrors = userRegisterErrors[event.target.name] = null;
         setUserRegisterErrors({ ...userRegisterErrors, ...newUserRegisterErrors });
+
+        switch (event.target.name) {
+            case "cpf":
+                event.target.value = validateInputCPFChange(event.target.value);
+                break;
+            case "phone":
+                event.target.value = validateInputPhoneChange(event.target.value);
+                break;
+            case "birthdate":
+                event.target.value = validateInputDateChange(event.target.value);
+                break;
+        };
     };
 
     const handleUserRegisterSubmit = async (event) => {
@@ -42,15 +58,22 @@ function RegistrarPessoa() {
 
         const formData = new FormData(event.target);
 
-        let newUserValues = Object.fromEntries(formData.entries());
-        let newUser = new User(newUserValues);
+        let newUser = {
+            name: formData.get("name"),
+            cpf: parseInputCPF(formData.get("cpf")),
+            email: formData.get("email"),
+            phone: parseInputPhone(formData.get("phone")),
+            role: formData.get("role"),
+            birthdate: parseInputDate(formData.get("birthdate")),
+            gender: formData.get("gender")
+        };
         
         let response = await usersLib.register(newUser);
 
         if (response.status === 200) {
             window.location.href = `/painel/pessoas/${response.userId}`;
         } else {
-            alert(response.message ?? "Erro desconhecido.");
+            setUserRegisterErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
         };
 
     };
@@ -110,7 +133,7 @@ function RegistrarPessoa() {
                             <AdvancedInput name="email" label="E-mail" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.email} bgColor="bg-neutral-100"></AdvancedInput>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-6">
+                        <div className="flex flex-col xl:flex-row items-start gap-6">
                             <AdvancedInput name="phone" label="Telefone" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.phone} bgColor="bg-neutral-100"></AdvancedInput>
                             
                             <AdvancedSelect name="role" label="Cargo" bgColor="bg-neutral-100"
@@ -125,7 +148,7 @@ function RegistrarPessoa() {
                             ></AdvancedSelect>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-6">
+                        <div className="flex flex-col xl:flex-row items-start gap-6">
                             <AdvancedInput name="birthdate" label="Data de Nascimento" type="text" onChange={handleUserRegisterInputChange} error={userRegisterErrors?.birthdate} bgColor="bg-neutral-100"></AdvancedInput>
                             
                             <AdvancedSelect name="gender" label="Sexo" bgColor="bg-neutral-100"

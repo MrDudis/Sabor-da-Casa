@@ -19,18 +19,18 @@ function create_db() {
             CREATE TABLE pessoa (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 cpf CHAR(11) NOT NULL,
-                nome VARCHAR(128) NOT NULL,
+                nome VARCHAR(255) NOT NULL,
                 data_nasc DATE NOT NULL,
                 sexo INTEGER NOT NULL,
-                telefone VARCHAR(25),
-                email VARCHAR(64),
+                telefone VARCHAR(11),
+                email VARCHAR(255),
                 senha VARCHAR(64) NOT NULL
             );
         `);
 
         db.run(`
             CREATE TABLE cliente (
-                id_pessoa INTEGER  PRIMARY KEY,
+                id_pessoa INTEGER PRIMARY KEY,
                 data_reg DATETIME,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
@@ -38,7 +38,7 @@ function create_db() {
 
         db.run(`
             CREATE TABLE funcionario (
-                id_pessoa INTEGER  PRIMARY KEY,
+                id_pessoa INTEGER PRIMARY KEY,
                 data_vinc DATETIME,
                 salario DOUBLE,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
@@ -54,14 +54,14 @@ function create_db() {
 
         db.run(`
             CREATE TABLE gerente (
-                id_pessoa INTEGER  PRIMARY KEY,
+                id_pessoa INTEGER PRIMARY KEY,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);
 
         db.run(`
             CREATE TABLE administrador (
-                id_pessoa INTEGER  PRIMARY KEY,
+                id_pessoa INTEGER PRIMARY KEY,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);
@@ -70,7 +70,7 @@ function create_db() {
             CREATE TABLE tokens (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 token VARCHAR(64) NOT NULL,
-                id_pessoa CHAR(11) NOT NULL,
+                id_pessoa INTEGER NOT NULL,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);
@@ -78,7 +78,7 @@ function create_db() {
         db.run(`
             CREATE TABLE produto (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome VARCHAR(50) NOT NULL,
+                nome VARCHAR(255) NOT NULL,
                 descricao TEXT NOT NULL,
                 imagem VARCHAR(128),
                 preco DOUBLE NOT NULL,

@@ -1,7 +1,7 @@
-export default function parseDate(date) {
+export function formatDate(date) {
     date = date?.toString();
     
-    if (!date) { return "--"; }
+    if (!date) { return "--/--/----"; }
     if (!date.includes("-")) { return date; }
 
     const dateArray = date.split("-");

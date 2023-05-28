@@ -14,7 +14,10 @@ import Product from "@/models/Product";
 
 import * as productsLib from "@/lib/products";
 
-import parsePrice from "@/utils/format/price";
+import { formatPrice } from "@/utils/formatting/price";
+
+import { validateInputPriceChange, validateInputPriceBlur, parseInputPrice } from "@/utils/validation/client/price";
+import { validateInputNumbersChange } from "@/utils/validation/client/numbers";
 
 export function getServerSideProps({ req, res }) {
 
@@ -38,27 +41,52 @@ function AdicionarProduto() {
     const [productCreateErrors, setProductCreateErrors] = useState({});
 
     const handleProductCreateInputChange = (event) => {
-        let newProductCreateErrors = productCreateErrors[event.target.name] = null;
+        const target = event.target;
+
+        let newProductCreateErrors = productCreateErrors[target.name] = null;
         setProductCreateErrors({ ...productCreateErrors, ...newProductCreateErrors });
 
-        const { name, value } = event.target;
+        switch (target.name) {
+            case "price":
+                target.value = validateInputPriceChange(target.value);
+                break;
+            case "stock":
+                target.value = validateInputNumbersChange(target.value);
+                break;
+        };
+
+        const { name, value } = target;
         setProductPreview({ ...productPreview, [name]: value });
     };
 
-    const handleUpdateSubmit = async (event) => {
+    const handleProductCreateInputBlur = (event) => {
+        switch (event.target.name) {
+            case "price":
+                event.target.value = validateInputPriceBlur(event.target.value);
+                break;
+        };
+    };
+
+    const handleProductCreateSubmit = async (event) => {
         event.preventDefault();
 
         const formData = new FormData(event.target);
 
-        let newProductValues = Object.fromEntries(formData.entries());
-        let newProduct = new Product(newProductValues);
-        
+        let newProductFormData = {
+            name: formData.get("name"),
+            description: formData.get("description"),
+            price: parseInputPrice(formData.get("price")),
+            stock: formData.get("stock"),
+        };
+
+        let newProduct = new Product(newProductFormData);
+
         let response = await productsLib.create(newProduct);
 
         if (response.status === 200) {
             window.location.href = `/painel/produtos/${response.productId}`;
         } else {
-            alert(response.message ?? "Erro desconhecido.");
+            setProductCreateErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
         };
 
     };
@@ -101,7 +129,7 @@ function AdicionarProduto() {
                         <h1 className="font-lgc text-2xl font-bold">Informações do Produto</h1>
                     </div>
 
-                    <form onSubmit={handleUpdateSubmit} className="w-full flex flex-col gap-8 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1000ms" }}>
+                    <form onSubmit={handleProductCreateSubmit} className="w-full flex flex-col gap-8 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1000ms" }}>
 
                         <div className="w-full flex flex-row items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24">
@@ -115,7 +143,7 @@ function AdicionarProduto() {
                             <AdvancedInput name="description" label="Descrição" type="text" onChange={handleProductCreateInputChange} error={productCreateErrors?.description} bgColor="bg-neutral-100"></AdvancedInput>
                             
                             <div className="flex flex-col xl:flex-row gap-8">
-                                <AdvancedInput name="price" label="Preço" type="text" onChange={handleProductCreateInputChange} error={productCreateErrors?.price} bgColor="bg-neutral-100"></AdvancedInput>
+                                <AdvancedInput name="price" label="Preço" type="text" defaultValue="R$ " onChange={handleProductCreateInputChange} onBlur={handleProductCreateInputBlur} error={productCreateErrors?.price} bgColor="bg-neutral-100"></AdvancedInput>
                                 <AdvancedInput name="stock" label="Estoque" type="text" onChange={handleProductCreateInputChange} error={productCreateErrors?.stock} bgColor="bg-neutral-100"></AdvancedInput>
                             </div>
                         </div>
@@ -157,18 +185,18 @@ function AdicionarProduto() {
 
                         <div className="w-full h-[55%] flex flex-col items-start justify-start px-6 py-5 gap-4">
                             <div className="w-full truncate-4-line">
-                                <h2 className="font-lgc font-bold">NOME</h2>
+                                <h2 className="font-lgc text-sm font-bold">NOME</h2>
                                 <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.name || "--"}</p>
                             </div>
 
                             <div className="w-full truncate-4-line">
-                                <h2 className="font-lgc font-bold">DESCRIÇÃO</h2>
+                                <h2 className="font-lgc text-sm font-bold">DESCRIÇÃO</h2>
                                 <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.description || "--"}</p>
                             </div>
 
                             <div className="w-full truncate-4-line">
-                                <h2 className="font-lgc font-bold">PREÇO</h2>
-                                <p className="font-lgc text-[16px] text-neutral-800">R$ {parsePrice(productPreview?.price) || "--"}</p>
+                                <h2 className="font-lgc text-sm font-bold">PREÇO</h2>
+                                <p className="font-lgc text-[16px] text-neutral-800">{formatPrice(productPreview?.price) || "--"}</p>
                             </div>
                         </div>
 

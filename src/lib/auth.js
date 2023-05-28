@@ -1,5 +1,5 @@
-export async function login(user, password) {
-
+export async function login(userinfo, password) {
+    console.log(`${userinfo} ${password}`)
     try {
 
         const response = await fetch("/api/auth/login", {
@@ -8,7 +8,7 @@ export async function login(user, password) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                user,
+                userinfo,
                 password
             })
         });

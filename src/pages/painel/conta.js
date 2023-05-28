@@ -13,7 +13,13 @@ import { BasicInput, AdvancedInput, BasicSelect } from "@/components/elements/In
 
 import * as meLib from "@/lib/me";
 
-import parseDate from "@/utils/format/date";
+import { formatCPF } from "@/utils/formatting/cpf";
+import { formatDate } from "@/utils/formatting/date";
+import { formatPhone } from "@/utils/formatting/phone";
+
+import { validateInputCPFChange, parseInputCPF } from "@/utils/validation/client/cpf";
+import { validateInputDateChange, parseInputDate } from "@/utils/validation/client/date";
+import { validateInputPhoneChange, parseInputPhone } from "@/utils/validation/client/phone";
 
 export function getServerSideProps({ req, res }) {
 
@@ -34,9 +40,23 @@ function Conta() {
 
     const [userUpdateErrors, setUserUpdateErrors] = useState({});
 
-    const handleUserInputChange = (event) => {
-        let newUserUpdateErrors = userUpdateErrors[event.target.name] = null;
+    const handleUserUpdateInputChange = (event) => {
+        const target = event.target;
+
+        let newUserUpdateErrors = userUpdateErrors[target.name] = null;
         setUserUpdateErrors({ ...userUpdateErrors, ...newUserUpdateErrors });
+
+        switch (target.name) {
+            case "cpf":
+                target.value = validateInputCPFChange(target.value);
+                break;
+            case "phone":
+                target.value = validateInputPhoneChange(target.value);
+                break;
+            case "birthdate":
+                target.value = validateInputDateChange(target.value);
+                break;
+        };
     };
     
     const handleUserUpdateSubmit = async (event) => {
@@ -44,7 +64,14 @@ function Conta() {
 
         const formData = new FormData(event.target);
 
-        let newUser = Object.fromEntries(formData.entries());
+        let newUser = {
+            name: formData.get("name"),
+            cpf: parseInputCPF(formData.get("cpf")),
+            email: formData.get("email"),
+            phone: parseInputPhone(formData.get("phone")),
+            birthdate: parseInputDate(formData.get("birthdate")),
+            gender: formData.get("gender")
+        };
 
         let response = await meLib.updateUser(newUser);
 
@@ -58,7 +85,7 @@ function Conta() {
 
     const [passwordErrors, setPasswordErrors] = useState({});
 
-    const handlePasswordInputChange = (event) => {
+    const handlePasswordUpdateInputChange = (event) => {
         let newPasswordErrors = passwordErrors[event.target.name] = null;
         setPasswordErrors({ ...passwordErrors, ...newPasswordErrors });
     };
@@ -77,7 +104,7 @@ function Conta() {
         if (response.status === 200) {
             window.location.reload();
         } else {
-            setPasswordErrors(response?.errors ?? { currentPassword: "Erro desconhecido." });
+            setPasswordErrors(response?.errors ?? { currentPassword: response?.message ?? "Erro desconhecido." });
         };
 
     };
@@ -164,17 +191,17 @@ function Conta() {
                         </div>
                         
                         <div className="flex flex-col items-start xl:flex-row gap-5">
-                            <BasicInput name="name" label="Nome Completo" type="text" placeholder={user?.name} defaultValue={user?.name} error={userUpdateErrors?.name} onChange={handleUserInputChange}></BasicInput>
-                            <BasicInput name="cpf" label="CPF" type="text" placeholder={user?.cpf} defaultValue={user?.cpf} error={userUpdateErrors?.cpf} onChange={handleUserInputChange}></BasicInput>
+                            <BasicInput name="name" label="Nome Completo" type="text" placeholder={user?.name} defaultValue={user?.name} error={userUpdateErrors?.name} onChange={handleUserUpdateInputChange}></BasicInput>
+                            <BasicInput name="cpf" label="CPF" type="text" placeholder={formatCPF(user?.cpf)} defaultValue={formatCPF(user?.cpf)} error={userUpdateErrors?.cpf} onChange={handleUserUpdateInputChange}></BasicInput>
                         </div>
 
                         <div className="flex flex-col items-start xl:flex-row gap-5">
-                            <BasicInput name="email" label="E-mail" type="text" placeholder={user?.email} defaultValue={user?.email} error={userUpdateErrors?.email} onChange={handleUserInputChange}></BasicInput>
-                            <BasicInput name="phone" label="Telefone" type="text" placeholder={user?.phone} defaultValue={user?.phone} error={userUpdateErrors?.phone} onChange={handleUserInputChange}></BasicInput>
+                            <BasicInput name="email" label="E-mail" type="text" placeholder={user?.email} defaultValue={user?.email} error={userUpdateErrors?.email} onChange={handleUserUpdateInputChange}></BasicInput>
+                            <BasicInput name="phone" label="Telefone" type="text" placeholder={formatPhone(user?.phone)} defaultValue={formatPhone(user?.phone)} error={userUpdateErrors?.phone} onChange={handleUserUpdateInputChange}></BasicInput>
                         </div>
 
                         <div className="flex flex-col items-start xl:flex-row gap-5">
-                            <BasicInput name="birthdate" label="Data de Nascimento" type="text" placeholder={parseDate(user?.birthdate)} defaultValue={parseDate(user?.birthdate)} error={userUpdateErrors?.birthdate} onChange={handleUserInputChange}></BasicInput>
+                            <BasicInput name="birthdate" label="Data de Nascimento" type="text" placeholder={formatDate(user?.birthdate)} defaultValue={formatDate(user?.birthdate)} error={userUpdateErrors?.birthdate} onChange={handleUserUpdateInputChange}></BasicInput>
 
                             <BasicSelect name="gender" label="Sexo"
                                 options={[ { label: "Masculino", value: Gender.MALE }, { label: "Feminino", value: Gender.FEMALE } ]}
@@ -214,9 +241,9 @@ function Conta() {
                         </div>
 
                         <div className="w-full flex flex-col gap-6 my-6">
-                            <AdvancedInput name="currentPassword" label="Senha Atual" type="text" onChange={handlePasswordInputChange} error={passwordErrors?.currentPassword} bgColor="bg-neutral-100"></AdvancedInput>
-                            <AdvancedInput name="newPassword" label="Senha Nova" type="text" onChange={handlePasswordInputChange} error={passwordErrors?.newPassword} bgColor="bg-neutral-100"></AdvancedInput>
-                            <AdvancedInput name="confirmNewPassword" label="Confirmar Senha Nova" type="text" onChange={handlePasswordInputChange} error={passwordErrors?.confirmNewPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="currentPassword" label="Senha Atual" type="password" onChange={handlePasswordUpdateInputChange} error={passwordErrors?.currentPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="newPassword" label="Senha Nova" type="password" onChange={handlePasswordUpdateInputChange} error={passwordErrors?.newPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="confirmNewPassword" label="Confirmar Senha Nova" type="password" onChange={handlePasswordUpdateInputChange} error={passwordErrors?.confirmNewPassword} bgColor="bg-neutral-100"></AdvancedInput>
                         </div>
 
                         <div className="w-full flex flex-row justify-center items-center mt-2">

@@ -15,7 +15,13 @@ import User, { Gender, Role, roleNames } from "@/models/User";
 
 import * as usersLib from "@/lib/users";
 
-import parseDate from "@/utils/format/date";
+import { formatCPF } from "@/utils/formatting/cpf";
+import { formatDate } from "@/utils/formatting/date";
+import { formatPhone } from "@/utils/formatting/phone";
+
+import { validateInputCPFChange, parseInputCPF } from "@/utils/validation/client/cpf";
+import { validateInputDateChange, parseInputDate } from "@/utils/validation/client/date";
+import { validateInputPhoneChange, parseInputPhone } from "@/utils/validation/client/phone";
 
 export function getServerSideProps({ req, res }) {
 
@@ -56,12 +62,51 @@ function Pessoa() {
 
     const [userUpdateErrors, setUserUpdateErrors] = useState({});
 
-    const handleUserInputChange = (event) => {
-        let newUserUpdateErrors = userUpdateErrors[event.target.name] = null;
+    const handleUserUpdateInputChange = (event) => {
+        const target = event.target;
+
+        let newUserUpdateErrors = userUpdateErrors[target.name] = null;
         setUserUpdateErrors({ ...userUpdateErrors, ...newUserUpdateErrors });
+
+        switch (target.name) {
+            case "cpf":
+                target.value = validateInputCPFChange(target.value);
+                break;
+            case "phone":
+                target.value = validateInputPhoneChange(target.value);
+                break;
+            case "birthdate":
+                target.value = validateInputDateChange(target.value);
+                break;
+        };
     };
 
-    const handleDeleteSubmit = async (event) => {
+    const handleUserUpdateSubmit = async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        let newUser = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            cpf: parseInputCPF(formData.get("cpf")),
+            phone: parseInputPhone(formData.get("phone")),
+            role: formData.get("role"),
+            birthdate: parseInputDate(formData.get("birthdate")),
+            gender: formData.get("gender")
+        };
+
+        let response = await usersLib.update(user?.id, newUser);
+
+        if (response.status === 200) {
+            window.location.reload();
+        } else {
+            setUserUpdateErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
+        };
+
+    };
+
+    const handleUserDeleteSubmit = async (event) => {
         event.preventDefault();
 
         if (!confirm("Tem certeza que deseja excluir este usuário?")) {
@@ -80,7 +125,7 @@ function Pessoa() {
 
     if (!user) {
         return (
-            <></>
+            <>Carregando...</>
         );
     };
 
@@ -146,7 +191,7 @@ function Pessoa() {
 
                     </div>
 
-                    <form onSubmit={(e) => {e.preventDefault(); alert("ainda não da pra editar o usuario, mas vc pode apagar ele")}} className="w-full flex flex-col gap-5 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1200ms" }}>
+                    <form onSubmit={handleUserUpdateSubmit} className="w-full flex flex-col gap-5 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1200ms" }}>
 
                         <div className="w-full flex flex-row items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24">
@@ -173,16 +218,16 @@ function Pessoa() {
                         </div>
                         
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <BasicInput name="name" label="Nome Completo" type="text" placeholder={user?.name} defaultValue={user?.name} onChange={handleUserInputChange} error={userUpdateErrors?.name} ></BasicInput>
+                            <BasicInput name="name" label="Nome Completo" type="text" placeholder={user?.name} defaultValue={user?.name} onChange={handleUserUpdateInputChange} error={userUpdateErrors?.name} ></BasicInput>
                         </div>
 
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <BasicInput name="cpf" label="CPF" type="text" placeholder={user?.cpf} defaultValue={user?.cpf} onChange={handleUserInputChange} error={userUpdateErrors?.cpf} ></BasicInput>
-                            <BasicInput name="email" label="E-mail" type="text" placeholder={user?.email} defaultValue={user?.email} onChange={handleUserInputChange} error={userUpdateErrors?.email} ></BasicInput>
+                            <BasicInput name="cpf" label="CPF" type="text" placeholder={formatCPF(user?.cpf)} defaultValue={formatCPF(user?.cpf)} onChange={handleUserUpdateInputChange} error={userUpdateErrors?.cpf} ></BasicInput>
+                            <BasicInput name="email" label="E-mail" type="text" placeholder={user?.email} defaultValue={user?.email} onChange={handleUserUpdateInputChange} error={userUpdateErrors?.email} ></BasicInput>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <BasicInput name="phone" label="Telefone" type="text" placeholder={user?.phone} defaultValue={user?.phone} onChange={handleUserInputChange} error={userUpdateErrors?.phone} ></BasicInput>
+                        <div className="flex flex-col xl:flex-row items-start gap-5">
+                            <BasicInput name="phone" label="Telefone" type="text" placeholder={formatPhone(user?.phone)} defaultValue={formatPhone(user?.phone)} onChange={handleUserUpdateInputChange} error={userUpdateErrors?.phone} ></BasicInput>
                             
                             <BasicSelect name="role" label="Cargo"
                                 options={[
@@ -196,8 +241,8 @@ function Pessoa() {
                             ></BasicSelect>
                         </div>
 
-                        <div className="flex flex-col xl:flex-row gap-5">
-                            <BasicInput name="birthdate" label="Data de Nascimento" type="text" placeholder={parseDate(user?.birthdate)} defaultValue={parseDate(user?.birthdate)} onChange={handleUserInputChange} error={userUpdateErrors?.birthdate} ></BasicInput>
+                        <div className="flex flex-col xl:flex-row items-start gap-5">
+                            <BasicInput name="birthdate" label="Data de Nascimento" type="text" placeholder={formatDate(user?.birthdate)} defaultValue={formatDate(user?.birthdate)} onChange={handleUserUpdateInputChange} error={userUpdateErrors?.birthdate} ></BasicInput>
 
                             <BasicSelect name="gender" label="Sexo"
                                 options={[ { label: "Masculino", value: Gender.MALE }, { label: "Feminino", value: Gender.FEMALE } ]}
@@ -216,7 +261,7 @@ function Pessoa() {
                         
                     </form>
 
-                    <form className="w-full flex flex-col xl:flex-row items-center justify-start px-6 py-5 gap-2 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
+                    <form onSubmit={handleUserDeleteSubmit} className="w-full flex flex-col xl:flex-row items-center justify-start px-6 py-5 gap-2 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
                         
                         <div className="w-full xl:w-[65%] flex flex-col justify-center items-start gap-2">
                             <div className="w-full flex flex-row justify-start items-center gap-2">
@@ -230,7 +275,7 @@ function Pessoa() {
                         </div>
 
                         <div className="w-full xl:w-[35%] flex flex-row justify-center items-center mt-2">
-                            <button onClick={handleDeleteSubmit} className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
+                            <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
                                     <path d="m480-394.391 69.217 69.217q14.261 13.261 33.305 13.261 19.043 0 32.304-13.261 14.261-14.261 14.261-33.304 0-19.044-14.261-32.305L545.609-460l69.217-69.217q14.261-14.261 14.261-33.305 0-19.043-14.261-32.304-12.696-13.696-32.022-13.696t-33.022 13.696L480-525.609l-69.217-69.217q-13.261-14.261-32.305-14.261-19.043 0-33.304 14.261-12.696 12.696-12.696 32.022t12.696 33.022L414.391-460l-69.217 69.217q-13.261 13.261-13.261 32.305 0 19.043 13.261 33.304 14.261 13.261 33.304 13.261 19.044 0 32.305-13.261L480-394.391ZM273.782-100.782q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-506.999q-22.087 0-37.544-15.457-15.457-15.457-15.457-37.544 0-22.087 15.457-37.544 15.457-15.457 37.544-15.457h179.784q0-22.087 15.456-37.544 15.457-15.456 37.544-15.456h158.87q22.087 0 37.544 15.456 15.456 15.457 15.456 37.544h179.784q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457v506.999q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H273.782Z"/>
                                 </svg>

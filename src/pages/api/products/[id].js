@@ -2,9 +2,12 @@ import nextConnect from "next-connect";
 
 import authentication from "@/middlewares/authentication";
 
+import Product from "@/models/Product";
 import { Role } from "@/models/User";
 
 import * as productsDb from "@/database/managers/products";
+
+import { validateProductData } from "@/utils/validation/api/products";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -35,7 +38,7 @@ handler.use(authentication);
 handler.patch(async (req, res) => {
 
     if (req.user.role > Role.MANAGER) {
-        return res.status(403).json({ status: 403, message: "Você não tem permissão para acessar esse recurso.", code: "UNAUTHORIZED" });
+        return res.status(403).json({ status: 403, message: "Você não tem permissão para editar um produto.", code: "UNAUTHORIZED" });
     };
 
     const id = req.query?.id;
@@ -46,32 +49,9 @@ handler.patch(async (req, res) => {
         return res.status(404).json({ status: 404, message: "Produto não encontrado.", code: "UNKNOWN_PRODUCT" });
     };
 
-    let newProduct = Object.assign({}, product, { ...req.body.product });
+    let newProduct = new Product(Object.assign({}, product, { ...req.body.product }));
 
-    let errors = [];
-
-    if (!newProduct.name || !newProduct.description || !newProduct.price) {
-        errors = {
-            ...errors,
-            name: !newProduct.name ? "Nome é obrigatório." : null,
-            description: !newProduct.description ? "Descrição é obrigatória." : null,
-            price: !newProduct.price ? "Preço é obrigatório." : null
-        }
-    };
-
-    if (Object.keys(errors).length > 0) {
-        return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });
-    };
-
-    newProduct.price = newProduct.price.replace(",", ".").replace(/[^0-9.]/g, "");
-    newProduct.price = parseFloat(newProduct.price);
-
-    if (isNaN(newProduct.price)) {
-        errors = {
-            ...errors,
-            price: "Preço inválido."
-        }
-    }
+    let errors = validateProductData(newProduct);
     
     if (Object.keys(errors).length > 0) {
         return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });
@@ -90,7 +70,7 @@ handler.patch(async (req, res) => {
 handler.delete(async (req, res) => {
 
     if (req.user.role > Role.MANAGER) {
-        return res.status(403).json({ status: 403, message: "Você não tem permissão para acessar esse recurso.", code: "UNAUTHORIZED" });
+        return res.status(403).json({ status: 403, message: "Você não tem permissão para excluir um produto.", code: "UNAUTHORIZED" });
     };
 
     const id = req.query?.id;

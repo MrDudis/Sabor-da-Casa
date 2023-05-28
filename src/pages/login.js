@@ -23,12 +23,17 @@ export default function Login() {
     const errorBox = useRef(null);
     const [errorMessage, setErrorMessage] = useState("");
     
-    const handleSubmit = async (event) => {
+    const handleLoginSubmit = async (event) => {
         event.preventDefault();
       
         const formData = new FormData(event.target);
-      
-        let response = await authLib.login(formData.get("userinfo"), formData.get("password"));
+
+        const loginData = {
+            userinfo: formData.get("userinfo"),
+            password: formData.get("password")
+        };
+        
+        let response = await authLib.login(loginData.userinfo, loginData.password);
 
         if (response.status === 200) {
 
@@ -43,14 +48,16 @@ export default function Login() {
         } else {
             setErrorMessage(response?.message ?? "Erro desconhecido.");
 
-            if (errorBox.current.classList.contains("hidden")) {
-                errorBox.current.classList.remove("hidden");
-                errorBox.current.classList.add("flex");
-                errorBox.current.classList.add("login-error-box-slide-in");
-                setTimeout(() => { errorBox.current.classList.remove("login-error-box-slide-in") }, 400);
+            let errorBoxClassList =errorBox.current.classList;
+
+            if (errorBoxClassList.contains("hidden")) {
+                errorBoxClassList.remove("hidden"); errorBoxClassList.add("flex");
+
+                errorBoxClassList.add("login-error-box-slide-in");
+                setTimeout(() => { errorBoxClassList.remove("login-error-box-slide-in") }, 400);
             } else {
-                errorBox.current.classList.add("login-error-box-shake");
-                setTimeout(() => { errorBox.current.classList.remove("login-error-box-shake") }, 400);
+                errorBoxClassList.add("login-error-box-shake");
+                setTimeout(() => { errorBoxClassList.remove("login-error-box-shake") }, 400);
             };
             
         };
@@ -67,7 +74,7 @@ export default function Login() {
                 <meta name="theme-color" content="#ed3434"></meta>
             </Head>
 
-            <div className="w-full h-screen flex justify-center items-center loginBackgroundMove bg-white bg-500 bg-center bg-repeat" style={{ backgroundImage: `url("/images/seamless-pattern-with-kitchen-tools-doodles.jpg")` }}>
+            <div className="w-full h-screen flex justify-center items-center login-background-move bg-white bg-500 bg-center bg-repeat" style={{ backgroundImage: `url("/images/seamless-pattern-with-kitchen-tools-doodles.jpg")` }}>
 
                 <div className="w-full h-full flex flex-col justify-center items-center" style={{ background: "rgba(255, 255, 255, 0.6)" }}>
                 
@@ -77,7 +84,7 @@ export default function Login() {
                             <div className="w-full h-full bg-white bg-cover bg-center bg-no-repeat rounded-l-md" style={{ backgroundImage: `url("/images/culinaria-mineira-cpt.jpg")` }}></div>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="w-full lg:w-[55%] h-full flex flex-col justify-center items-start gap-4 px-10 py-12 max-md:fade-in">
+                        <form onSubmit={handleLoginSubmit} className="w-full lg:w-[55%] h-full flex flex-col justify-center items-start gap-4 px-10 py-12 max-md:fade-in">
 
                             <div className="w-full flex items-center justify-center mb-4">
                                 <h1 className="font-august text-black text-5xl text-center cursor-pointer" onClick={() => { window.location.href = "/" }}>Sabor da Casa</h1>

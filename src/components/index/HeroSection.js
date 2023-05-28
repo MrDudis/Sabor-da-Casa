@@ -1,7 +1,3 @@
-import styles from "@/styles/Index.module.css";
-
-import { useEffect } from "react";
-
 export default function HeroSection() {
 
     function scrollToElement(elementId) {
@@ -17,7 +13,7 @@ export default function HeroSection() {
     };
 
     return (
-        <div className={styles.heroBackground}>
+        <div className="w-full h-screen bg-[#734108] bg-cover bg-center bg-no-repeat bg-fixed" style={{ backgroundImage: `url("/images/hero-background.png")` }}>
 
             <div className="w-full h-full flex flex-col justify-between items-center background-fade-in" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
 

@@ -149,7 +149,7 @@ function Produtos() {
                             </svg>
                             <div className="flex flex-col text-center gap-1">
                                 <p className="text-black font-lgc font-bold text-2xl slide-up-fade-in opacity-0" style={{ animationDelay: "200ms" }}>Nenhum produto encontrado.</p>
-                                <p className="text-black font-lgc text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>Tente novamente com outra pesquisa{user?.role <= Role.MANAGER ? 'ou começe adicionando produtos com o botão "Adicionar" acima' : ""}.</p>
+                                <p className="text-black font-lgc text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>Tente novamente com outra pesquisa{user?.role <= Role.MANAGER ? ' ou começe adicionando produtos com o botão "Adicionar" acima' : ""}.</p>
                             </div>
                         </div>
                     ) : null

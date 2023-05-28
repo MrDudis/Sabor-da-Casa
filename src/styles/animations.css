@@ -23,16 +23,7 @@
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    @keyframes slide-down {
-        0% {
-            transform: translateY(-100%);
-        }
-        100% {
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes fast-fade-out {
+    @keyframes fade-out {
         0% {
             opacity: 1;
         }
@@ -41,14 +32,14 @@
         }
     }
 
-    .fast-fade-out {
-        animation: fast-fade-out 0.6s ease-in-out;
+    .fade-out {
+        animation: fade-out 1.4s ease-in-out;
         animation-fill-mode: forwards;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .slide-down {
-        animation: slide-down 0.8s ease-in-out;
+    .fast-fade-out {
+        animation: fade-out 0.6s ease-in-out;
         animation-fill-mode: forwards;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -62,38 +53,13 @@
         }
     }
 
-    @keyframes shimmer {
-        0% {
-          transform: translateX(-100%);
-        }
-        100% {
-          transform: translateX(100%);
-        }
-    }
-
-    .shimmer {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .shimmer::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 200%;
-        height: 100%;
-        background: linear-gradient(to right, transparent 0%, #DEDEDE 50%, transparent 100%);
-        animation: shimmer 1.1s infinite;
-    }
-
     .background-fade-in {
         animation: background-fade-in 0.5s ease-in-out;
         animation-fill-mode: forwards;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    @keyframes moveBackground {
+    @keyframes login-background-move {
         from {
             background-position: 0 0;
         }
@@ -102,8 +68,23 @@
         }
     }
 
-    .loginBackgroundMove {
-        animation: moveBackground 30s linear infinite;
+    .login-background-move {
+        animation: login-background-move 30s linear infinite;
+    }
+
+    @keyframes slide-down {
+        0% {
+            transform: translateY(-100%);
+        }
+        100% {
+            transform: translateY(0);
+        }
+    }
+
+    .slide-down {
+        animation: slide-down 0.8s ease-in-out;
+        animation-fill-mode: forwards;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     @keyframes zoom-out {
@@ -256,6 +237,31 @@
         animation: smooth-slide-down-fade-in 0.6s ease-in-out;
         animation-fill-mode: forwards;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+    }
+
+    .shimmer {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .shimmer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, #DEDEDE 50%, transparent 100%);
+        animation: shimmer 1.1s infinite;
     }
 
 }

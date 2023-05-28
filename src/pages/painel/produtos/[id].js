@@ -15,7 +15,9 @@ import Product from "@/models/Product";
 
 import * as productsLib from "@/lib/products";
 
-import parsePrice from "@/utils/format/price";
+import { formatPrice } from "@/utils/formatting/price";
+
+import { validateInputPriceChange, validateInputPriceBlur, parseInputPrice } from "@/utils/validation/client/price";
 
 export function getServerSideProps({ req, res }) {
 
@@ -57,26 +59,46 @@ function Produto() {
     const [productPreview, setProductPreview] = useState({});
     useEffect(() => setProductPreview({ name: product?.name, description: product?.description, price: product?.price }), [product]);
 
+    const isEdited = (product, preview) => {
+        return product.name !== preview.name || product.description !== preview.description || formatPrice(product.price) !== formatPrice(preview.price);
+    };
+
     const [productUpdateErrors, setProductUpdateErrors] = useState({});
 
-    const handleProductInputChange = (event) => {
-        let newProductUpdateErrors = productUpdateErrors[event.target.name] = null;
+    const handleProductUpdateInputChange = (event) => {
+        const target = event.target;
+
+        let newProductUpdateErrors = productUpdateErrors[target.name] = null;
         setProductUpdateErrors({ ...productUpdateErrors, ...newProductUpdateErrors });
 
-        const { name, value } = event.target;
+        switch (target.name) {
+            case "price":
+                target.value = validateInputPriceChange(target.value);
+                break;
+        };
+
+        const { name, value } = target;
         setProductPreview({ ...productPreview, [name]: value });
     };
-
-    const isEdited = (product, preview) => {
-        return product.name !== preview.name || product.description !== preview.description || parsePrice(product.price) !== parsePrice(preview.price);
+    
+    const handleProductUpdateInputBlur = (event) => {
+        switch (event.target.name) {
+            case "price":
+                event.target.value = validateInputPriceBlur(event.target.value);
+                break;
+        };
     };
 
-    const handleUpdateSubmit = async (event) => {
+    const handleProductUpdateSubmit = async (event) => {
         event.preventDefault();
 
         const formData = new FormData(event.target);
 
-        let newProduct = Object.fromEntries(formData.entries());
+        let newProduct = {
+            name: formData.get("name"),
+            description: formData.get("description"),
+            price: parseInputPrice(formData.get("price"))
+        };
 
         let response = await productsLib.update(product?.id, newProduct);
 
@@ -88,7 +110,7 @@ function Produto() {
 
     };
 
-    const handleDeleteSubmit = async (event) => {
+    const handleProductDeleteSubmit = async (event) => {
         event.preventDefault();
 
         if (!confirm("Tem certeza que deseja excluir este produto?")) {
@@ -107,7 +129,7 @@ function Produto() {
 
     if (!product) {
         return (
-            <></>
+            <>Carregando...</>
         );
     };
 
@@ -156,7 +178,7 @@ function Produto() {
                                 <path d="M206.783-60.782q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-546.434q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848H240v-33.783q0-19.261 13.761-32.739 13.761-13.478 33.022-13.478t32.739 13.478q13.479 13.478 13.479 32.739v33.783h293.998v-33.783q0-19.261 13.761-32.739 13.761-13.478 33.022-13.478t32.74 13.478Q720-872.262 720-853.001v33.783h33.217q44.305 0 75.153 30.848 30.848 30.848 30.848 75.153v546.434q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H206.783Zm0-106.001h546.434V-560H206.783v393.217ZM480-395.478q-18.922 0-31.722-12.8T435.478-440q0-18.922 12.8-31.722t31.722-12.8q18.922 0 31.722 12.8t12.8 31.722q0 18.922-12.8 31.722T480-395.478Zm-160 0q-18.922 0-31.722-12.8T275.478-440q0-18.922 12.8-31.722t31.722-12.8q18.922 0 31.722 12.8t12.8 31.722q0 18.922-12.8 31.722T320-395.478Zm320 0q-18.13 0-31.326-12.8-13.196-12.8-13.196-31.722t13.196-31.722q13.196-12.8 31.609-12.8 18.413 0 31.326 12.8T684.522-440q0 18.922-12.8 31.722T640-395.478Zm-160 160q-18.922 0-31.722-13.196t-12.8-31.609q0-18.413 12.8-31.326T480-324.522q18.922 0 31.722 12.8t12.8 31.722q0 18.13-12.8 31.326-12.8 13.196-31.722 13.196Zm-160 0q-18.922 0-31.722-13.196t-12.8-31.609q0-18.413 12.8-31.326T320-324.522q18.922 0 31.722 12.8t12.8 31.722q0 18.13-12.8 31.326-12.8 13.196-31.722 13.196Zm320 0q-18.13 0-31.326-13.196-13.196-13.196-13.196-31.609 0-18.413 13.196-31.326t31.609-12.913q18.413 0 31.326 12.8T684.522-280q0 18.13-12.8 31.326-12.8 13.196-31.722 13.196Z"/>
                             </svg>
                             <div className="w-full flex flex-col items-start justify-center">
-                                <p className="font-lgc text-lg font-bold">Criado em</p>
+                                <p className="font-lgc text-lg font-bold">Adicionado em</p>
                                 <p className="font-lgc text-lg">24 de Maio de 2023</p>
                             </div>
                         </div>
@@ -173,7 +195,7 @@ function Produto() {
 
                     </div>
 
-                    <form onSubmit={handleUpdateSubmit} className="w-full flex flex-col gap-5 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1200ms" }}>
+                    <form onSubmit={handleProductUpdateSubmit} className="w-full flex flex-col gap-5 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1200ms" }}>
 
                         <div className="w-full flex flex-row items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24">
@@ -200,12 +222,12 @@ function Produto() {
                         </div>
                         
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <BasicInput name="name" label="Nome do Produto" type="text" placeholder={product?.name} defaultValue={product?.name} onChange={handleProductInputChange} error={productUpdateErrors?.name}></BasicInput>
-                            <BasicInput name="price" label="Preço" type="text" placeholder={"R$ " + parsePrice(product?.price)} defaultValue={"R$ " + parsePrice(product?.price)} onChange={handleProductInputChange} error={productUpdateErrors?.price}></BasicInput>
+                            <BasicInput name="name" label="Nome do Produto" type="text" placeholder={product?.name} defaultValue={product?.name} onBlur={handleProductUpdateInputBlur} onChange={handleProductUpdateInputChange} error={productUpdateErrors?.name}></BasicInput>
+                            <BasicInput name="price" label="Preço" type="text" placeholder={formatPrice(product?.price)} defaultValue={formatPrice(product?.price)} onBlur={handleProductUpdateInputBlur} onChange={handleProductUpdateInputChange} error={productUpdateErrors?.price}></BasicInput>
                         </div>
 
                         <div className="flex flex-col xl:flex-row gap-5">
-                            <BasicInput name="description" label="Descrição" type="text" placeholder={product?.description} defaultValue={product?.description} onChange={handleProductInputChange} error={productUpdateErrors?.description}></BasicInput>
+                            <BasicInput name="description" label="Descrição" type="text" placeholder={product?.description} defaultValue={product?.description} onBlur={handleProductUpdateInputBlur} onChange={handleProductUpdateInputChange} error={productUpdateErrors?.description}></BasicInput>
                         </div>
 
                         <div className="w-full flex flex-row justify-end items-center mt-2">
@@ -219,7 +241,7 @@ function Produto() {
                         
                     </form>
 
-                    <form className="w-full flex flex-col xl:flex-row items-center justify-start px-6 py-5 gap-2 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
+                    <form onSubmit={handleProductDeleteSubmit} className="w-full flex flex-col xl:flex-row items-center justify-start px-6 py-5 gap-2 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
                         
                         <div className="w-full xl:w-[65%] flex flex-col justify-center items-start gap-2">
                             <div className="w-full flex flex-row justify-start items-center gap-2">
@@ -233,7 +255,7 @@ function Produto() {
                         </div>
 
                         <div className="w-full xl:w-[35%] flex flex-row justify-center items-center mt-2">
-                            <button onClick={handleDeleteSubmit} className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
+                            <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
                                     <path d="m480-394.391 69.217 69.217q14.261 13.261 33.305 13.261 19.043 0 32.304-13.261 14.261-14.261 14.261-33.304 0-19.044-14.261-32.305L545.609-460l69.217-69.217q14.261-14.261 14.261-33.305 0-19.043-14.261-32.304-12.696-13.696-32.022-13.696t-33.022 13.696L480-525.609l-69.217-69.217q-13.261-14.261-32.305-14.261-19.043 0-33.304 14.261-12.696 12.696-12.696 32.022t12.696 33.022L414.391-460l-69.217 69.217q-13.261 13.261-13.261 32.305 0 19.043 13.261 33.304 14.261 13.261 33.304 13.261 19.044 0 32.305-13.261L480-394.391ZM273.782-100.782q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-506.999q-22.087 0-37.544-15.457-15.457-15.457-15.457-37.544 0-22.087 15.457-37.544 15.457-15.457 37.544-15.457h179.784q0-22.087 15.456-37.544 15.457-15.456 37.544-15.456h158.87q22.087 0 37.544 15.456 15.456 15.457 15.456 37.544h179.784q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457v506.999q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H273.782Z"/>
                                 </svg>
@@ -284,18 +306,18 @@ function Produto() {
 
                         <div className="w-full h-fit flex flex-col items-start justify-start px-6 py-5 gap-4">
                             <div className="w-full">
-                                <h2 className="font-lgc font-bold">NOME</h2>
+                                <h2 className="font-lgc text-sm font-bold">NOME</h2>
                                 <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.name}</p>
                             </div>
 
                             <div className="w-full">
-                                <h2 className="font-lgc font-bold">DESCRIÇÃO</h2>
+                                <h2 className="font-lgc text-sm font-bold">DESCRIÇÃO</h2>
                                 <p className="font-lgc text-[16px] text-neutral-800">{productPreview?.description}</p>
                             </div>
 
                             <div className="w-full">
-                                <h2 className="font-lgc font-bold">PREÇO</h2>
-                                <p className="font-lgc text-[16px] text-neutral-800">R$ {parsePrice(productPreview?.price)}</p>
+                                <h2 className="font-lgc text-sm font-bold">PREÇO</h2>
+                                <p className="font-lgc text-[16px] text-neutral-800">{formatPrice(productPreview?.price)}</p>
                             </div>
                         </div>
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import parsePrice from "@/utils/format/price";
+import { formatPrice } from "@/utils/formatting/price";
 
 export default function ProductBox({ product, animationDelay }) {
 
@@ -13,7 +13,7 @@ export default function ProductBox({ product, animationDelay }) {
     };
 
     return (
-        <Link href={`/painel/produtos/${product?.id}`} className="w-full min-w-[190px] max-w-md h-72 flex flex-col gap-2 cursor-pointer hover:bg-neutral-50 hover:shadow-xl transition-all rounded-md bg-neutral-100 border border-neutral-400 fast-fade-in">
+        <Link href={`/painel/produtos/${product?.id}`} className="w-full min-w-[190px] max-w-md h-72 flex flex-col gap-2 cursor-pointer hover:bg-neutral-50 hover:shadow-xl hover:scale-[102%] transition-all rounded-md bg-neutral-100 border border-neutral-400 fast-fade-in">
 
             <div className="w-full h-[45%] bg-center bg-cover bg-neutral-200 rounded-t-md"
                 style={{ backgroundImage: `url('${product?.image}')` }}
@@ -26,7 +26,7 @@ export default function ProductBox({ product, animationDelay }) {
                 </div>
 
                 <div className="w-full flex flex-row justify-start mb-1.5">
-                    <p className="font-lgc text-lg text-neutral-800">R$ {parsePrice(product?.price)}</p>
+                    <p className="font-lgc text-lg text-neutral-800">{formatPrice(product?.price)}</p>
                 </div>
             </div>
 

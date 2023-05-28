@@ -163,6 +163,69 @@ export async function getAll() {
 
 };
 
+export async function update(user) {
+
+    const query = `
+        UPDATE pessoa
+        SET nome = ?, cpf = ?, email = ?, telefone = ?, data_nasc = ?, sexo = ?
+        WHERE id = ?
+    `;
+
+    return new Promise((resolve, reject) => {
+
+        db.serialize(() => {
+
+            db.run("BEGIN TRANSACTION");
+
+            db.run(query, [user.name, user.cpf, user.email, user.phone, user.birthdate, user.gender, user.id], function(error) {
+                if (error) {
+                    console.log(error);
+                    return resolve(false);
+                };
+
+                if (this.changes < 1) {
+                    db.run("ROLLBACK");
+                    return resolve(false);
+                };
+
+                let roleQuery = `
+                    DELETE FROM ${rolesTable[user.role]}
+                    WHERE id_pessoa = ?
+                `
+
+                db.run(roleQuery, [user.id], function(error) {
+                    if (error) {
+                        db.run("ROLLBACK");
+                        console.log(error);
+                        return resolve(false);
+                    };
+
+                    let roleQuery = `
+                        INSERT INTO ${rolesTable[user.role]} (id_pessoa)
+                        VALUES (?)
+                    `;
+
+                    db.run(roleQuery, [user.id], function(error) {
+                        if (error) {
+                            db.run("ROLLBACK");
+                            console.log(error);
+                            return resolve(false);
+                        };
+
+                        db.run("COMMIT");
+                        return resolve(true);
+                    });
+
+                });
+
+            });
+
+        });
+
+    });
+
+};
+
 export async function validatePassword(user, password) {
 
     const query = `
