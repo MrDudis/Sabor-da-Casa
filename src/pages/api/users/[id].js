@@ -65,7 +65,7 @@ handler.patch(async (req, res) => {
         return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
     };
 
-    res.status(200).json({ status: 200, message: "OK", code: "OK" });
+    res.status(200).json({ status: 200, message: "OK", code: "OK", user: newUser });
 
 });
 

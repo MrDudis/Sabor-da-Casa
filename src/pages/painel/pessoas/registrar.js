@@ -7,7 +7,7 @@ import UserContext from "@/components/painel/auth/UserContext";
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import { AdvancedInput, AdvancedSelect } from "@/components/elements/Input";
+import { AdvancedInput, AdvancedSelect } from "@/components/elements/input/Input";
 
 import User, { Role, Gender } from "@/models/User";
 
@@ -35,6 +35,7 @@ function RegistrarPessoa() {
     const { user } = useContext(UserContext);
 
     const [userRegisterErrors, setUserRegisterErrors] = useState({});
+    const [userRegisterLoading, setUserRegisterLoading] = useState(false);
 
     const handleUserRegisterInputChange = (event) => {
         let newUserRegisterErrors = userRegisterErrors[event.target.name] = null;
@@ -56,6 +57,8 @@ function RegistrarPessoa() {
     const handleUserRegisterSubmit = async (event) => {
         event.preventDefault();
 
+        setUserRegisterLoading(true);
+
         const formData = new FormData(event.target);
 
         let newUser = {
@@ -76,6 +79,7 @@ function RegistrarPessoa() {
             setUserRegisterErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
         };
 
+        setTimeout(() => { setUserRegisterLoading(false) }, 500);
     };
 
     return (
@@ -159,11 +163,17 @@ function RegistrarPessoa() {
                     </div>
 
                     <div className="w-full flex flex-row justify-end items-center mt-2">
-                        <button className="w-full xl:w-[35%] lg::max-w-sm flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
-                                <path d="M766.218-410.283q-17.814 0-29.864-12.05t-12.05-29.863v-76.174h-76.173q-17.813 0-29.863-12.05t-12.05-29.863q0-17.813 12.05-29.863t29.863-12.05h76.173v-76.174q0-17.813 12.05-29.863t29.864-12.05q17.813 0 29.863 12.05t12.05 29.863v76.174h76.173q17.813 0 29.863 12.05 12.051 12.05 12.051 29.863t-12.051 29.863q-12.05 12.05-29.863 12.05h-76.173v76.174q0 17.813-12.05 29.863t-29.863 12.05Zm-404.783-73.782q-69.587 0-118.859-49.272-49.272-49.272-49.272-118.859 0-69.587 49.272-118.739t118.859-49.152q69.587 0 118.859 49.152 49.271 49.152 49.271 118.739t-49.271 118.859q-49.272 49.272-118.859 49.272ZM78.805-147.804q-19.153 0-32.327-13.174t-13.174-32.326v-75.109q0-36.224 18.743-66.589 18.742-30.365 49.801-46.346 62.717-31.239 127.664-46.978t131.923-15.739q67.435 0 132.391 15.619 64.957 15.62 127.196 46.859 31.059 15.947 49.801 46.245 18.742 30.299 18.742 66.929v75.109q0 19.152-13.174 32.326-13.173 13.174-32.326 13.174H78.805Z"/>
-                            </svg>
-                            Registrar
+                        <button disabled={userRegisterLoading} className="w-full xl:w-[35%] lg::max-w-sm flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                            { userRegisterLoading ? (
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
+                                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
+                                    <path d="M766.218-410.283q-17.814 0-29.864-12.05t-12.05-29.863v-76.174h-76.173q-17.813 0-29.863-12.05t-12.05-29.863q0-17.813 12.05-29.863t29.863-12.05h76.173v-76.174q0-17.813 12.05-29.863t29.864-12.05q17.813 0 29.863 12.05t12.05 29.863v76.174h76.173q17.813 0 29.863 12.05 12.051 12.05 12.051 29.863t-12.051 29.863q-12.05 12.05-29.863 12.05h-76.173v76.174q0 17.813-12.05 29.863t-29.863 12.05Zm-404.783-73.782q-69.587 0-118.859-49.272-49.272-49.272-49.272-118.859 0-69.587 49.272-118.739t118.859-49.152q69.587 0 118.859 49.152 49.271 49.152 49.271 118.739t-49.271 118.859q-49.272 49.272-118.859 49.272ZM78.805-147.804q-19.153 0-32.327-13.174t-13.174-32.326v-75.109q0-36.224 18.743-66.589 18.742-30.365 49.801-46.346 62.717-31.239 127.664-46.978t131.923-15.739q67.435 0 132.391 15.619 64.957 15.62 127.196 46.859 31.059 15.947 49.801 46.245 18.742 30.299 18.742 66.929v75.109q0 19.152-13.174 32.326-13.173 13.174-32.326 13.174H78.805Z"/>
+                                </svg>
+                            ) }
+                            { userRegisterLoading ? "Registrando..." : "Registrar" }
                         </button>
                     </div>
                     

@@ -9,7 +9,7 @@ import UserContext from "@/components/painel/auth/UserContext";
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import { BasicInput, AdvancedInput, BasicSelect } from "@/components/elements/Input";
+import { BasicInput, AdvancedInput, BasicSelect } from "@/components/elements/input/Input";
 
 import * as meLib from "@/lib/me";
 
@@ -36,9 +36,10 @@ export function getServerSideProps({ req, res }) {
 
 function Conta() {
 
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
 
     const [userUpdateErrors, setUserUpdateErrors] = useState({});
+    const [userUpdateLoading, setUserUpdateLoading] = useState(false);
 
     const handleUserUpdateInputChange = (event) => {
         const target = event.target;
@@ -62,6 +63,8 @@ function Conta() {
     const handleUserUpdateSubmit = async (event) => {
         event.preventDefault();
 
+        setUserUpdateLoading(true);
+
         const formData = new FormData(event.target);
 
         let newUser = {
@@ -76,37 +79,46 @@ function Conta() {
         let response = await meLib.updateUser(newUser);
 
         if (response.status === 200) {
-            window.location.reload();
+            setUserUpdateErrors({});
+            setUser(response.user);
+            // show modal of success
         } else {
-            setUserUpdateErrors(response?.errors ?? { name: "Algo deu errado." });
+            setUserUpdateErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
         };
+
+        setTimeout(() => { setUserUpdateLoading(false); }, 500);
 
     };
 
-    const [passwordErrors, setPasswordErrors] = useState({});
+    const [passwordUpdateErrors, setPasswordUpdateErrors] = useState({});
+    const [passwordUpdateLoading, setPasswordUpdateLoading] = useState(false);
 
     const handlePasswordUpdateInputChange = (event) => {
-        let newPasswordErrors = passwordErrors[event.target.name] = null;
-        setPasswordErrors({ ...passwordErrors, ...newPasswordErrors });
+        let newPasswordUpdateErrors = passwordUpdateErrors[event.target.name] = null;
+        setPasswordUpdateErrors({ ...passwordUpdateErrors, ...newPasswordUpdateErrors });
     };
 
     const handlePasswordUpdateSubmit = async (event) => {
         event.preventDefault();
 
+        setPasswordUpdateLoading(true);
+
         const formData = new FormData(event.target);
 
         if (formData.get("newPassword") !== formData.get("confirmNewPassword")) {
-            return setPasswordErrors({ confirmNewPassword: "As senhas não coincidem." });
+            return setPasswordUpdateErrors({ confirmNewPassword: "As senhas não coincidem." });
         };
 
         let response = await meLib.updatePassword(formData.get("currentPassword"), formData.get("newPassword"));
 
         if (response.status === 200) {
-            window.location.reload();
+            setPasswordUpdateErrors({});
+            // show modal of success
         } else {
-            setPasswordErrors(response?.errors ?? { currentPassword: response?.message ?? "Erro desconhecido." });
+            setPasswordUpdateErrors(response?.errors ?? { currentPassword: response?.message ?? "Erro desconhecido." });
         };
 
+        setTimeout(() => { setPasswordUpdateLoading(false); }, 500);
     };
 
     return (
@@ -210,11 +222,18 @@ function Conta() {
                         </div>
 
                         <div className="w-full flex flex-row justify-end items-center mt-2">
-                            <button className="w-full xl:w-[42%] lg::max-w-sm flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
-                                    <path d="M206.783 955.218q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153V302.783q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848h437.391q21.087 0 40.392 7.978 19.304 7.978 34.261 22.935l109.478 109.478q14.957 14.957 22.935 34.261 7.978 19.305 7.978 40.392v437.391q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H206.783ZM480 809.217q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM299.784 502.783h253.998q22.088 0 37.544-15.457 15.457-15.456 15.457-37.544v-53.998q0-22.088-15.457-37.544-15.456-15.457-37.544-15.457H299.784q-22.088 0-37.544 15.457-15.457 15.456-15.457 37.544v53.998q0 22.088 15.457 37.544 15.456 15.457 37.544 15.457Z"/>
-                                </svg>
-                                Salvar Alterações
+                            <button disabled={userUpdateLoading} className="w-full xl:w-56 flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                                { userUpdateLoading ? (
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
+                                        <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white smooth-slide-down-fade-in opacity-0">
+                                        <path d="M206.783 955.218q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153V302.783q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848h437.391q21.087 0 40.392 7.978 19.304 7.978 34.261 22.935l109.478 109.478q14.957 14.957 22.935 34.261 7.978 19.305 7.978 40.392v437.391q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H206.783ZM480 809.217q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM299.784 502.783h253.998q22.088 0 37.544-15.457 15.457-15.456 15.457-37.544v-53.998q0-22.088-15.457-37.544-15.456-15.457-37.544-15.457H299.784q-22.088 0-37.544 15.457-15.457 15.456-15.457 37.544v53.998q0 22.088 15.457 37.544 15.456 15.457 37.544 15.457Z"/>
+                                    </svg>
+                                ) }
+
+                                { userUpdateLoading ? "Salvando..." : "Salvar Alterações" }
                             </button>
                         </div>
                         
@@ -241,17 +260,26 @@ function Conta() {
                         </div>
 
                         <div className="w-full flex flex-col gap-6 my-6">
-                            <AdvancedInput name="currentPassword" label="Senha Atual" type="password" onChange={handlePasswordUpdateInputChange} error={passwordErrors?.currentPassword} bgColor="bg-neutral-100"></AdvancedInput>
-                            <AdvancedInput name="newPassword" label="Senha Nova" type="password" onChange={handlePasswordUpdateInputChange} error={passwordErrors?.newPassword} bgColor="bg-neutral-100"></AdvancedInput>
-                            <AdvancedInput name="confirmNewPassword" label="Confirmar Senha Nova" type="password" onChange={handlePasswordUpdateInputChange} error={passwordErrors?.confirmNewPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="currentPassword" label="Senha Atual" type="password" onChange={handlePasswordUpdateInputChange} error={passwordUpdateErrors?.currentPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="newPassword" label="Senha Nova" type="password" onChange={handlePasswordUpdateInputChange} error={passwordUpdateErrors?.newPassword} bgColor="bg-neutral-100"></AdvancedInput>
+                            <AdvancedInput name="confirmNewPassword" label="Confirmar Senha Nova" type="password" onChange={handlePasswordUpdateInputChange} error={passwordUpdateErrors?.confirmNewPassword} bgColor="bg-neutral-100"></AdvancedInput>
                         </div>
 
                         <div className="w-full flex flex-row justify-center items-center mt-2">
-                            <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
-                                    <path d="M520 955.218q-65.391 0-123.152-19.782-57.761-19.783-106.022-56.479-18.522-14.391-21.218-38.391-2.696-24.001 15.261-42.523 14.391-14.391 35.326-14.956 20.935-.566 39.023 12.391 35 26 75.587 39.87 40.586 13.869 85.195 13.869 113.739 0 193.478-79.739T793.217 576q0-113.739-79.739-193.478T520 302.783q-112.043 0-192.63 78.891-80.587 78.891-80.587 191.5v3.608l42.174-41.608q12.695-12.696 30.891-12.696 18.196 0 31.326 12.696 13.131 13.13 13.131 31.326 0 18.196-13.131 31.326L231.391 717.609q-8.261 8.261-17.804 11.609-9.544 3.348-19.805 3.348t-19.804-3.348q-9.544-3.348-17.805-11.609L36.521 596.826Q23.825 584.13 24.042 566q.218-18.13 12.913-30.826 12.696-13.131 31.11-13.131 18.412 0 31.108 13.131l41.609 42.608v-4.608q0-77.826 29.913-146.153 29.913-68.326 80.956-119.37 51.044-51.043 120.218-80.956Q441.043 196.782 520 196.782t147.848 29.913q68.892 29.913 120.218 81.239 51.326 51.326 81.239 120.218Q899.218 497.043 899.218 576q0 158.479-110.369 268.849Q678.479 955.218 520 955.218ZM440 736q-17 0-28.5-11.5T400 696V576q0-17 11.5-28.5T440 536v-40q0-33 23.5-56.5T520 416q33 0 56.5 23.5T600 496v40q17 0 28.5 11.5T640 576v120q0 17-11.5 28.5T600 736H440Zm40-200h80v-40q0-17-11.5-28.5T520 456q-17 0-28.5 11.5T480 496v40Z"/>
-                                </svg>
-                                Alterar Senha
+                            <button disabled={passwordUpdateLoading} className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                                {
+                                    passwordUpdateLoading ? (
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
+                                            <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white smooth-slide-down-fade-in opacity-0">
+                                            <path d="M520 955.218q-65.391 0-123.152-19.782-57.761-19.783-106.022-56.479-18.522-14.391-21.218-38.391-2.696-24.001 15.261-42.523 14.391-14.391 35.326-14.956 20.935-.566 39.023 12.391 35 26 75.587 39.87 40.586 13.869 85.195 13.869 113.739 0 193.478-79.739T793.217 576q0-113.739-79.739-193.478T520 302.783q-112.043 0-192.63 78.891-80.587 78.891-80.587 191.5v3.608l42.174-41.608q12.695-12.696 30.891-12.696 18.196 0 31.326 12.696 13.131 13.13 13.131 31.326 0 18.196-13.131 31.326L231.391 717.609q-8.261 8.261-17.804 11.609-9.544 3.348-19.805 3.348t-19.804-3.348q-9.544-3.348-17.805-11.609L36.521 596.826Q23.825 584.13 24.042 566q.218-18.13 12.913-30.826 12.696-13.131 31.11-13.131 18.412 0 31.108 13.131l41.609 42.608v-4.608q0-77.826 29.913-146.153 29.913-68.326 80.956-119.37 51.044-51.043 120.218-80.956Q441.043 196.782 520 196.782t147.848 29.913q68.892 29.913 120.218 81.239 51.326 51.326 81.239 120.218Q899.218 497.043 899.218 576q0 158.479-110.369 268.849Q678.479 955.218 520 955.218ZM440 736q-17 0-28.5-11.5T400 696V576q0-17 11.5-28.5T440 536v-40q0-33 23.5-56.5T520 416q33 0 56.5 23.5T600 496v40q17 0 28.5 11.5T640 576v120q0 17-11.5 28.5T600 736H440Zm40-200h80v-40q0-17-11.5-28.5T520 456q-17 0-28.5 11.5T480 496v40Z"/>
+                                        </svg>
+                                    )
+                                }
+                                
+                                { passwordUpdateLoading ? "Alterando..." : "Alterar Senha" }
                             </button>
                         </div>
                         

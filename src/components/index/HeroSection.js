@@ -15,7 +15,7 @@ export default function HeroSection() {
     return (
         <div className="w-full h-screen bg-[#734108] bg-cover bg-center bg-no-repeat bg-fixed" style={{ backgroundImage: `url("/images/hero-background.png")` }}>
 
-            <div className="w-full h-full flex flex-col justify-between items-center background-fade-in" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
+            <div className="w-full h-full flex flex-col justify-between items-center hero-background-fade-in">
 
                 <div className="w-full px-6 sm:px-8 xl:px-16 py-10 flex flex-row justify-between items-center slide-down">
 

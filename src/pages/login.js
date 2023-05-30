@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRef, useState } from "react";
 
-import { AdvancedInput } from "@/components/elements/Input";
+import { AdvancedInput } from "@/components/elements/input/Input";
 
 import * as authLib from "@/lib/auth";
 

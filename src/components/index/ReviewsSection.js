@@ -3,7 +3,7 @@ export default function ReviewsSection({ reviews }) {
     return (
         <div className="w-full bg-cover bg-center bg-no-repeat bg-fixed" style={{ backgroundImage: `url("/images/restaurant-view-home.png")` }} id="avaliacoes">
 
-            <div className="w-full" style={{ background: "rgba(0, 0, 0, 0.8)" }}>
+            <div className="w-full" style={{ background: "rgba(0, 0, 0, 0.6)" }}>
 
                 <div className="flex flex-col justify-center items-center pt-32 pb-44 gap-12">
 

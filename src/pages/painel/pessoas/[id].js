@@ -9,7 +9,7 @@ import UserContext from "@/components/painel/auth/UserContext";
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import { BasicInput, BasicSelect } from "@/components/elements/Input";
+import { BasicInput, BasicSelect } from "@/components/elements/input/Input";
 
 import User, { Gender, Role, roleNames } from "@/models/User";
 
@@ -61,6 +61,7 @@ function Pessoa() {
     useEffect(() => fetchUser, []);
 
     const [userUpdateErrors, setUserUpdateErrors] = useState({});
+    const [userUpdateLoading, setUserUpdateLoading] = useState(false);
 
     const handleUserUpdateInputChange = (event) => {
         const target = event.target;
@@ -84,6 +85,8 @@ function Pessoa() {
     const handleUserUpdateSubmit = async (event) => {
         event.preventDefault();
 
+        setUserUpdateLoading(true);
+
         const formData = new FormData(event.target);
 
         let newUser = {
@@ -99,11 +102,13 @@ function Pessoa() {
         let response = await usersLib.update(user?.id, newUser);
 
         if (response.status === 200) {
-            window.location.reload();
+            setUser(response.user);
+            // show modal of success
         } else {
             setUserUpdateErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
         };
 
+        setTimeout(() => setUserUpdateLoading(false), 500);
     };
 
     const handleUserDeleteSubmit = async (event) => {
@@ -191,7 +196,7 @@ function Pessoa() {
 
                     </div>
 
-                    <form onSubmit={handleUserUpdateSubmit} className="w-full flex flex-col gap-5 px-4 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1200ms" }}>
+                    <form onSubmit={handleUserUpdateSubmit} className="w-full flex flex-col gap-5 px-6 py-5 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1200ms" }}>
 
                         <div className="w-full flex flex-row items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24">
@@ -251,17 +256,23 @@ function Pessoa() {
                         </div>
 
                         <div className="w-full flex flex-row justify-end items-center mt-2">
-                            <button className="w-full xl:w-[35%] lg::max-w-sm flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 disabled:opacity-75 disabled:bg-red-600 text-white rounded-md transition-all" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
-                                    <path d="M206.783 955.218q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153V302.783q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848h437.391q21.087 0 40.392 7.978 19.304 7.978 34.261 22.935l109.478 109.478q14.957 14.957 22.935 34.261 7.978 19.305 7.978 40.392v437.391q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H206.783ZM480 809.217q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM299.784 502.783h253.998q22.088 0 37.544-15.457 15.457-15.456 15.457-37.544v-53.998q0-22.088-15.457-37.544-15.456-15.457-37.544-15.457H299.784q-22.088 0-37.544 15.457-15.457 15.456-15.457 37.544v53.998q0 22.088 15.457 37.544 15.456 15.457 37.544 15.457Z"/>
-                                </svg>
-                                Salvar
+                            <button disabled={userUpdateLoading} className="w-full xl:w-56 flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                                { userUpdateLoading ? (
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
+                                        <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
+                                        <path d="M206.783 955.218q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153V302.783q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848h437.391q21.087 0 40.392 7.978 19.304 7.978 34.261 22.935l109.478 109.478q14.957 14.957 22.935 34.261 7.978 19.305 7.978 40.392v437.391q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H206.783ZM480 809.217q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM299.784 502.783h253.998q22.088 0 37.544-15.457 15.457-15.456 15.457-37.544v-53.998q0-22.088-15.457-37.544-15.456-15.457-37.544-15.457H299.784q-22.088 0-37.544 15.457-15.457 15.456-15.457 37.544v53.998q0 22.088 15.457 37.544 15.456 15.457 37.544 15.457Z"/>
+                                    </svg>
+                                ) }
+                                { userUpdateLoading ? "Salvando..." : "Salvar Alterações" }
                             </button>
                         </div>
                         
                     </form>
 
-                    <form onSubmit={handleUserDeleteSubmit} className="w-full flex flex-col xl:flex-row items-center justify-start px-6 py-5 gap-2 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
+                    <form onSubmit={handleUserDeleteSubmit} className="w-full flex flex-col xl:flex-row items-center justify-between px-6 py-5 gap-2 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
                         
                         <div className="w-full xl:w-[65%] flex flex-col justify-center items-start gap-2">
                             <div className="w-full flex flex-row justify-start items-center gap-2">
@@ -274,7 +285,7 @@ function Pessoa() {
                             <p className="font-lgc text-[17px]">Deleta o usuário, essa ação é irreversível.</p>
                         </div>
 
-                        <div className="w-full xl:w-[35%] flex flex-row justify-center items-center mt-2">
+                        <div className="w-full xl:w-56 flex flex-row justify-center items-center mt-2">
                             <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
                                     <path d="m480-394.391 69.217 69.217q14.261 13.261 33.305 13.261 19.043 0 32.304-13.261 14.261-14.261 14.261-33.304 0-19.044-14.261-32.305L545.609-460l69.217-69.217q14.261-14.261 14.261-33.305 0-19.043-14.261-32.304-12.696-13.696-32.022-13.696t-33.022 13.696L480-525.609l-69.217-69.217q-13.261-14.261-32.305-14.261-19.043 0-33.304 14.261-12.696 12.696-12.696 32.022t12.696 33.022L414.391-460l-69.217 69.217q-13.261 13.261-13.261 32.305 0 19.043 13.261 33.304 14.261 13.261 33.304 13.261 19.044 0 32.305-13.261L480-394.391ZM273.782-100.782q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-506.999q-22.087 0-37.544-15.457-15.457-15.457-15.457-37.544 0-22.087 15.457-37.544 15.457-15.457 37.544-15.457h179.784q0-22.087 15.456-37.544 15.457-15.456 37.544-15.456h158.87q22.087 0 37.544 15.456 15.456 15.457 15.456 37.544h179.784q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457v506.999q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H273.782Z"/>

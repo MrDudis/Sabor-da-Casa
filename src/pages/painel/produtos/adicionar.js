@@ -8,7 +8,7 @@ import UserContext from "@/components/painel/auth/UserContext";
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
-import { AdvancedInput } from "@/components/elements/Input";
+import { AdvancedInput } from "@/components/elements/input/Input";
 
 import Product from "@/models/Product";
 
@@ -39,6 +39,7 @@ function AdicionarProduto() {
     const [productPreview, setProductPreview] = useState({});
 
     const [productCreateErrors, setProductCreateErrors] = useState({});
+    const [productCreateLoading, setProductCreateLoading] = useState(false);
 
     const handleProductCreateInputChange = (event) => {
         const target = event.target;
@@ -70,6 +71,8 @@ function AdicionarProduto() {
     const handleProductCreateSubmit = async (event) => {
         event.preventDefault();
 
+        setProductCreateLoading(true);
+
         const formData = new FormData(event.target);
 
         let newProductFormData = {
@@ -89,6 +92,7 @@ function AdicionarProduto() {
             setProductCreateErrors(response?.errors ?? { name: response?.message ?? "Erro desconhecido." });
         };
 
+        setTimeout(() => { setProductCreateLoading(false) }, 500);
     };
 
     return (
@@ -149,11 +153,17 @@ function AdicionarProduto() {
                         </div>
 
                         <div className="w-full flex flex-row justify-end items-center mt-2">
-                            <button className="w-full xl:w-[35%] lg::max-w-sm flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
-                                    <path d="M480-194.5q-19.152 0-32.326-13.174T434.5-240v-194.5H240q-19.152 0-32.326-13.174T194.5-480q0-19.152 13.174-32.326T240-525.5h194.5V-720q0-19.152 13.174-32.326T480-765.5q19.152 0 32.326 13.174T525.5-720v194.5H720q19.152 0 32.326 13.174T765.5-480q0 19.152-13.174 32.326T720-434.5H525.5V-240q0 19.152-13.174 32.326T480-194.5Z"/>
-                                </svg>
-                                Adicionar
+                            <button disabled={productCreateLoading} className="w-full xl:w-56 flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                                { productCreateLoading ? (
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
+                                        <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
+                                        <path d="M480-194.5q-19.152 0-32.326-13.174T434.5-240v-194.5H240q-19.152 0-32.326-13.174T194.5-480q0-19.152 13.174-32.326T240-525.5h194.5V-720q0-19.152 13.174-32.326T480-765.5q19.152 0 32.326 13.174T525.5-720v194.5H720q19.152 0 32.326 13.174T765.5-480q0 19.152-13.174 32.326T720-434.5H525.5V-240q0 19.152-13.174 32.326T480-194.5Z"/>
+                                    </svg>
+                                ) }
+                                { productCreateLoading ? "Adicionando..." : "Adicionar" }
                             </button>
                         </div>
                         
@@ -172,7 +182,7 @@ function AdicionarProduto() {
 
                     <div className="relative w-full xl:max-w-sm flex flex-col items-start justify-start h-96 bg-neutral-100 rounded-md border border-neutral-400 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "1400ms" }}>
 
-                        <div className="absolute flex flex-row justify-center items-center px-2 py-1 gap-1 rounded-lg bg-neutral-100 -top-2 -left-2">
+                        <div className="absolute flex flex-row justify-center items-center px-2 py-1 gap-1 rounded-lg bg-neutral-100 border border-neutral-400 -top-2 -left-2">
                             <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14">
                                 <path d="M168.479 0q-36.392 0-62.435-26.044Q80-52.087 80-88.479q0-36.391 26.044-62.717 26.043-26.327 62.435-26.327h623.042q36.392 0 62.435 26.327Q880-124.87 880-88.479q0 36.392-26.044 62.435Q827.913 0 791.521 0H168.479Zm36.043-257.523q-22.087 0-37.544-15.456-15.457-15.457-15.457-37.544v-86.783q0-10.826 3.848-20.304 3.848-9.479 12.109-17.74l351.696-352.261 162.435 162.436-352.261 351.696q-8.261 8.261-17.739 12.108-9.479 3.848-20.305 3.848h-86.782Zm514.174-404.869-161.87-162.436 75.956-75.956q13.827-14.827 34.218-14.609 20.391.217 34.218 14.609l94 94q13.826 13.826 13.826 33.435t-13.826 34.435l-76.522 76.522Z"/>
                             </svg>

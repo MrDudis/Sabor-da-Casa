@@ -44,17 +44,17 @@
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    @keyframes background-fade-in {
+    @keyframes hero-background-fade-in {
         0% {
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(0, 0, 0, 0);
         }
         100% {
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.6);
         }
     }
 
-    .background-fade-in {
-        animation: background-fade-in 0.5s ease-in-out;
+    .hero-background-fade-in {
+        animation: hero-background-fade-in 0.6s ease-in-out;
         animation-fill-mode: forwards;
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
