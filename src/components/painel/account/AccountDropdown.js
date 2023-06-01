@@ -36,7 +36,7 @@ export default function Dropdown({ showDropdown, setShowDropdown }) {
 
     return (
 
-        <div className={`${dropdownDisplay} absolute z-30 w-full top-12 p-1.5 rounded-md flex-col justify-center items-end bg-stone-800 shadow-2xl ${showDropdown ? "account-dropdown-slide-in" : "account-dropdown-slide-out"}`}>
+        <div className={`${dropdownDisplay} absolute z-30 w-full top-12 p-1.5 rounded-md flex-col justify-center items-end bg-stone-800 shadow-2xl ${showDropdown ? "dropdown-slide-in" : "dropdown-slide-out"}`}>
 
             <Link href="/painel/conta" onClick={() => { setShowDropdown(false) }} className="w-full flex flex-row items-center gap-2 p-1.5 rounded-md hover:bg-stone-700 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 96 960 960" height="24" className="w-5 h-5 fill-white transition-all">

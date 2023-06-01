@@ -39,7 +39,7 @@ const ModalProvider = ({ children }) => {
             {
                 modal ? (
                     <div className={`fixed inset-0 w-screen h-screen flex flex-col justify-center items-center ${modalClosing ? "modal-background-fade-out" : "modal-background-fade-in"}`} style={{ zIndex: 9999 }}>
-                        <div className={`${modalClosing ? "modal-zoom-out" : "modal-zoom-in"}`} ref={modalRef}>
+                        <div className={`m-8 ${modalClosing ? "modal-zoom-out" : "modal-zoom-in"}`} ref={modalRef}>
                             { modal ? modal : null }
                         </div>
                     </div>

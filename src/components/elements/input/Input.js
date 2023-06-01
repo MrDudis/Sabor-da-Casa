@@ -28,6 +28,19 @@ export function AdvancedInput({ name, label, type, onChange, onBlur, defaultValu
 
 };
 
+export function FilterInput({ name, label, placeholder, defaultValue, onChange, onBlur, bgColor }) {
+
+    return (
+        <div className="w-full flex flex-col gap-1">
+            <div className={input.advancedInputDiv}>
+                <input onChange={({ target }) => { target.value = onChange(target.value); }} onBlur={({ target }) => { target.value = onBlur(target.value); }} className={input.filterInput} id={name} name={name} type="text" placeholder=" " defaultValue={defaultValue}></input>
+                <label className={input.advancedInputLabel} htmlFor={name}><span className={`px-1 ${bgColor}`}>{label}</span></label>
+            </div>
+        </div>
+    );
+
+};
+
 export function BasicSelect({ name, label, options, defaultValue, onChange, error }) {
 
     return (
@@ -67,3 +80,22 @@ export function AdvancedSelect({ name, label, options, defaultValue, onChange, e
     );
 
 };
+
+export function FilterRadioInput({ name, label, options, defaultValue }) {
+
+    return (
+        <>
+            { 
+                options.map((option, index) => {
+                    return (
+                        <label class="inline-flex items-center" index={index}>
+                            <input type="radio" class="font-lgc h-5 w-5 text-black border border-gray-300" name={name} value={option?.value}></input>
+                            <span class="ml-2 font-lgc text-gray-700">{option?.label}</span>
+                        </label>
+                    );
+                })
+            }
+        </>
+    );
+
+}

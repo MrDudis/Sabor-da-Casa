@@ -93,3 +93,15 @@
 .advancedInput:focus + .advancedInputLabel {
     color: red;
 }
+
+.filterInput {
+    @apply advancedInput;
+}
+
+.filterInput:focus {
+    border: 1.2px #0075ff solid;
+}
+
+.filterInput:focus + .advancedInputLabel {
+    color: #0075ff;
+}

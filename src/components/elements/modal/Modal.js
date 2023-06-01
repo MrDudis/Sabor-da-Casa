@@ -28,7 +28,7 @@ function ModalIcon(name) {
 export function MessageModal({ title, icon, message, buttons, closeModal }) {
 
     return (
-        <div className="h-fit bg-neutral-800 flex flex-col rounded-lg shadow-2xl px-12 py-6 m-8 gap-4">
+        <div className="h-fit bg-neutral-800 flex flex-col rounded-lg shadow-2xl px-12 py-6 gap-4">
 
             <div className="w-full flex flex-row justify-center items-center gap-2">
                 { ModalIcon(icon) }
