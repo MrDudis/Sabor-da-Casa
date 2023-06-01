@@ -1,13 +1,17 @@
 import { useState, useEffect, useContext } from "react";
-import Link from "next/link";
-import Head from "next/head";
 
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
 import PersonBox from "@/components/painel/pessoas/PersonBox";
+import { MessageModal } from "@/components/elements/modal/Modal";
 
 import * as usersLib from "@/lib/users";
 
@@ -26,6 +30,9 @@ export function getServerSideProps({ req, res }) {
 
 function Pessoas() {
 
+    const router = useRouter();
+
+    const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
 
     const [baseAnimationDelay, setBaseAnimationDelay] = useState(400);
@@ -40,12 +47,19 @@ function Pessoas() {
         if (response.status === 200) {
             setTimeout(() => { setUsers(response.users); setBaseAnimationDelay(0); }, 1600);
         } else {
-            alert(response.message ?? "Erro desconhecido.");
+            showModal(
+                <MessageModal 
+                    icon="error" title="Erro" message={response.message ?? "Erro desconhecido."}
+                    buttons={[ { label: "Fechar", action: closeModal } ]}
+                ></MessageModal>
+            );
+    
+            router.push("/painel");
         };
 
     };
 
-    useEffect(() => fetchUsers, []);
+    useEffect(() => { fetchUsers(); }, []);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [searchTimeout, setSearchTimeout] = useState(null);

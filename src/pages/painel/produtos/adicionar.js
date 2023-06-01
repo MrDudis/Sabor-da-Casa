@@ -21,6 +21,7 @@ import { formatPrice } from "@/utils/formatting/price";
 
 import { validateInputPriceChange, validateInputPriceBlur, parseInputPrice } from "@/utils/validation/client/price";
 import { validateInputNumbersChange } from "@/utils/validation/client/numbers";
+import { Role } from "@/models/User";
 
 export function getServerSideProps({ req, res }) {
 
@@ -41,6 +42,19 @@ function AdicionarProduto() {
 
     const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
+
+    useEffect(() => {
+        if (user && user.role > Role.MANAGER) {
+            showModal(
+                <MessageModal 
+                    icon="error" title="Erro" message={"Você não tem permissão para adicionar um produto."}
+                    buttons={[ { label: "Fechar", action: closeModal } ]}
+                ></MessageModal>
+            );
+    
+            router.push("/painel/produtos");
+        };
+    }, [user]);
 
     const [productPreview, setProductPreview] = useState({});
 

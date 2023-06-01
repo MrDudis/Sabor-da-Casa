@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import UserContext from "@/providers/user/UserContext";
 
@@ -16,22 +16,14 @@ const UserProvider = ({ children }) => {
     const response = await meLib.get();
 
     if (response.status === 200) {
-
       setUser(new User(response.user));
-
-    } else if (response.status === 401) {
-
-      authLib.logout(document).then(() => { window.location.href = "/login"; });
-
     } else {
-
-      alert(response.message ?? "Erro desconhecido.");
-
+      authLib.logout(document).then(() => { window.location.href = "/login"; });
     };
 
   };
 
-  useEffect(() => fetchUser, []);
+  useEffect(() => { fetchUser(); }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

@@ -2,12 +2,14 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import Head from "next/head";
 
+import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
 import ProductBox from "@/components/painel/produtos/ProductBox";
+import { MessageModal } from "@/components/elements/modal/Modal";
 
 import { Role } from "@/models/User";
 
@@ -28,6 +30,7 @@ export function getServerSideProps({ req, res }) {
 
 function Produtos() {
 
+    const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
 
     const [baseAnimationDelay, setBaseAnimationDelay] = useState(400);
@@ -42,12 +45,19 @@ function Produtos() {
         if (response.status === 200) {
             setTimeout(() => { setProducts(response.products); setBaseAnimationDelay(0); }, 1600);
         } else {
-            alert(response.message ?? "Erro desconhecido.");
+            showModal(
+                <MessageModal 
+                    icon="error" title="Erro" message={response.message ?? "Erro desconhecido."}
+                    buttons={[ { label: "Fechar", action: closeModal } ]}
+                ></MessageModal>
+            );
+    
+            router.push("/painel");
         };
 
     };
 
-    useEffect(() => fetchProducts, []);
+    useEffect(() => { fetchProducts(); }, []);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [searchTimeout, setSearchTimeout] = useState(null);

@@ -41,6 +41,19 @@ function RegistrarPessoa() {
     const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
 
+    useEffect(() => {
+        if (user && user.role > Role.CASHIER) {
+            showModal(
+                <MessageModal 
+                    icon="error" title="Erro" message={"Você não tem permissão para registrar um usuário."}
+                    buttons={[ { label: "Fechar", action: closeModal } ]}
+                ></MessageModal>
+            );
+    
+            router.push("/painel/pessoas");
+        };
+    }, [user]);
+
     const [userRegisterErrors, setUserRegisterErrors] = useState({});
     const [userRegisterLoading, setUserRegisterLoading] = useState(false);
 
