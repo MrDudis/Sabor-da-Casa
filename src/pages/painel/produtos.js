@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import Head from "next/head";
 
-import UserContext from "@/components/painel/auth/UserContext";
+import UserContext from "@/providers/user/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
@@ -30,7 +30,7 @@ function Produtos() {
 
     const { user } = useContext(UserContext);
 
-    const [baseAnimationDelay, setBaseAnimationDelay] = useState(800);
+    const [baseAnimationDelay, setBaseAnimationDelay] = useState(400);
     const animationDelay = 50;
 
     const [products, setProducts] = useState(Array(15).fill(null));
@@ -40,7 +40,7 @@ function Produtos() {
         let response = await productsLib.getAll();
 
         if (response.status === 200) {
-            setTimeout(() => { setProducts(response.products); setBaseAnimationDelay(0); }, 2000);
+            setTimeout(() => { setProducts(response.products); setBaseAnimationDelay(0); }, 1600);
         } else {
             alert(response.message ?? "Erro desconhecido.");
         };
@@ -84,8 +84,8 @@ function Produtos() {
 
             <div className="w-full flex flex-col justify-center items-start border-b border-neutral-800 scale-right-to-left">
                 <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
-                    <h1 className="font-lgc text-3xl sm:text-4xl text-left slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>Produtos</h1>
-                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                    <h1 className="font-lgc text-3xl sm:text-4xl text-left slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>Produtos</h1>
+                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "300ms" }}>
                         <Link href="/painel" className="hover:font-bold">Painel</Link> <p className="cursor-default">{" > "}</p> 
                         <p className="cursor-default truncate">Produtos</p>
                     </p>
@@ -98,7 +98,7 @@ function Produtos() {
 
                     <div className={`flex w-full ${user?.role <= Role.MANAGER ? "xl:w-[50%]" : ""} gap-6`}>
 
-                        <div className="w-full flex flex-row items-center gap-1 border-b border-neutral-800 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                        <div className="w-full flex flex-row items-center gap-1 border-b border-neutral-800 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "300ms" }}>
                             <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 96 960 960" width="28" className="fill-neutral-800">
                                 <path d="M745.826 920.435 526.913 701.523q-29.435 21.739-68.152 34.608-38.718 12.87-83.283 12.87-114.087 0-193.544-79.457Q102.477 590.087 102.477 476q0-114.087 79.457-193.544 79.457-79.457 193.544-79.457 114.087 0 193.544 79.457Q648.479 361.913 648.479 476q0 45.13-12.87 83.283-12.869 38.152-34.608 67.021l220.478 221.044q14.956 14.956 14.674 36.326-.283 21.37-15.674 36.761-14.957 14.957-37.327 14.957-22.37 0-37.326-14.957ZM375.478 642.999q69.913 0 118.456-48.543Q542.477 545.913 542.477 476q0-69.913-48.543-118.456-48.543-48.543-118.456-48.543-69.913 0-118.456 48.543Q208.479 406.087 208.479 476q0 69.913 48.543 118.456 48.543 48.543 118.456 48.543Z"/>
                             </svg>
@@ -110,14 +110,14 @@ function Produtos() {
                     {
                         user?.role <= Role.MANAGER ? (
                             <div className="w-full flex flex-col sm:flex-row gap-6 xl:w-[50%]">
-                                <Link href="/painel/produtos/adicionar" className="w-full min-w-[190px] flex flex-row justify-start items-center gap-3 bg-neutral-100 cursor-pointer hover:bg-neutral-200 rounded-md px-4 py-3 transition-all smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>        
+                                <Link href="/painel/produtos/adicionar" className="w-full min-w-[190px] flex flex-row justify-start items-center gap-3 bg-neutral-100 cursor-pointer hover:bg-neutral-200 rounded-md px-4 py-3 transition-all smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>        
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                                         <path d="M565.5-405.5q17 0 28.5-11.5t11.5-28.5v-80h80q17 0 28.5-11.5t11.5-28.5q0-17-11.5-28.5t-28.5-11.5h-80v-80q0-17-11.5-28.5t-28.5-11.5q-17 0-28.5 11.5t-11.5 28.5v80h-80q-17 0-28.5 11.5t-11.5 28.5q0 17 11.5 28.5t28.5 11.5h80v80q0 17 11.5 28.5t28.5 11.5ZM328.37-237.37q-37.783 0-64.392-26.608-26.608-26.609-26.608-64.392v-474.26q0-37.783 26.608-64.392 26.609-26.609 64.392-26.609h474.26q37.783 0 64.392 26.609 26.609 26.609 26.609 64.392v474.26q0 37.783-26.609 64.392-26.609 26.608-64.392 26.608H328.37Zm-171 171q-37.783 0-64.392-26.608-26.609-26.609-26.609-64.392v-519.76q0-19.153 13.174-32.327 13.174-13.173 32.326-13.173 19.153 0 32.327 13.173 13.174 13.174 13.174 32.327v519.76h519.76q19.153 0 32.327 13.174 13.173 13.174 13.173 32.327 0 19.152-13.173 32.326Q696.283-66.37 677.13-66.37H157.37Z"/>
                                     </svg>
                                     <p className="text-black font-lgc font-bold text-xl">Adicionar</p>
                                 </Link>
 
-                                <Link href="/painel/produtos/estoque" className="w-full min-w-[190px] flex flex-row justify-start items-center gap-3 bg-neutral-100 cursor-pointer hover:bg-neutral-200 rounded-md px-4 py-3 transition-all smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "700ms" }}>        
+                                <Link href="/painel/produtos/estoque" className="w-full min-w-[190px] flex flex-row justify-start items-center gap-3 bg-neutral-100 cursor-pointer hover:bg-neutral-200 rounded-md px-4 py-3 transition-all smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "500ms" }}>        
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                                         <path d="M484.522-608.479q-17 0-28.5-11.5t-11.5-28.5v-80h-80q-17 0-28.5-11.5t-11.5-28.5q0-17 11.5-28.5t28.5-11.5h80v-80q0-17 11.5-28.5t28.5-11.5q17 0 28.5 11.5t11.5 28.5v80h80q17 0 28.5 11.5t11.5 28.5q0 17-11.5 28.5t-28.5 11.5h-80v80q0 17-11.5 28.5t-28.5 11.5ZM280-71.521q-33 0-56.5-23.5t-23.5-56.5q0-33 23.5-56.5t56.5-23.5q33 0 56.5 23.5t23.5 56.5q0 33-23.5 56.5t-56.5 23.5Zm400 0q-33 0-56.5-23.5t-23.5-56.5q0-33 23.5-56.5t56.5-23.5q33 0 56.5 23.5t23.5 56.5q0 33-23.5 56.5t-56.5 23.5Zm-400-200q-51.033 0-77.103-43.457-26.071-43.457-.81-87.544L254.391-496 114.913-791.521H80q-20.603 0-34.541-13.938Q31.52-819.397 31.52-840q0-20.603 13.938-34.541Q59.397-888.479 80-888.479h62.739q14.957 0 28.122 7.917 13.166 7.917 19.748 22.432L343.13-537.523h277.74l136.217-245.999q6.13-12.261 17.891-18.326 11.761-6.065 25.052-6.631 27.789-.565 41.967 23.674 14.177 24.24.351 49.327L703.87-486.522q-12.13 21.696-32.109 34.109Q651.783-440 626.522-440H333.609l-38.913 71.521H720q20.603 0 34.541 13.938 13.938 13.938 13.938 34.541 0 20.603-13.938 34.541-13.938 13.938-34.541 13.938H280Z"/>
                                     </svg>

@@ -1,23 +1,30 @@
 import "@/styles/globals.css";
 import "@/styles/animations.css";
 
-import UserProvider from "@/components/painel/auth/UserProvider";
+import ModalProvider from "@/providers/modal/ModalProvider";
+import UserProvider from "@/providers/user/UserProvider";
 
 export default function App({ Component, pageProps }) {
 
   const getLayout = Component.getLayout || ((page) => page);
 
+  const Page = (
+    <ModalProvider>
+      {getLayout(<Component {...pageProps} />)}
+    </ModalProvider>
+  );
+
   if (Component.requiresUser) {
     
     return (
       <UserProvider>
-        {getLayout(<Component {...pageProps} />)}
+        {Page}
       </UserProvider>
     );
 
   } else {
 
-    return getLayout(<Component {...pageProps} />);
+    return Page;
 
   };
   

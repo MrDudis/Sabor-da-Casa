@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import UserContext from "@/components/painel/auth/UserContext";
+import UserContext from "@/providers/user/UserContext";
 
 import User from "@/models/User";
 

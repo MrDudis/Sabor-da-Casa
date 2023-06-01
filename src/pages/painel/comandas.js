@@ -3,7 +3,7 @@ import { useContext } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-import UserContext from "@/components/painel/auth/UserContext";
+import UserContext from "@/providers/user/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
@@ -37,8 +37,8 @@ function Comandas() {
 
             <div className="w-full flex flex-col justify-center items-start border-b border-neutral-800 scale-right-to-left">
                 <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
-                    <h1 className="font-lgc text-3xl sm:text-4xl text-left slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>Comandas</h1>
-                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                    <h1 className="font-lgc text-3xl sm:text-4xl text-left slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>Comandas</h1>
+                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "300ms" }}>
                         <Link href="/painel" className="hover:font-bold">Painel</Link> <p className="cursor-default">{" > "}</p> 
                         <p className="cursor-default truncate">Comandas</p>
                     </p>

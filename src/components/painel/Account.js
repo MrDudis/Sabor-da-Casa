@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 
-import UserContext from "@/components/painel/auth/UserContext";
+import UserContext from "@/providers/user/UserContext";
 
 import Dropdown from "./account/AccountDropdown";
 
@@ -32,7 +32,7 @@ export default function Account() {
     if (!user) { return null; }
 
     return (
-        <div ref={dropdown} className={`flex flex-row justify-between items-center absolute z-40 top-0 right-0 px-1 mx-3 sm:mx-7 my-4 sm:my-7 w-auto min-w-[148px] h-9 rounded-full select-none cursor-pointer ${accountColor} hover:bg-stone-700 account-slide-in`}>
+        <div ref={dropdown} className={`w-auto min-w-[148px] flex flex-row justify-between items-center absolute z-40 top-0 right-0 px-1 mx-3 sm:mx-7 my-4 sm:my-7 h-9 rounded-full select-none cursor-pointer ${accountColor} hover:bg-stone-700 account-slide-in`}>
 
             <div className="w-full flex flex-row items-center" onClick={() => { setShowDropdown(!showDropdown) }}>
 

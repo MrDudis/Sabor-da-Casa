@@ -53,7 +53,7 @@ handler.patch(async (req, res) => {
 
     let newUser = new User(Object.assign({}, user, { ...req.body.user }));
 
-    let errors = validateUserData(newUser);
+    let errors = validateUserData(newUser, req.user);
 
     if (Object.keys(errors).length > 0) {
         return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });

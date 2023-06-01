@@ -20,11 +20,14 @@ export function getServerSideProps({ req, res }) {
 
 export default function Login() {
 
-    const errorBox = useRef(null);
-    const [errorMessage, setErrorMessage] = useState("");
+    const loginErrorBox = useRef(null);
+    const [loginErrorMessage, setLoginErrorMessage] = useState("");
+    const [loginLoading, setLoginLoading] = useState(false);
     
     const handleLoginSubmit = async (event) => {
         event.preventDefault();
+
+        setLoginLoading(true);
       
         const formData = new FormData(event.target);
 
@@ -46,9 +49,9 @@ export default function Login() {
             };
 
         } else {
-            setErrorMessage(response?.message ?? "Erro desconhecido.");
+            setLoginErrorMessage(response?.message ?? "Erro desconhecido.");
 
-            let errorBoxClassList =errorBox.current.classList;
+            let errorBoxClassList = loginErrorBox.current.classList;
 
             if (errorBoxClassList.contains("hidden")) {
                 errorBoxClassList.remove("hidden"); errorBoxClassList.add("flex");
@@ -62,6 +65,7 @@ export default function Login() {
             
         };
 
+        setTimeout(() => { setLoginLoading(false) }, 500);
     };
 
     return (
@@ -97,11 +101,11 @@ export default function Login() {
                                     <p className="font-lgc text-neutral-900 text-md">Acesse a Área Restrita do Restaurante Sabor da Casa.</p>
                                 </div>
 
-                                <div ref={errorBox} className={`bg-red-500 hidden flex-row justify-start items-center gap-2 w-full px-3 py-2 mt-6 rounded-lg`}>
+                                <div ref={loginErrorBox} className={`bg-red-500 hidden flex-row justify-start items-center gap-2 w-full px-3 py-2 mt-6 rounded-lg`}>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
                                         <path d="M480 776q17 0 28.5-11.5T520 736q0-17-11.5-28.5T480 696q-17 0-28.5 11.5T440 736q0 17 11.5 28.5T480 776Zm0-160q17 0 28.5-11.5T520 576V416q0-17-11.5-28.5T480 376q-17 0-28.5 11.5T440 416v160q0 17 11.5 28.5T480 616Zm0 360q-83 0-156-31.5T197 859q-54-54-85.5-127T80 576q0-83 31.5-156T197 293q54-54 127-85.5T480 176q83 0 156 31.5T763 293q54 54 85.5 127T880 576q0 83-31.5 156T763 859q-54 54-127 85.5T480 976Z"/>
                                     </svg>
-                                    <p className="font-lgc text-white text-lg">{errorMessage}</p>
+                                    <p className="font-lgc text-white text-lg">{loginErrorMessage}</p>
                                 </div>
 
                                 <div className="w-full flex flex-col gap-2 mt-7">
@@ -119,11 +123,17 @@ export default function Login() {
                             </div>
 
                             <div className="w-full flex flex-row justify-center items-center mt-2">
-                                <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all" type="submit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white">
-                                        <path d="M361.761 754.652q-12.674-14.434-12.674-33.087 0-18.652 12.674-31.326L430.5 621.5H154.022q-19.153 0-32.327-13.174T108.521 576q0-19.152 13.174-32.326t32.327-13.174H430.5l-68.979-68.978q-13.434-13.435-13.315-32.087.12-18.653 13.555-32.087 12.674-13.435 31.445-13.435 18.772 0 31.446 12.674l147.826 147.587q6.718 6.717 9.576 14.793 2.859 8.076 2.859 17.033t-2.859 17.033q-2.858 8.076-9.576 14.793L424.413 755.652q-13.435 13.435-31.707 12.555-18.271-.881-30.945-13.555Zm161.826 189.479q-19.152 0-32.326-13.174t-13.174-32.327q0-19.152 13.174-32.326t32.326-13.174h236.891V298.87H523.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.153 13.174-32.327t32.326-13.174h236.891q37.783 0 64.392 26.609 26.609 26.609 26.609 64.392v554.26q0 37.783-26.609 64.392-26.609 26.609-64.392 26.609H523.587Z"/>
-                                    </svg>
-                                    Entrar
+                                <button disabled={loginLoading} className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                                    { loginLoading ? (
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
+                                            <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-white fast-fade-in">
+                                            <path d="M361.761 754.652q-12.674-14.434-12.674-33.087 0-18.652 12.674-31.326L430.5 621.5H154.022q-19.153 0-32.327-13.174T108.521 576q0-19.152 13.174-32.326t32.327-13.174H430.5l-68.979-68.978q-13.434-13.435-13.315-32.087.12-18.653 13.555-32.087 12.674-13.435 31.445-13.435 18.772 0 31.446 12.674l147.826 147.587q6.718 6.717 9.576 14.793 2.859 8.076 2.859 17.033t-2.859 17.033q-2.858 8.076-9.576 14.793L424.413 755.652q-13.435 13.435-31.707 12.555-18.271-.881-30.945-13.555Zm161.826 189.479q-19.152 0-32.326-13.174t-13.174-32.327q0-19.152 13.174-32.326t32.326-13.174h236.891V298.87H523.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.153 13.174-32.327t32.326-13.174h236.891q37.783 0 64.392 26.609 26.609 26.609 26.609 64.392v554.26q0 37.783-26.609 64.392-26.609 26.609-64.392 26.609H523.587Z"/>
+                                        </svg>
+                                    ) }
+                                    { loginLoading ? "Entrando..." : "Entrar" }
                                 </button>
                             </div>
 

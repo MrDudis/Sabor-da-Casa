@@ -1,3 +1,5 @@
+import { Role } from "@/models/User";
+
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -89,7 +91,7 @@ export function validateUserMeData(user) {
 
 };
 
-export function validateUserData(user) {
+export function validateUserData(user, me) {
 
     let errors = validateUserMeData(user);
 
@@ -97,8 +99,12 @@ export function validateUserData(user) {
         errors = { ...errors, role: "O cargo é obrigatório." };
     } else {
 
-        if (user.role < 0 || user.role > 4) {
+        if (user.role < Role.ADMIN || user.role > Role.CUSTOMER) {
             errors = { ...errors, role: "Cargo inválido." };
+        };
+
+        if (me.role != Role.ADMIN && me.role >= user.role) {
+            errors = { ...errors, role: "Você não tem permissão para criar um usuário com este cargo." };
         };
 
     };

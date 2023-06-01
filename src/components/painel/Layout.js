@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Link from "next/link";
 
-import UserContext from "@/components/painel/auth/UserContext";
+import UserContext from "@/providers/user/UserContext";
 
 import { Role } from "@/models/User";
 
@@ -123,7 +123,7 @@ export default function Dashboard({ children, activePage }) {
 
             </div>
 
-            <div className="flex w-full fade-in">
+            <div className="flex w-full fast-fade-in">
 
                 <div className="w-full pb-24 sm:pb-6 p-6 sm:p-10 overflow-auto min-h-screen max-h-screen">
 

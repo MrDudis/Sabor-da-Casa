@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import Head from "next/head";
 
-import UserContext from "@/components/painel/auth/UserContext";
+import UserContext from "@/providers/user/UserContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
@@ -28,7 +28,7 @@ function Pessoas() {
 
     const { user } = useContext(UserContext);
 
-    const [baseAnimationDelay, setBaseAnimationDelay] = useState(800);
+    const [baseAnimationDelay, setBaseAnimationDelay] = useState(400);
     const animationDelay = 50;
 
     const [users, setUsers] = useState(Array(18).fill(null));
@@ -38,7 +38,7 @@ function Pessoas() {
         let response = await usersLib.getAll();
 
         if (response.status === 200) {
-            setTimeout(() => { setUsers(response.users); setBaseAnimationDelay(0); }, 2000);
+            setTimeout(() => { setUsers(response.users); setBaseAnimationDelay(0); }, 1600);
         } else {
             alert(response.message ?? "Erro desconhecido.");
         };
@@ -83,8 +83,8 @@ function Pessoas() {
 
             <div className="w-full flex flex-col justify-center items-start border-b border-neutral-800 scale-right-to-left">
                 <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
-                    <h1 className="font-lgc text-3xl sm:text-4xl text-left slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>Pessoas</h1>
-                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                    <h1 className="font-lgc text-3xl sm:text-4xl text-left slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>Pessoas</h1>
+                    <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "300ms" }}>
                         <Link href="/painel" className="hover:font-bold">Painel</Link> <p className="cursor-default">{" > "}</p> 
                         <p className="cursor-default truncate">Pessoas</p>
                     </p>
@@ -97,7 +97,7 @@ function Pessoas() {
 
                     <div className="flex w-full sm:w-[70%] gap-6">
 
-                        <div className="w-full flex flex-row items-center gap-1 border-b border-neutral-800 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                        <div className="w-full flex flex-row items-center gap-1 border-b border-neutral-800 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "300ms" }}>
                             <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 96 960 960" width="28" className="fill-neutral-800">
                                 <path d="M745.826 920.435 526.913 701.523q-29.435 21.739-68.152 34.608-38.718 12.87-83.283 12.87-114.087 0-193.544-79.457Q102.477 590.087 102.477 476q0-114.087 79.457-193.544 79.457-79.457 193.544-79.457 114.087 0 193.544 79.457Q648.479 361.913 648.479 476q0 45.13-12.87 83.283-12.869 38.152-34.608 67.021l220.478 221.044q14.956 14.956 14.674 36.326-.283 21.37-15.674 36.761-14.957 14.957-37.327 14.957-22.37 0-37.326-14.957ZM375.478 642.999q69.913 0 118.456-48.543Q542.477 545.913 542.477 476q0-69.913-48.543-118.456-48.543-48.543-118.456-48.543-69.913 0-118.456 48.543Q208.479 406.087 208.479 476q0 69.913 48.543 118.456 48.543 48.543 118.456 48.543Z"/>
                             </svg>
@@ -106,7 +106,7 @@ function Pessoas() {
 
                     </div>
 
-                    <Link href="/painel/pessoas/registrar" className="w-full min-w-[190px] sm:w-[30%] flex flex-row justify-start items-center gap-3 bg-neutral-100 hover:bg-neutral-200 cursor-pointer rounded-md px-4 py-3 transition-all smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "700ms" }}>
+                    <Link href="/painel/pessoas/registrar" className="w-full min-w-[190px] sm:w-[30%] flex flex-row justify-start items-center gap-3 bg-neutral-100 hover:bg-neutral-200 cursor-pointer rounded-md px-4 py-3 transition-all smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24" className="fill-neutral-800">
                             <path d="M774.696 631.694q-18.921 0-31.722-12.8-12.8-12.8-12.8-31.722v-70.956h-70.956q-18.921 0-31.722-12.8-12.8-12.8-12.8-31.722 0-18.921 12.8-31.721 12.801-12.801 31.722-12.801h70.956v-70.956q0-18.921 12.8-31.721 12.801-12.801 31.722-12.801 18.922 0 31.722 12.801 12.8 12.8 12.8 31.721v70.956h70.956q18.922 0 31.722 12.801 12.8 12.8 12.8 31.721 0 18.922-12.8 31.722t-31.722 12.8h-70.956v70.956q0 18.922-12.8 31.722t-31.722 12.8Zm-411.305-65.303q-74.478 0-126.848-52.37-52.37-52.37-52.37-126.849 0-74.478 52.37-126.565 52.37-52.088 126.848-52.088 74.479 0 126.849 52.088 52.37 52.087 52.37 126.565 0 74.479-52.37 126.849-52.37 52.37-126.849 52.37ZM77.174 924.828q-22.088 0-37.544-15.457-15.457-15.457-15.457-37.544v-79.348q0-39.258 20.437-72.166 20.436-32.907 54.303-50.226 63.696-31.566 129.933-47.631 66.238-16.065 134.545-16.065 69.392 0 135.653 15.782 66.261 15.783 128.826 47.348 33.867 17.238 54.303 49.989 20.437 32.751 20.437 72.969v79.348q0 22.087-15.457 37.544-15.457 15.457-37.544 15.457H77.174Z"/>
                         </svg>
