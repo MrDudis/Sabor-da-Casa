@@ -81,7 +81,7 @@ export function AdvancedSelect({ name, label, options, defaultValue, onChange, e
 
 };
 
-export function FilterRadioInput({ name, label, options, defaultValue }) {
+export function FilterRadioInput({ name, options, defaultValue }) {
 
     return (
         <>
@@ -98,4 +98,23 @@ export function FilterRadioInput({ name, label, options, defaultValue }) {
         </>
     );
 
-}
+};
+
+export function FilterCheckboxInput({ name, options, defaultValue }) {
+
+    return (
+        <>
+            { 
+                options.map((option, index) => {
+                    return (
+                        <label class="inline-flex items-center" index={index}>
+                            <input type="checkbox" class="font-lgc h-4 w-4 text-black border border-gray-300" name={option?.name} value={option?.value}></input>
+                            <span class="ml-2 font-lgc text-gray-700">{option?.label}</span>
+                        </label>
+                    );
+                })
+            }
+        </>
+    );
+
+};

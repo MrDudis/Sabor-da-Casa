@@ -128,7 +128,7 @@ function Conta() {
         const formData = new FormData(event.target);
 
         if (formData.get("newPassword") !== formData.get("confirmNewPassword")) {
-            setTimeout(() => { setUserUpdateLoading(false); }, 500);
+            setTimeout(() => { setPasswordUpdateLoading(false); }, 500);
             return setPasswordUpdateErrors({ confirmNewPassword: "As senhas não coincidem." });
         };
 
@@ -136,10 +136,11 @@ function Conta() {
 
         if (response.status === 200) {
             setPasswordUpdateErrors({});
+            event.target.reset();
 
             showModal(
                 <MessageModal 
-                    icon="success" title="Successo!" message="Suas senha foi alterada com successo."
+                    icon="success" title="Successo!" message="Sua senha foi alterada com successo."
                     buttons={[ { label: "Fechar", action: closeModal } ]}
                 ></MessageModal>
             );
