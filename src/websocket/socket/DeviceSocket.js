@@ -6,8 +6,6 @@ export default class DeviceSocket {
 
     constructor(socket) {
         this.socket = socket;
-
-        this.userId = 1;
         
         devicesDb.insert(this).then(id => {
             this.id = id;

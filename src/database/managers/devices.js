@@ -3,7 +3,7 @@ import db from "../db.js";
 import Device from "../../models/Device.js";
 
 export async function insert(device) {
-    console.log(device)
+    
     const query = `
         INSERT INTO dispositivo (id_pessoa)
         VALUES (?)
@@ -11,7 +11,7 @@ export async function insert(device) {
     
     return new Promise((resolve, reject) => {
 
-        db.run(query, [device.userId], function (error) {
+        db.run(query, [device?.userId], function (error) {
 
             if (error) {
                 console.log(error);
