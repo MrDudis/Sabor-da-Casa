@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { roleNames } from "@/models/User";
+import { roleNames } from "../../../models/User.js";
 
 export default function PersonBox({ user, animationDelay }) {
 

@@ -3,6 +3,7 @@ import "@/styles/animations.css";
 
 import ModalProvider from "@/providers/modal/ModalProvider";
 import UserProvider from "@/providers/user/UserProvider";
+import WebSocketProvider from "@/providers/websocket/WebSocketProvider";
 
 export default function App({ Component, pageProps }) {
 
@@ -18,7 +19,9 @@ export default function App({ Component, pageProps }) {
     
     return (
       <UserProvider>
-        {Page}
+        <WebSocketProvider>
+          {Page}
+        </WebSocketProvider>
       </UserProvider>
     );
 

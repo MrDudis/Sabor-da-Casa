@@ -1,17 +1,17 @@
 import db from "../db.js";
 
-import Product from "../../models/Product.js";
+import Device from "../../models/Device.js";
 
-export async function insert(product) {
-
+export async function insert(device) {
+    console.log(device)
     const query = `
-        INSERT INTO produto (nome, descricao, imagem, preco, estoque)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO dispositivo (id_pessoa)
+        VALUES (?)
     `;
     
     return new Promise((resolve, reject) => {
 
-        db.run(query, [product.name, product.description, product.image, product.price, product.stock], function (error) {
+        db.run(query, [device.userId], function (error) {
 
             if (error) {
                 console.log(error);
@@ -26,33 +26,11 @@ export async function insert(product) {
 
 };
 
-export async function get(id) {
-
-    const query = `
-        SELECT *
-        FROM produto
-        WHERE id = ?
-    `;
-
-    return new Promise((resolve, reject) => {
-
-        db.get(query, [id], (error, row) => {
-            if (row) {
-                resolve(new Product(row));
-            } else {
-                resolve(null);
-            }
-        });
-
-    });
-
-};
-
 export async function getAll() {
 
     const query = `
         SELECT *
-        FROM produto
+        FROM dispositivo
     `;
 
     return new Promise((resolve, reject) => {
@@ -63,7 +41,7 @@ export async function getAll() {
                 console.log(error);
                 resolve(null);
             } else if (rows) {
-                resolve(rows.map(row => new Product(row)));
+                resolve(rows.map(row => new Device(row)));
             } else {
                 resolve(null);
             };
@@ -74,17 +52,16 @@ export async function getAll() {
 
 };
 
-export async function update(product) {
+export async function deleteDevice(id) {
 
     const query = `
-        UPDATE produto
-        SET nome = ?, descricao = ?, imagem = ?, preco = ?, estoque = ?
+        DELETE FROM dispositivo
         WHERE id = ?
     `;
-    
+
     return new Promise((resolve, reject) => {
-        
-        db.run(query, [product.name, product.description, product.image, product.price, product.stock, product.id], (error) => {
+
+        db.run(query, [id], function (error) {
 
             if (error) {
                 console.log(error);
@@ -92,23 +69,22 @@ export async function update(product) {
             } else {
                 resolve(true);
             };
-            
+
         });
 
     });
 
 };
 
-export async function deleteProduct(id) {
-
+export async function deleteAll() {
+    
     const query = `
-        DELETE FROM produto
-        WHERE id = ?
+        DELETE FROM dispositivo
     `;
 
     return new Promise((resolve, reject) => {
 
-        db.run(query, [id], function (error) {
+        db.run(query, function (error) {
 
             if (error) {
                 console.log(error);

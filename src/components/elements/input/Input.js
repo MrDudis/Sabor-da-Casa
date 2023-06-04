@@ -1,4 +1,4 @@
-import input from "@/components/elements/input/Input.module.css";
+import input from "./Input.module.css";
 
 export function BasicInput({ name, label, placeholder, type, onChange, onBlur, defaultValue, error }) {
 

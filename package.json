@@ -1,6 +1,7 @@
 {
   "name": "experiencia-criativa-3o-periodo",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,11 +11,14 @@
     "reset-db": "node ./scripts/create_db.js"
   },
   "dependencies": {
+    "express": "^4.18.2",
+    "js-cookie": "^3.0.5",
     "next": "13.2.4",
     "next-connect": "0.13.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sqlite3": "5.1.6"
+    "sqlite3": "5.1.6",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "autoprefixer": "10.4.14",

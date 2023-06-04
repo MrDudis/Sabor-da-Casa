@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import Link from "next/link";
 
-import UserContext from "@/providers/user/UserContext";
+import UserContext from "../../providers/user/UserContext.js";
 
-import { Role } from "@/models/User";
+import { Role } from "../../models/User.js";
 
-import styles from "@/styles/painel/Layout.module.css";
+import styles from "../../styles/painel/Layout.module.css";
 
 export default function Dashboard({ children, activePage }) {
 

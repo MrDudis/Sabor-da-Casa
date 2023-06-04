@@ -1,5 +1,5 @@
-import * as usersDb from "@/database/managers/users";
-import * as tokensDb from "@/database/managers/tokens";
+import * as usersDb from "../database/managers/users.js";
+import * as tokensDb from "../database/managers/tokens.js";
 
 export default async function authenticate(req, res, next) {
 

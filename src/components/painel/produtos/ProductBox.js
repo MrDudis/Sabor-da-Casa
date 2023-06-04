@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { formatPrice } from "@/utils/formatting/price";
+import { formatPrice } from "../../../utils/formatting/price.js";
 
 export default function ProductBox({ product, animationDelay }) {
 

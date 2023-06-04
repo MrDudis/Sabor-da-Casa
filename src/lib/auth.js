@@ -1,5 +1,5 @@
 export async function login(userinfo, password) {
-    console.log(`${userinfo} ${password}`)
+    
     try {
 
         const response = await fetch("/api/auth/login", {

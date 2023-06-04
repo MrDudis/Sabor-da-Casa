@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-import * as authLib from "@/lib/auth";
+import * as authLib from "../../../lib/auth.js";
 
 export default function Dropdown({ showDropdown, setShowDropdown }) {
 

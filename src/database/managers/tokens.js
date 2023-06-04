@@ -1,6 +1,6 @@
 import db from "../db.js";
 
-import { generateToken } from "@/utils/token.js";
+import { generateToken } from "../../utils/token.js";
 
 export async function insert(id_pessoa) {
 

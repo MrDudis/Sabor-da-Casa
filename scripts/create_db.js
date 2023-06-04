@@ -1,5 +1,5 @@
-const sqlite3 = require("sqlite3").verbose();
-const fs = require("fs");
+import sqlite3 from "sqlite3";
+import fs from "fs";
 
 if (!fs.existsSync("./database")) {
     fs.mkdirSync("./database");
@@ -83,6 +83,14 @@ function create_db() {
                 imagem VARCHAR(128),
                 preco DOUBLE NOT NULL,
                 estoque INTEGER NOT NULL
+            );
+        `);
+
+        db.run(`
+            CREATE TABLE dispositivo (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_pessoa INTEGER,
+                FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);
 

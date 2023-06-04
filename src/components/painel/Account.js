@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 
-import UserContext from "@/providers/user/UserContext";
+import UserContext from "../../providers/user/UserContext.js";
 
 import Dropdown from "./account/AccountDropdown";
 

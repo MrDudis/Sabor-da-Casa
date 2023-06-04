@@ -1,8 +1,8 @@
 import db from "../db.js";
 
-import User, { Role } from "@/models/User.js";
+import User, { Role } from "../../models/User.js";
 
-import { hashStringToSHA256 } from "@/utils/hash.js";
+import { hashStringToSHA256 } from "../../utils/hash.js";
 
 const rolesTable = {
     [Role.CUSTOMER]: "cliente",
