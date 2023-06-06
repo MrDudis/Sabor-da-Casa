@@ -1,3 +1,5 @@
+import User from "./User";
+
 export default class Device {
 
     constructor(data) {
@@ -19,6 +21,18 @@ export default class Device {
             this.userId = data.id_pessoa;
         } else {
             this.userId ??= null;
+        };
+
+        if ("name" in data) {
+            this.name = data.name;
+        } else if ("nome" in data) {
+            this.name = data.nome;
+        } else {
+            this.name ??= null;
+        };
+
+        if (data.user != null) {
+            this.user = new User(data.user);
         };
 
     };

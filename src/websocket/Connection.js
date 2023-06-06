@@ -18,7 +18,7 @@ export default class Connection {
     start() {
 
         let startMessage = {
-            operation: "hello"
+            operation: "HELLO"
         };
 
         this.socket.send(JSON.stringify(startMessage));
@@ -33,7 +33,7 @@ export default class Connection {
 
         message = JSON.parse(message);
 
-        if (message?.operation == "identify") {
+        if (message?.operation == "IDENTIFY") {
             let token = message?.data?.token;
 
             let identification = await identify(token);
@@ -44,7 +44,7 @@ export default class Connection {
                 this.socket.client = identification.client;
                 
                 let authenticatedMessage = {
-                    operation: "identify_success"
+                    operation: "IDENTIFY_SUCCESS"
                 };
 
                 this.socket.send(JSON.stringify(authenticatedMessage));
@@ -56,7 +56,7 @@ export default class Connection {
 
                 } else if (identification.type == "device") {
                     
-                    let deviceSocket = new DeviceSocket(this.socket);
+                    let deviceSocket = new DeviceSocket(this.socket, (message?.data?.name ?? "Dispositivo Desconhecido"));
                     this.onMessage = (message) => deviceSocket.onMessage(message);
 
                 };
@@ -64,7 +64,7 @@ export default class Connection {
             } else {
 
                 let identifyErrorMessage = {
-                    operation: "identify_error"
+                    operation: "IDENTIFY_ERROR"
                 };
 
                 this.socket.send(JSON.stringify(identifyErrorMessage));

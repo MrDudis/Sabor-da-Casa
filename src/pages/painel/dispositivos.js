@@ -2,7 +2,9 @@ import { useContext, useState, useEffect } from "react";
 
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
+import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
 import WebSocketContext from "@/providers/websocket/WebSocketContext";
 
@@ -10,7 +12,10 @@ import * as devicesLib from "@/lib/devices";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
+
 import DeviceBox from "@/components/painel/dispositivos/DeviceBox";
+
+import { MessageModal } from "@/components/elements/modal/Modal";
 
 export function getServerSideProps({ req, res }) {
 
@@ -29,13 +34,13 @@ export function getServerSideProps({ req, res }) {
 
 function Dispositivos({ token }) {
 
+    const router = useRouter();
+
+    const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
 
     const { connect, socket } = useContext(WebSocketContext);
-
-    useEffect(() => {
-        connect(token);
-    }, []);
+    useEffect(() => { connect(token); }, []);
 
     const [timerState, setTimerState] = useState(false);
 
@@ -51,7 +56,7 @@ function Dispositivos({ token }) {
 
     }, [timerState]);
 
-    const [devices, setDevices] = useState(Array(18).fill(null));
+    const [devices, setDevices] = useState([ null ]);
 
     const fetchDevices = async () => {
         setTimerState(false);
@@ -83,7 +88,6 @@ function Dispositivos({ token }) {
         return () => {
             socket.off("REFRESH_DEVICES", fetchDevices);
         };
-
     }, [socket]);
 
     return (
@@ -123,7 +127,7 @@ function Dispositivos({ token }) {
                     <p className="font-lgc">Esta página atualiza em tempo real.</p>
                 </div>
 
-                <div className="w-full grid grid-cols-1 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 gap-6">
 
                     {
                         devices.map((deviceData, index) => {

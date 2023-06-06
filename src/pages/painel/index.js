@@ -1,8 +1,9 @@
-import { useContext } from "react";
+import { useEffect, useContext } from "react";
 
 import Head from "next/head";
 
 import UserContext from "@/providers/user/UserContext";
+import WebSocketContext from "@/providers/websocket/WebSocketContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
@@ -15,14 +16,19 @@ export function getServerSideProps({ req, res }) {
     };
 
     return {
-        props: {}
+        props: {
+            token: req.cookies.token
+        }
     };
 
 };
 
-function Painel() {
+function Painel({ token }) {
 
     const { user } = useContext(UserContext);
+
+    const { connect, socket } = useContext(WebSocketContext);
+    useEffect(() => { connect(token); }, []);
 
     return (
         <>

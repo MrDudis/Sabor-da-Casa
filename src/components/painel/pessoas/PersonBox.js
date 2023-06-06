@@ -21,7 +21,7 @@ export default function PersonBox({ user, animationDelay }) {
                 </div>
 
                 <div className="w-full flex flex-col justify-center items-center text-center">
-                    <p className="w-full h-full text-black font-lgc font-bold text-lg truncate-2-line">{user?.name}</p>
+                    <p className="w-full h-full text-black font-lgc font-bold text-lg truncate">{user?.name}</p>
                     <p className="text-black font-lgc text-sm">{roleNames[user?.role]}</p>
                 </div>
             </div>

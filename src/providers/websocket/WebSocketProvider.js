@@ -15,7 +15,7 @@ class WebSocketManager extends EventEmitter {
     };
 
     connect() {
-        this.socket = new WebSocket("ws://192.168.15.151:81/");
+        this.socket = new WebSocket("ws://192.168.15.151:8081/");
 
         this.socket.onopen = this.onopen.bind(this);
         this.socket.onmessage = this.onmessage.bind(this);
@@ -32,8 +32,8 @@ class WebSocketManager extends EventEmitter {
         const message = JSON.parse(event.data);
 
         switch (message.operation) {
-            case "hello":
-                this.socket.send(JSON.stringify({ operation: "identify", data: { token: this.token } }));
+            case "HELLO":
+                this.socket.send(JSON.stringify({ operation: "IDENTIFY", data: { token: this.token } }));
                 break;
             default:
                 this.emit(message.operation, message);

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
+import WebSocketContext from "@/providers/websocket/WebSocketContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
@@ -29,17 +30,22 @@ export function getServerSideProps({ req, res }) {
     };
 
     return {
-        props: {}
+        props: {
+            token: req.cookies.token
+        }
     };
 
 };
 
-function Produto() {
+function Produto({ token }) {
 
     const router = useRouter();
 
     const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
+
+    const { connect, socket } = useContext(WebSocketContext);
+    useEffect(() => { connect(token); }, []);
     
     const [product, setProduct] = useState(null);
     const [productLoadError, setProductLoadError] = useState(null);
@@ -235,6 +241,7 @@ function Produto() {
                     </svg>
                     <p className="font-lgc text-lg">Voltar</p>
                 </Link>
+                
                 <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
                     <h1 className="font-lgc text-3xl sm:text-4xl slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>{product?.name}</h1>
                     <p className="w-full flex flex-row items-center justify-start gap-2 font-lgc sm:text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "300ms" }}>

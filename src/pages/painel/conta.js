@@ -7,6 +7,7 @@ import { roleNames, Gender } from "@/models/User";
 
 import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
+import WebSocketContext from "@/providers/websocket/WebSocketContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
@@ -32,15 +33,20 @@ export function getServerSideProps({ req, res }) {
     };
 
     return {
-        props: {}
+        props: {
+            token: req.cookies.token
+        }
     };
 
 };
 
-function Conta() {
+function Conta({ token }) {
 
     const { showModal, closeModal } = useContext(ModalContext);
     const { user, setUser } = useContext(UserContext);
+
+    const { connect, socket } = useContext(WebSocketContext);
+    useEffect(() => { connect(token); }, []);
 
     const [userUpdateErrors, setUserUpdateErrors] = useState({});
     const [userUpdateLoading, setUserUpdateLoading] = useState(false);

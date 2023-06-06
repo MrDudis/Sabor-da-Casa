@@ -5,7 +5,6 @@ import authentication from "@/middlewares/authentication";
 import { Role } from "@/models/User";
 
 import * as usersDb from "@/database/managers/users";
-import * as devicesDb from "@/database/managers/devices";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -25,19 +24,25 @@ handler.get(async (req, res) => {
         return res.status(403).json({ status: 403, message: "Você não tem permissão para buscar dispositivos.", code: "UNAUTHORIZED" });
     };
 
-    const devices = await devicesDb.getAll();
+    const deviceSockets = req.wss.getDeviceSocket().sockets;
 
-    if (!devices) {
-        return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
-    };
+    let devices = [];
 
-    for (let device of devices) {
+    for (let deviceSocket of deviceSockets) {
+
+        let device = {
+            id: deviceSocket.id,
+            name: deviceSocket.name,
+            userId: deviceSocket.userId,
+        };
         
-        if (device.userId != null) {
+        if (deviceSocket.userId != null) {
             device.user = await usersDb.getById(device.userId);
         } else {
             device.user = null;
         };
+
+        devices.push(device);
 
     };
     

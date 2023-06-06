@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
+import WebSocketContext from "@/providers/websocket/WebSocketContext";
 
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
@@ -26,17 +27,22 @@ export function getServerSideProps({ req, res }) {
     };
 
     return {
-        props: {}
+        props: {
+            token: req.cookies.token
+        }
     };
 
 };
 
-function Pessoas() {
+function Pessoas({ token }) {
 
     const router = useRouter();
 
     const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
+
+    const { connect, socket } = useContext(WebSocketContext);
+    useEffect(() => { connect(token); }, []);
 
     const [baseAnimationDelay, setBaseAnimationDelay] = useState(400);
     const animationDelay = 50;

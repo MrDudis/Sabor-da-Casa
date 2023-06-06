@@ -8,11 +8,11 @@ def on_message(ws, message):
     
     operation = message_json["operation"]
 
-    if operation == "hello":
+    if operation == "HELLO":
         ws.send(json.dumps({
-            "operation": "identify",
-            "data": { "token": token }
+            "operation": "IDENTIFY",
+            "data": { "name": "Emulador Python v0.1", "token": token }
         }))
 
-ws = websocket.WebSocketApp("ws://192.168.15.151:81", on_message=on_message)
+ws = websocket.WebSocketApp("ws://192.168.15.151:8081", on_message=on_message)
 ws.run_forever()

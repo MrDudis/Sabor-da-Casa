@@ -87,8 +87,8 @@ function create_db() {
         `);
 
         db.run(`
-            CREATE TABLE dispositivo (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            CREATE TABLE cartoes (
+                id_cartao INTEGER PRIMARY KEY,
                 id_pessoa INTEGER,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
