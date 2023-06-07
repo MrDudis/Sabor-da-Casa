@@ -88,7 +88,7 @@ function create_db() {
 
         db.run(`
             CREATE TABLE cartoes (
-                id_cartao INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY,
                 id_pessoa INTEGER,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );

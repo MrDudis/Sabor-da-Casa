@@ -51,7 +51,7 @@ export default class Connection {
 
                 if (identification.type == "user") {
 
-                    let userSocket = new UserSocket(this.socket);
+                    let userSocket = new UserSocket(this.socket, identification.client);
                     this.onMessage = (message) => userSocket.onMessage(message);
 
                 } else if (identification.type == "device") {
