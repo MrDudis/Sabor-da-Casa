@@ -27,6 +27,7 @@ export function getServerSideProps({ req, res }) {
     if (!req.cookies.token) {
         res.writeHead(302, { Location: "/login?r=" + req.url });
         res.end();
+        return { props: {} };
     };
 
     return {

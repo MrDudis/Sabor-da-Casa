@@ -24,6 +24,7 @@ export function getServerSideProps({ req, res }) {
     if (!req.cookies.token) {
         res.writeHead(302, { Location: "/login?r=" + req.url });
         res.end();
+        return { props: {} };
     };
 
     return {
@@ -32,6 +33,24 @@ export function getServerSideProps({ req, res }) {
         }
     };
 
+};
+
+const sortOptions = {
+    NAME: {
+        ASC: "name_asc",
+        DESC: "name_desc"
+    },
+    ROLE: {
+        ASC: "role_asc",
+        DESC: "role_desc"
+    }
+};
+
+const sortOptionsLabels = {
+    [sortOptions.NAME.ASC]: "Nome (A-Z)",
+    [sortOptions.NAME.DESC]: "Nome (Z-A)",
+    [sortOptions.ROLE.ASC]: "Cargo (Crescente)",
+    [sortOptions.ROLE.DESC]: "Cargo (Decrecente)"
 };
 
 function Pessoas({ token }) {
@@ -72,6 +91,8 @@ function Pessoas({ token }) {
 
     const [searchQuery, setSearchQuery] = useState("");
     const [searchTimeout, setSearchTimeout] = useState(null);
+
+    const [sortOption, setSortOption] = useState(sortOptions.NAME.ASC);
 
     const handleSearch = async () => {
         let query = searchQuery.trim();
@@ -170,13 +191,17 @@ function Pessoas({ token }) {
                                 </svg>
                                 <div className="flex flex-row items-baseline justify-start gap-1">
                                     <h2 className="font-lgc font-bold">Ordenar por:</h2>
-                                    <p className="font-lgc text-sm">Nome</p>
+                                    <p className="font-lgc text-sm">{sortOptionsLabels[sortOption]}</p>
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" className={`fill-neutral-700 ${showSortDropdown ? "rotate-180" : ""} transition-all`}>
                                     <path d="m436-374-98-98q-31-31-14.5-71t60.5-40h197q43 0 59.5 40T626-472l-98 98q-9 9-21.5 14t-24.5 5q-12 0-24.5-5T436-374Z"/>
                                 </svg>
 
-                                <PersonSortDropdown showDropdown={showSortDropdown}></PersonSortDropdown>
+                                <PersonSortDropdown 
+                                    selectedSortOption={sortOption} setSortOption={setSortOption} 
+                                    sortOptions={sortOptions} sortOptionsLabels={sortOptionsLabels}
+                                    showDropdown={showSortDropdown}
+                                ></PersonSortDropdown>
                             </div>
                         </div>
 
@@ -216,7 +241,11 @@ function Pessoas({ token }) {
                         </div>
 
                         <div className="w-full flex flex-col items-start justify-start p-4 gap-3 rounded-md border border-neutral-400 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "200ms" }}>
-                            <p className="font-lgc text-lg">Cargo</p>
+                            
+                            <div className="w-full flex flex-row justify-between items-center">
+                                <p className="font-lgc text-lg">Cargo</p>
+                                <p className="font-lgc text-neutral-600 text-xs cursor-pointer hover:underline">Limpar</p>
+                            </div>
                             
                             <FilterCheckboxInput
                                 name="price"

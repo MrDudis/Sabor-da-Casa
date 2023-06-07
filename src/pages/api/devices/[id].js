@@ -35,12 +35,7 @@ handler.get(async (req, res) => {
         id: device.id,
         name: device.name,
         userId: device.userId,
-    };
-
-    if (device.userId != null) {
-        deviceData.user = await usersDb.getById(device.userId);
-    } else {
-        deviceData.user = null;
+        user: device.user
     };
 
     res.status(200).json({ status: 200, message: "OK", code: "OK", device: deviceData });

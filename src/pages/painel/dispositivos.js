@@ -22,6 +22,7 @@ export function getServerSideProps({ req, res }) {
     if (!req.cookies.token) {
         res.writeHead(302, { Location: "/login?r=" + req.url });
         res.end();
+        return { props: {} };
     };
 
     return {
@@ -56,7 +57,7 @@ function Dispositivos({ token }) {
 
     }, [timerState]);
 
-    const [devices, setDevices] = useState([ null ]);
+    const [devices, setDevices] = useState([]);
 
     const fetchDevices = async () => {
         setTimerState(false);
@@ -82,13 +83,38 @@ function Dispositivos({ token }) {
 
     useEffect(() => {
         if (!socket) { return; };
+        
+        const deviceCreate = (data) => {
+            if (!data) { return; };
 
-        socket.on("REFRESH_DEVICES", fetchDevices);
+            setDevices([ ...devices, data.device ]);
+        };
+
+        socket.on("DEVICE_CREATE", deviceCreate);
+
+        const deviceUpdate = (data) => {
+            if (!data) { return; };
+            
+            let otherDevices = devices.filter(device => device.id != data.device.id);
+            setDevices([ ...otherDevices, data.device ]);
+        };
+
+        socket.on("DEVICE_UPDATE", deviceUpdate);
+
+        const deviceDelete = (data) => {
+            if (!data) { return; };
+
+            setDevices(devices.filter(device => device.id != data.device.id));
+        };
+
+        socket.on("DEVICE_DELETE", deviceDelete);
 
         return () => {
-            socket.off("REFRESH_DEVICES", fetchDevices);
+            socket.off("DEVICE_CREATE", deviceCreate);
+            socket.off("DEVICE_UPDATE", deviceUpdate);
+            socket.off("DEVICE_DELETE", deviceDelete);
         };
-    }, [socket]);
+    }, [socket, devices]);
 
     return (
         <>

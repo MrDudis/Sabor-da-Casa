@@ -34,14 +34,9 @@ handler.get(async (req, res) => {
             id: deviceSocket.id,
             name: deviceSocket.name,
             userId: deviceSocket.userId,
+            user: deviceSocket.user
         };
         
-        if (deviceSocket.userId != null) {
-            device.user = await usersDb.getById(device.userId);
-        } else {
-            device.user = null;
-        };
-
         devices.push(device);
 
     };

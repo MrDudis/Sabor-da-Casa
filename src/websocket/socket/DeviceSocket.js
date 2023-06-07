@@ -5,6 +5,8 @@ import { Role } from "../../models/User.js";
 import * as usersDb from "../../database/managers/users.js";
 import * as cardsDb from "../../database/managers/cards.js";
 
+import Device from "../../models/Device.js";
+
 export default class DeviceSocket {
 
     static id = 0;
@@ -27,19 +29,14 @@ export default class DeviceSocket {
 
         this.name = name;
         this.id = DeviceSocket.id++;
+
         this.userId = null;
+        this.user = null;
 
         DeviceSocket.sockets.add(this);
-        UserSocket.emit({ operation: "REFRESH_DEVICES" });
-
+        UserSocket.emit({ operation: "DEVICE_CREATE", data: { device: new Device(this) } });
+        
         this.socket.on("close", () => this.onClose());
-    };
-
-    setUserId(userId) {
-        this.userId = userId;
-
-        UserSocket.emit({ operation: "REFRESH_DEVICES" });
-        UserSocket.emit({ operation: "UPDATE_DEVICE" }, { data: { id: this.id }})
     };
 
     onMessage(message) {
@@ -60,8 +57,19 @@ export default class DeviceSocket {
     onClose() {
         DeviceSocket.sockets.delete(this);
 
-        UserSocket.emit({ operation: "REFRESH_DEVICES" });
-        UserSocket.emit({ operation: "DELETE_DEVICE" }, { data: { id: this.id }})
+        UserSocket.emit({ operation: "DEVICE_DELETE", data: { device: new Device(this) } });
+    };
+
+    async setUserId(userId) {
+        this.userId = userId;
+
+        if (userId != null) {
+            this.user = await usersDb.getById(userId);
+        } else {
+            this.user = null;
+        };
+
+        UserSocket.emit({ operation: "DEVICE_UPDATE", data: { device: new Device(this) } });
     };
 
     async pair(cardId) {
@@ -83,9 +91,14 @@ export default class DeviceSocket {
         if (this.userId == null) { return; }
 
         const userId = await cardsDb.get(cardId);
-        if (!userId) { return; }
-        
-        UserSocket.emitToUserId(this.userId, { operation: "ACTION", data: { deviceId: this.id, userId, cardId }});
+
+        let user = null;
+
+        if (userId != null) {
+            user = await usersDb.getById(userId);
+        };
+
+        UserSocket.emitToUserId(this.userId, { operation: "ACTION", data: { deviceId: this.id, user, userId, cardId }});
     };
 
     forceDisconnect() {

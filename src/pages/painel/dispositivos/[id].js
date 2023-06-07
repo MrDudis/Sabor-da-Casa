@@ -22,8 +22,9 @@ export function getServerSideProps({ req, res }) {
     if (!req.cookies.token) {
         res.writeHead(302, { Location: "/login?r=" + req.url });
         res.end();
+        return { props: {} };
     };
-
+    
     return {
         props: {
             token: req.cookies.token
@@ -64,15 +65,16 @@ function Dispositivo({ token }) {
     useEffect(() => {
         if (!socket) { return; };
 
-        const onDeviceUpdate = (data) => {
-            if (data.id !== device?.id) { return; }
+        const deviceUpdate = (data) => {
+            if (!data || data.device?.id != device?.id) { return; }
             
-            setDevice(null);
-            fetchDevice();
+            setDevice(data.device);
         };
     
-        const onDeviceDelete = (data) => {
-            if (data.id !== device?.id) { return; }
+        socket.on("DEVICE_UPDATE", deviceUpdate);
+
+        const deviceDelete = (data) => {
+            if (!data || data.device?.id != device?.id) { return; }
             
             showModal(
                 <MessageModal
@@ -84,14 +86,13 @@ function Dispositivo({ token }) {
             router.push("/painel/dispositivos");
         };
 
-        socket.on("UPDATE_DEVICE", onDeviceUpdate);
-        socket.on("DELETE_DEVICE", onDeviceDelete);
+        socket.on("DEVICE_DELETE", deviceDelete);
 
         return () => {
-            socket.off("UPDATE_DEVICE", onDeviceUpdate);
-            socket.off("DELETE_DEVICE", onDeviceDelete);
+            socket.off("DEVICE_UPDATE", deviceUpdate);
+            socket.off("DEVICE_DELETE", deviceDelete);
         };
-    }, [socket]);
+    }, [socket, device]);
 
     const [devicePairLoading, setDevicePairLoading] = useState(false);
 

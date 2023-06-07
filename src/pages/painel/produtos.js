@@ -28,6 +28,7 @@ export function getServerSideProps({ req, res }) {
     if (!req.cookies.token) {
         res.writeHead(302, { Location: "/login?r=" + req.url });
         res.end();
+        return { props: {} };
     };
 
     return {
@@ -302,7 +303,11 @@ function Produtos({ token }) {
                         </div>
 
                         <div className="w-full flex flex-col items-start justify-start p-4 gap-3 rounded-md border border-neutral-400 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "300ms" }}>
-                            <p className="font-lgc text-lg">Estoque</p>
+                            
+                            <div className="w-full flex flex-row justify-between items-center">
+                                <p className="font-lgc text-lg">Estoque</p>
+                                <p className="font-lgc text-neutral-600 text-xs cursor-pointer hover:underline">Limpar</p>
+                            </div>
                             
                             <FilterRadioInput
                                 name="stock"

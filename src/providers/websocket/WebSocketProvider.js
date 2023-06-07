@@ -36,7 +36,7 @@ class WebSocketManager extends EventEmitter {
                 this.socket.send(JSON.stringify({ operation: "IDENTIFY", data: { token: this.token } }));
                 break;
             default:
-                this.emit(message.operation, message);
+                this.emit(message.operation, (message?.data ?? null));
                 break;
         };
     };
