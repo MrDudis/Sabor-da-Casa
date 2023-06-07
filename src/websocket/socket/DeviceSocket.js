@@ -1,6 +1,6 @@
 import UserSocket from "./UserSocket.js";
 
-import { Role } from "@/models/User.js";
+import { Role } from "../../models/User.js";
 
 import * as usersDb from "../../database/managers/users.js";
 import * as cardsDb from "../../database/managers/cards.js";

@@ -8,7 +8,7 @@ import WebSocket from "./websocket/ws.js";
 const express = expressJS();
 const server = http.Server(express);
 
-const next = nextJS({ dev: true });
+const next = nextJS({ dev: false });
 const nextHandler = next.getRequestHandler();
 
 next.prepare().then(async () => {
