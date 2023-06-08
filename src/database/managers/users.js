@@ -132,6 +132,39 @@ export async function getByCredentials(userinfo, password) {
 
 };
 
+export async function getByEmailOrCPF(email, cpf) {
+
+    const query = `
+        SELECT p.*, c.id_pessoa AS cliente_id, f.id_pessoa AS funcionario_id, cx.id_pessoa AS caixa_id, g.id_pessoa AS gerente_id, a.id_pessoa AS administrador_id
+        FROM pessoa p
+        LEFT JOIN cliente c ON p.id = c.id_pessoa
+        LEFT JOIN funcionario f ON p.id = f.id_pessoa
+        LEFT JOIN caixa cx ON p.id = cx.id_pessoa
+        LEFT JOIN gerente g ON p.id = g.id_pessoa
+        LEFT JOIN administrador a ON p.id = a.id_pessoa
+        WHERE p.email = ? OR p.cpf = ?
+        LIMIT 1
+    `;
+
+    return new Promise((resolve, reject) => {
+
+        db.get(query, [email, cpf], (error, row) => {
+
+            if (error) {
+                console.log(error);
+                resolve(null);
+            } else if (row) {
+                resolve(new User(row));
+            } else {
+                resolve(null);
+            };
+
+        });
+
+    });
+
+};
+
 export async function getAll() {
 
     const query = `
@@ -167,7 +200,7 @@ export async function update(user) {
 
     const query = `
         UPDATE pessoa
-        SET nome = ?, cpf = ?, email = ?, telefone = ?, data_nasc = ?, sexo = ?
+        SET nome = ?, cpf = ?, email = ?, telefone = ?, data_nasc = ?, sexo = ?, data_edicao = CURRENT_TIMESTAMP
         WHERE id = ?
     `;
 
@@ -261,7 +294,7 @@ export async function updateUser(user) {
 
     const query = `
         UPDATE pessoa
-        SET nome = ?, cpf = ?, email = ?, telefone = ?, data_nasc = ?, sexo = ?
+        SET nome = ?, cpf = ?, email = ?, telefone = ?, data_nasc = ?, sexo = ?, data_edicao = CURRENT_TIMESTAMP
         WHERE id = ?
     `;
     

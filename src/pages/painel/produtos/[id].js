@@ -18,6 +18,7 @@ import Product from "@/models/Product";
 
 import * as productsLib from "@/lib/products";
 
+import { formatTimestamp } from "@/utils/formatting/timestamp";
 import { formatPrice } from "@/utils/formatting/price";
 
 import { validateInputPriceChange, validateInputPriceBlur, parseInputPrice } from "@/utils/validation/client/price";
@@ -272,7 +273,7 @@ function Produto({ token }) {
                             </svg>
                             <div className="w-full flex flex-col items-start justify-center">
                                 <p className="font-lgc text-lg font-bold">Adicionado em</p>
-                                <p className="font-lgc text-lg">24 de Maio de 2023</p>
+                                <p className="font-lgc text-lg">{formatTimestamp(product?.createdAt)}</p>
                             </div>
                         </div>
 
@@ -303,7 +304,7 @@ function Produto({ token }) {
                             </svg>
                             <div className="flex flex-col lg:flex-row gap-0 lg:gap-1">
                                 <p className="font-lgc text-black font-bold">Última Edição em</p>
-                                <p className="font-lgc text-black">24 de Maio de 2023.</p>
+                                <p className="font-lgc text-black">{formatTimestamp(product?.updatedAt)}.</p>
                             </div>
                         </div>
 

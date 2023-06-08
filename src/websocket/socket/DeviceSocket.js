@@ -24,10 +24,14 @@ export default class DeviceSocket {
 
     };
 
-    constructor(socket, name) {
+    constructor(socket, name, serial) {
         this.socket = socket;
 
         this.name = name;
+        this.serial = serial;
+
+        this.connectedAt = new Date();
+        
         this.id = DeviceSocket.id++;
 
         this.userId = null;

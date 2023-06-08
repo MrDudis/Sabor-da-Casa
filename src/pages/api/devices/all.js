@@ -2,9 +2,8 @@ import nextConnect from "next-connect";
 
 import authentication from "@/middlewares/authentication";
 
+import Device from "@/models/Device";
 import { Role } from "@/models/User";
-
-import * as usersDb from "@/database/managers/users";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -25,21 +24,8 @@ handler.get(async (req, res) => {
     };
 
     const deviceSockets = req.wss.getDeviceSocket().sockets;
-
-    let devices = [];
-
-    for (let deviceSocket of deviceSockets) {
-
-        let device = {
-            id: deviceSocket.id,
-            name: deviceSocket.name,
-            userId: deviceSocket.userId,
-            user: deviceSocket.user
-        };
-        
-        devices.push(device);
-
-    };
+    
+    const devices = [...deviceSockets.values()].map(deviceSocket => new Device(deviceSocket));
     
     res.status(200).json({ status: 200, message: "OK", code: "OK", devices });
 

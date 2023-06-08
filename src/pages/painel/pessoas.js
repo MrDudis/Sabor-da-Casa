@@ -8,6 +8,8 @@ import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
 import WebSocketContext from "@/providers/websocket/WebSocketContext";
 
+import { Role } from "@/models/User";
+
 import Dashboard from "@/components/painel/Layout";
 import Account from "@/components/painel/Account";
 
@@ -250,11 +252,11 @@ function Pessoas({ token }) {
                             <FilterCheckboxInput
                                 name="price"
                                 options={[
-                                    { label: "Administrador", value: "0" },
-                                    { label: "Gerente", value: "1" },
-                                    { label: "Caixa", value: "2" },
-                                    { label: "Funcionário", value: "3" },
-                                    { label: "Cliente", value: "4" }
+                                    { label: "Administrador", value: Role.ADMIN },
+                                    { label: "Gerente", value: Role.MANAGER },
+                                    { label: "Caixa", value: Role.CASHIER },
+                                    { label: "Funcionário", value: Role.EMPLOYEE },
+                                    { label: "Cliente", value: Role.CUSTOMER }
                                 ]}
                             ></FilterCheckboxInput>
 

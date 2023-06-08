@@ -31,6 +31,13 @@ handler.patch(async (req, res) => {
     let newUser = new User({ ...req.user, ...req.body.user, id: req.user.id, role: req.user.role });
     
     let errors = validateUserMeData(newUser);
+
+    let checkUser = await usersDb.getByEmailOrCPF(newUser.email, newUser.cpf);
+
+    if (checkUser && checkUser.id != req.user.id) {
+        if (checkUser.email == newUser.email) { errors = { ...errors, email: "Este e-mail já está em uso." }; };
+        if (checkUser.cpf == newUser.cpf) { errors = { ...errors, cpf: "Este CPF já está em uso." }; };
+    };
     
     if (Object.keys(errors).length > 0) {
         return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });
@@ -42,7 +49,9 @@ handler.patch(async (req, res) => {
         return res.status(400).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
     };
 
-    res.status(200).json({ status: 200, message: "OK", code: "OK", user: newUser });
+    const updatedUser = await usersDb.getById(newUser.id);
+
+    res.status(200).json({ status: 200, message: "OK", code: "OK", user: updatedUser });
 
 });
 

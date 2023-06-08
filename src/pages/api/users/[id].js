@@ -51,9 +51,25 @@ handler.patch(async (req, res) => {
         return res.status(404).json({ status: 404, message: "Usuário não encontrado.", code: "UNKNOWN_USER" });
     };
 
+    if (req.user.role >= user.role) {
+
+        if (req.user.id == id) {
+            return res.status(403).json({ status: 403, message: "Para editar as suas informações, utilize a aba Minha Conta.", code: "UNAUTHORIZED" });
+        };
+
+        return res.status(403).json({ status: 403, message: "Você não tem permissão para editar este usuário.", code: "UNAUTHORIZED" });
+    };
+
     let newUser = new User(Object.assign({}, user, { ...req.body.user }));
 
     let errors = validateUserData(newUser, req.user);
+
+    let checkUser = await usersDb.getByEmailOrCPF(newUser.email, newUser.cpf);
+
+    if (checkUser && checkUser.id != id) {
+        if (checkUser.email == newUser.email) { errors = { ...errors, email: "Este e-mail já está em uso." }; };
+        if (checkUser.cpf == newUser.cpf) { errors = { ...errors, cpf: "Este CPF já está em uso." }; };
+    };
 
     if (Object.keys(errors).length > 0) {
         return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });
@@ -65,7 +81,9 @@ handler.patch(async (req, res) => {
         return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
     };
 
-    res.status(200).json({ status: 200, message: "OK", code: "OK", user: newUser });
+    const updatedUser = await usersDb.getById(id);
+
+    res.status(200).json({ status: 200, message: "OK", code: "OK", user: updatedUser });
 
 });
 

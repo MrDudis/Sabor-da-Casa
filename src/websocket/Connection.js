@@ -56,7 +56,7 @@ export default class Connection {
 
                 } else if (identification.type == "device") {
                     
-                    let deviceSocket = new DeviceSocket(this.socket, (message?.data?.name ?? "Dispositivo Desconhecido"));
+                    let deviceSocket = new DeviceSocket(this.socket, (message?.data?.name ?? "Dispositivo Desconhecido"), (message?.data?.serial ?? "????-????-????"));
                     this.onMessage = (message) => deviceSocket.onMessage(message);
 
                 };

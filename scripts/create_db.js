@@ -24,14 +24,15 @@ function create_db() {
                 sexo INTEGER NOT NULL,
                 telefone VARCHAR(11),
                 email VARCHAR(255),
-                senha VARCHAR(64) NOT NULL
+                senha VARCHAR(64) NOT NULL,
+                data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+                data_edicao DATETIME DEFAULT CURRENT_TIMESTAMP
             );
         `);
 
         db.run(`
             CREATE TABLE cliente (
                 id_pessoa INTEGER PRIMARY KEY,
-                data_reg DATETIME,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);
@@ -82,7 +83,9 @@ function create_db() {
                 descricao TEXT NOT NULL,
                 imagem VARCHAR(128),
                 preco DOUBLE NOT NULL,
-                estoque INTEGER NOT NULL
+                estoque INTEGER NOT NULL,
+                data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+                data_edicao DATETIME DEFAULT CURRENT_TIMESTAMP
             );
         `);
 

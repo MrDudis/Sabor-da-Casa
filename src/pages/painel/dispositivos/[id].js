@@ -17,6 +17,8 @@ import Device from "@/models/Device";
 
 import * as devicesLib from "@/lib/devices";
 
+import { formatTimestampRelative } from "@/utils/formatting/timestamp";
+
 export function getServerSideProps({ req, res }) {
 
     if (!req.cookies.token) {
@@ -46,6 +48,8 @@ function Dispositivo({ token }) {
     const [device, setDevice] = useState(null);
     const [deviceLoadError, setDeviceLoadError] = useState(null);
 
+    const [deviceConnectedTimer, setDeviceConnectedTimer] = useState(null);
+
     const fetchDevice = async () => {
 
         const id = router.query?.id;
@@ -54,6 +58,7 @@ function Dispositivo({ token }) {
 
         if (response.status === 200) {
             setDevice(new Device(response.device));
+            setDeviceConnectedTimer(new Date(response.device.connectedAt));
         } else {
             setDeviceLoadError(response.message ?? "Erro desconhecido.");
         };
@@ -61,6 +66,34 @@ function Dispositivo({ token }) {
     };
 
     useEffect(() => { fetchDevice(); }, []);
+
+    useEffect(() => {
+        if (!device) { return; }
+
+        if (device.connectedAt) {
+            setDeviceConnectedTimer(new Date(device.connectedAt));
+        } else {
+            setDeviceConnectedTimer(null);
+        };
+
+    }, [device]);
+
+    useEffect(() => {console.log(deviceConnectedTimer);
+        if (!device || !device.connectedAt) { return; }
+
+        let timer = 1000;
+
+        if (Date.now() - new Date(device.connectedAt).getTime() > 1000 * 60) {
+            timer = 1000 * 60;
+        };
+        
+        const timeout = setTimeout(() => {
+            setDeviceConnectedTimer(new Date(device.connectedAt));
+        }, timer);
+
+        return () => { clearTimeout(timeout); };
+
+    }, [deviceConnectedTimer]);
 
     useEffect(() => {
         if (!socket) { return; };
@@ -321,30 +354,6 @@ function Dispositivo({ token }) {
                         <h1 className="font-lgc text-2xl font-bold">Informações do Dispositivo</h1>
                     </div>
 
-                    <div className="w-full flex flex-col xl:flex-row items-center gap-6">
-
-                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28">
-                                <path d="M528.479-500.522v-128.173q0-20.604-13.938-34.541-13.938-13.938-34.541-13.938-20.603 0-34.541 13.938-13.938 13.937-13.938 34.541v145.999q0 10.826 3.848 20.345 3.848 9.519 11.544 17.134l122.956 122.956q13.826 13.826 33.652 13.826 19.827 0 34.218-13.826 14.391-13.826 14.391-34.218 0-20.391-14.391-34.783l-109.26-109.26ZM480-60.782q-87.522 0-163.906-32.96-76.385-32.96-132.888-89.464-56.504-56.503-89.464-132.888Q60.782-392.478 60.782-480t32.96-163.906q32.96-76.385 89.464-132.888 56.503-56.504 132.888-89.464 76.384-32.96 163.906-32.96t163.906 32.96q76.385 32.96 132.888 89.464 56.504 56.503 89.464 132.888 32.96 76.384 32.96 163.906t-32.96 163.906q-32.96 76.385-89.464 132.888-56.503 56.504-132.888 89.464Q567.522-60.782 480-60.782ZM480-480Zm-.005 313.217q130.179 0 221.7-91.239Q793.217-349.261 793.217-480T701.7-701.978q-91.516-91.239-221.695-91.239-130.179 0-221.7 91.239Q166.783-610.739 166.783-480T258.3-258.022q91.516 91.239 221.695 91.239Z"/>
-                            </svg>
-                            <div className="w-full flex flex-col items-start justify-center">
-                                <p className="font-lgc text-lg font-bold">Tempo Conectado</p>
-                                <p className="font-lgc text-lg">2 minutos</p>
-                            </div>
-                        </div>
-
-                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                                <path d="M22.477-102.477V-320H120v120h120v97.523H22.477Zm697.523 0V-200h120v-120h97.523v217.523H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM22.477-640v-217.523H240V-760H120v120H22.477ZM840-640v-120H720v-97.523h217.523V-640H840Z"/>
-                            </svg>
-                            <div className="w-full flex flex-col items-start justify-center">
-                                <p className="font-lgc text-lg font-bold">Serial Number</p>
-                                <p className="font-lgc text-lg">4125-5273-3936</p>
-                            </div>
-                        </div>
-
-                    </div>
-
                     {
                         device?.userId ? (
                             <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
@@ -362,6 +371,30 @@ function Dispositivo({ token }) {
                             </div>
                         )
                     }
+
+                    <div className="w-full flex flex-col xl:flex-row items-center gap-6">
+
+                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28">
+                                <path d="M528.479-500.522v-128.173q0-20.604-13.938-34.541-13.938-13.938-34.541-13.938-20.603 0-34.541 13.938-13.938 13.937-13.938 34.541v145.999q0 10.826 3.848 20.345 3.848 9.519 11.544 17.134l122.956 122.956q13.826 13.826 33.652 13.826 19.827 0 34.218-13.826 14.391-13.826 14.391-34.218 0-20.391-14.391-34.783l-109.26-109.26ZM480-60.782q-87.522 0-163.906-32.96-76.385-32.96-132.888-89.464-56.504-56.503-89.464-132.888Q60.782-392.478 60.782-480t32.96-163.906q32.96-76.385 89.464-132.888 56.503-56.504 132.888-89.464 76.384-32.96 163.906-32.96t163.906 32.96q76.385 32.96 132.888 89.464 56.504 56.503 89.464 132.888 32.96 76.384 32.96 163.906t-32.96 163.906q-32.96 76.385-89.464 132.888-56.503 56.504-132.888 89.464Q567.522-60.782 480-60.782ZM480-480Zm-.005 313.217q130.179 0 221.7-91.239Q793.217-349.261 793.217-480T701.7-701.978q-91.516-91.239-221.695-91.239-130.179 0-221.7 91.239Q166.783-610.739 166.783-480T258.3-258.022q91.516 91.239 221.695 91.239Z"/>
+                            </svg>
+                            <div className="w-full flex flex-col items-start justify-center">
+                                <p className="font-lgc text-lg font-bold">Tempo Conectado</p>
+                                <p className="font-lgc text-lg">{formatTimestampRelative(deviceConnectedTimer)}</p>
+                            </div>
+                        </div>
+
+                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                <path d="M22.477-102.477V-320H120v120h120v97.523H22.477Zm697.523 0V-200h120v-120h97.523v217.523H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM22.477-640v-217.523H240V-760H120v120H22.477ZM840-640v-120H720v-97.523h217.523V-640H840Z"/>
+                            </svg>
+                            <div className="w-full flex flex-col items-start justify-center">
+                                <p className="font-lgc text-lg font-bold">Serial Number</p>
+                                <p className="font-lgc text-lg">{device?.serial ?? "????-????-????"}</p>
+                            </div>
+                        </div>
+
+                    </div>
 
                     {
                         device?.userId ? (

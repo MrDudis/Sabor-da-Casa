@@ -85,6 +85,22 @@ export default class User {
             this.role = Role.CUSTOMER;
         };
 
+        if ("data_criacao" in data) {
+            this.createdAt = data.data_criacao;
+        } else if ("createdAt" in data) {
+            this.createdAt = data.createdAt;
+        } else {
+            this.createdAt ??= null;
+        };
+
+        if ("data_edicao" in data) {
+            this.updatedAt = data.data_edicao;
+        } else if ("updatedAt" in data) {
+            this.updatedAt = data.updatedAt;
+        } else {
+            this.updatedAt ??= null;
+        };
+
     }
 
 }

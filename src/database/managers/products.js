@@ -78,7 +78,7 @@ export async function update(product) {
 
     const query = `
         UPDATE produto
-        SET nome = ?, descricao = ?, imagem = ?, preco = ?, estoque = ?
+        SET nome = ?, descricao = ?, imagem = ?, preco = ?, estoque = ?, data_edicao = CURRENT_TIMESTAMP
         WHERE id = ?
     `;
     

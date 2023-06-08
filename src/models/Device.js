@@ -31,8 +31,20 @@ export default class Device {
             this.name ??= null;
         };
 
+        if ("serial" in data) {
+            this.serial = data.serial;
+        } else {
+            this.serial ??= null;
+        };
+
         if (data.user != null) {
             this.user = new User(data.user);
+        };
+
+        if ("connectedAt" in data) {
+            this.connectedAt = data.connectedAt;
+        } else {
+            this.connectedAt ??= null;
         };
 
     };

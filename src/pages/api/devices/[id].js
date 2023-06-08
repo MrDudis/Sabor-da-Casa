@@ -2,9 +2,8 @@ import nextConnect from "next-connect";
 
 import authentication from "@/middlewares/authentication";
 
+import Device from "@/models/Device";
 import { Role } from "@/models/User";
-
-import * as usersDb from "@/database/managers/users";
 
 const handler = nextConnect({
     onError: (error, req, res, next) => {
@@ -25,20 +24,15 @@ handler.get(async (req, res) => {
     };
 
     const id = req.query.id;
-    const device = req.wss.getDeviceSocket().get(id);
+    const deviceSocket = req.wss.getDeviceSocket().get(id);
 
-    if (!device) {
+    if (!deviceSocket) {
         return res.status(404).json({ status: 404, message: "Dispositivo não encontrado.", code: "NOT_FOUND" });
     };
 
-    let deviceData = {
-        id: device.id,
-        name: device.name,
-        userId: device.userId,
-        user: device.user
-    };
+    const device = new Device(deviceSocket);
 
-    res.status(200).json({ status: 200, message: "OK", code: "OK", device: deviceData });
+    res.status(200).json({ status: 200, message: "OK", code: "OK", device });
 
 });
 

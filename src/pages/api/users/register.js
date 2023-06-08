@@ -31,6 +31,13 @@ handler.post(async (req, res) => {
 
     let errors = validateUserData(newUser, req.user);
 
+    let checkUser = await usersDb.getByEmailOrCPF(newUser.email, newUser.cpf);
+
+    if (checkUser) {
+        if (checkUser.email == newUser.email) { errors = { ...errors, email: "Este e-mail já está em uso." }; };
+        if (checkUser.cpf == newUser.cpf) { errors = { ...errors, cpf: "Este CPF já está em uso." }; };
+    };
+
     if (Object.keys(errors).length > 0) {
         return res.status(400).json({ status: 400, message: "Erro de validação.", code: "VALIDATION_ERROR", errors });
     };

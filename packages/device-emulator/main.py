@@ -11,7 +11,11 @@ def on_message(ws, message):
     if operation == "HELLO":
         ws.send(json.dumps({
             "operation": "IDENTIFY",
-            "data": { "name": "Emulador Python v0.1", "token": token }
+            "data": { 
+                "name": "Emulador Python v0.1",
+                "serial": "0000-0000-0000",
+                "token": token
+            }
         }))
 
 ws = websocket.WebSocketApp("ws://192.168.15.151:8081", on_message=on_message)
