@@ -46,7 +46,7 @@ handler.patch(async (req, res) => {
     const device = req.wss.getDeviceSocket().get(id);
 
     if (!device) {
-        return res.status(404).json({ status: 404, message: "Dispositivo não encontrado.", code: "NOT_FOUND" });
+        return res.status(404).json({ status: 404, message: "Dispositivo não encontrado.", code: "UNKNOWN_DEVICE" });
     };
 
     let userId = req.body.userId || null;
@@ -67,7 +67,7 @@ handler.delete(async (req, res) => {
     const device = req.wss.getDeviceSocket().get(id);
 
     if (!device) {
-        return res.status(404).json({ status: 404, message: "Dispositivo não encontrado.", code: "NOT_FOUND" });
+        return res.status(404).json({ status: 404, message: "Dispositivo não encontrado.", code: "UNKNOWN_DEVICE" });
     };
 
     device.forceDisconnect();

@@ -77,6 +77,12 @@ handler.delete(async (req, res) => {
 
     const id = req.query?.id;
 
+    const product = await productsDb.get(id);
+
+    if (!product) {
+        return res.status(404).json({ status: 404, message: "Produto não encontrado.", code: "UNKNOWN_PRODUCT" });
+    };
+
     let deleted = await productsDb.deleteProduct(id);
 
     if (!deleted) {

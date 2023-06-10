@@ -319,6 +319,7 @@ function Produtos({ token }) {
                                     { label: "Acima de 50", value: "4" },
                                     { label: "Outro:", value: "5" },
                                 ]}
+                                onChange={(newValue) => {  }}
                             />
 
                             <div className="w-full flex flex-row justify-between items-center gap-3 mt-2">

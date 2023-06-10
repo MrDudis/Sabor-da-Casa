@@ -46,6 +46,19 @@
         box-shadow: 0px 5px 50px;
     }
 
+    .scanner {
+        background-image: repeating-linear-gradient(0deg, #333333, #333333 15px, transparent 15px, transparent 26px, #333333 26px), repeating-linear-gradient(90deg, #333333, #333333 15px, transparent 15px, transparent 26px, #333333 26px), repeating-linear-gradient(180deg, #333333, #333333 15px, transparent 15px, transparent 26px, #333333 26px), repeating-linear-gradient(270deg, #333333, #333333 15px, transparent 15px, transparent 26px, #333333 26px);
+        background-size: 4px calc(100% + 26px), calc(100% + 26px) 4px, 4px calc(100% + 26px) , calc(100% + 26px) 4px;
+        background-position: 0 0, 0 0, 100% 0, 0 100%;
+        background-repeat: no-repeat;
+        animation: scanner-animation 0.7s infinite linear;
+    }
+
+    @keyframes scanner-animation {
+        from { background-position: 0 0, -26px 0, 100% -26px, 0 100%; }
+        to { background-position: 0 -26px, 0 0, 100% 0, -26px 100%; }
+    }
+
 }
 
 @font-face {

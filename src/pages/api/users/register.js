@@ -23,7 +23,7 @@ handler.use(authentication);
 handler.post(async (req, res) => {
 
     if (req.user.role > Role.CASHIER) {
-        return res.status(403).json({ status: 403, message: "Você não tem permissão para acessar esse recurso.", code: "UNAUTHORIZED" });
+        return res.status(403).json({ status: 403, message: "Você não tem permissão para registrar usuários.", code: "UNAUTHORIZED" });
     };
 
     let newUser = new User(req.body.user);

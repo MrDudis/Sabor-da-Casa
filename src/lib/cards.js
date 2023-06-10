@@ -1,13 +1,13 @@
-export async function register(user) {
+export async function register(card) {
 
     try {
 
-        const response = await fetch("/api/users/register", {
+        const response = await fetch("/api/cards/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ user })
+            body: JSON.stringify({ card })
         });
     
         let data = await response.json();
@@ -27,31 +27,7 @@ export async function get(id) {
 
     try {
 
-        const response = await fetch(`/api/users/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-
-        const data = await response.json();
-        return data
-
-    } catch (error) {
-        return {
-            status: 400,
-            message: "Falha ao buscar informações.",
-            code: "FETCH_ERROR"
-        };
-    };
-
-};
-
-export async function getCards(id) {
-
-    try {
-
-        const response = await fetch(`/api/users/${id}/cards`, {
+        const response = await fetch(`/api/cards/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -75,7 +51,7 @@ export async function getAll() {
 
     try {
 
-        const response = await fetch("/api/users/all", {
+        const response = await fetch("/api/cards/all", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -95,36 +71,36 @@ export async function getAll() {
 
 };
 
-export async function update(id, user) {
+export async function update(cardId, newUserId) {
 
     try {
 
-        const response = await fetch(`/api/users/${id}`, {
+        const response = await fetch(`/api/cards/${cardId}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ user })
+            body: JSON.stringify({ userId: newUserId })
         });
-
-        const data = await response.json();
-        return data
+    
+        let data = await response.json();
+        return data;
 
     } catch (error) {
         return {
             status: 400,
-            message: "Falha ao enviar requisição.",
+            message: "Falha ao buscar informações.",
             code: "FETCH_ERROR"
         };
     };
 
 };
 
-export async function deleteUser(id) {
+export async function deleteCard(id) {
 
     try {
 
-        const response = await fetch(`/api/users/${id}`, {
+        const response = await fetch(`/api/cards/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"

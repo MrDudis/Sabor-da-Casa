@@ -78,16 +78,16 @@ export default class DeviceSocket {
 
     async pair(cardId) {
         if (!cardId) { return; }
-
-        const userId = await cardsDb.get(cardId);
-        if (!userId) { return; }
-
-        const user = await usersDb.getById(userId);
+        
+        const card = await cardsDb.get(cardId);
+        if (!card?.userId) { return; }
+        
+        const user = await usersDb.getById(card?.userId);
         if (!user) { return; }
-
+        
         if (user.role == Role.CUSTOMER) { return; }
-
-        this.setUserId(userId);
+        
+        this.setUserId(card?.userId);
     };
 
     async action(cardId) {

@@ -1,8 +1,10 @@
+import User from "./User.js";
+
 export default class Card {
 
     constructor(data) {
 
-        this.id = data.id;
+        this.id = data?.id;
         this._patch(data);
 
     };
@@ -23,6 +25,26 @@ export default class Card {
             this.userId = data.id_pessoa;
         } else {
             this.userId ??= null;
+        };
+
+        if (data.user != null) {
+            this.user = new User(data.user);
+        };
+
+        if ("data_criacao" in data) {
+            this.createdAt = data.data_criacao;
+        } else if ("createdAt" in data) {
+            this.createdAt = data.createdAt;
+        } else {
+            this.createdAt ??= null;
+        };
+
+        if ("data_edicao" in data) {
+            this.updatedAt = data.data_edicao;
+        } else if ("updatedAt" in data) {
+            this.updatedAt = data.updatedAt;
+        } else {
+            this.updatedAt ??= null;
         };
 
     };

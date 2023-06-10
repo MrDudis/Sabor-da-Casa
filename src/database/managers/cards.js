@@ -3,11 +3,11 @@ import db from "../db.js";
 import Card from "../../models/Card.js";
 
 export async function upsert(card) {
-
+    
     const query = `
         INSERT INTO cartao (id, id_pessoa)
         VALUES (?, ?)
-        ON CONFLICT (id) DO UPDATE SET id_pessoa = ?
+        ON CONFLICT (id) DO UPDATE SET id_pessoa = ?, data_edicao = CURRENT_TIMESTAMP
     `;
 
     return new Promise((resolve, reject) => {
@@ -50,6 +50,33 @@ export async function get(id) {
 
     });
 
+
+};
+
+export async function getCardsByUserId(userId) {
+
+    const query = `
+        SELECT *
+        FROM cartao
+        WHERE id_pessoa = ?
+    `;
+
+    return new Promise((resolve, reject) => {
+
+        db.all(query, [userId], (error, rows) => {
+
+            if (error) {
+                console.log(error);
+                resolve(null);
+            } else if (rows) {
+                resolve(rows.map(row => new Card(row)));
+            } else {
+                resolve(null);
+            };
+
+        });
+
+    });
 
 };
 

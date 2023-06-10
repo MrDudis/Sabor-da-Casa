@@ -78,7 +78,7 @@ function Dispositivo({ token }) {
 
     }, [device]);
 
-    useEffect(() => {console.log(deviceConnectedTimer);
+    useEffect(() => {
         if (!device || !device.connectedAt) { return; }
 
         let timer = 1000;
@@ -289,12 +289,12 @@ function Dispositivo({ token }) {
                         <p className="text-black font-lgc font-bold text-2xl slide-up-fade-in opacity-0" style={{ animationDelay: "200ms" }}>Falha ao Carregar Dispositivo.</p>
                         <p className="text-black font-lgc text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>{deviceLoadError}</p>
                     </div>
-                    <Link href="/painel/dispositivos" className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                    <div onClick={() => router.back()} className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 cursor-pointer rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                             <path d="M420.869-189.13 166.478-442.956q-7.696-7.696-11.326-17.239-3.631-9.544-3.631-19.805t3.631-19.805q3.63-9.543 11.326-17.239l254.391-254.391q14.957-14.956 36.826-15.174 21.87-.217 37.827 15.739 15.957 15.522 16.457 37.11.5 21.587-15.457 37.544L333.306-533.001h400.65q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457h-400.65l163.216 163.215q14.957 14.957 15.457 37.044.5 22.088-15.457 37.61-15.522 15.956-37.609 15.956-22.087 0-38.044-15.956Z"/>
                         </svg>
                         <p className="font-lgc text-lg">Voltar</p>
-                    </Link>
+                    </div>
                 </div>
             );
         } else {
@@ -319,12 +319,12 @@ function Dispositivo({ token }) {
             </Head>
 
             <div className="w-full flex flex-col justify-center items-start gap-6 border-b border-neutral-800 scale-right-to-left">
-                <Link href="/painel/dispositivos" className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                <div onClick={() => router.back()} className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 cursor-pointer rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                         <path d="M420.869-189.13 166.478-442.956q-7.696-7.696-11.326-17.239-3.631-9.544-3.631-19.805t3.631-19.805q3.63-9.543 11.326-17.239l254.391-254.391q14.957-14.956 36.826-15.174 21.87-.217 37.827 15.739 15.957 15.522 16.457 37.11.5 21.587-15.457 37.544L333.306-533.001h400.65q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457h-400.65l163.216 163.215q14.957 14.957 15.457 37.044.5 22.088-15.457 37.61-15.522 15.956-37.609 15.956-22.087 0-38.044-15.956Z"/>
                     </svg>
                     <p className="font-lgc text-lg">Voltar</p>
-                </Link>
+                </div>
                 
                 <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
 
@@ -345,7 +345,7 @@ function Dispositivo({ token }) {
 
             <div className="flex flex-col md:flex-row justify-start items-start gap-6 py-6">
 
-                <div className="w-full md:w-[60%] flex flex-col gap-6">
+                <div className="w-full xl:w-[886px] flex flex-col gap-6">
 
                     <div className="w-full flex flex-row items-center gap-2 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "300ms" }}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
@@ -356,14 +356,14 @@ function Dispositivo({ token }) {
 
                     {
                         device?.userId ? (
-                            <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                            <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                                     <path d="M480-489.609q-74.479 0-126.849-52.37-52.369-52.37-52.369-126.849 0-74.478 52.369-126.565 52.37-52.088 126.849-52.088 74.479 0 126.849 52.088 52.369 52.087 52.369 126.565 0 74.479-52.369 126.849-52.37 52.37-126.849 52.37ZM246.783-131.172q-44.305 0-75.153-30.849-30.848-30.848-30.848-75.153v-26.347q0-39.088 20.326-72.109 20.326-33.022 54.413-50.283 63.696-31.566 129.957-47.631T480-449.609q69.391 0 135.652 15.782 66.261 15.783 128.827 47.348 34.087 17.261 54.413 50.001 20.326 32.739 20.326 72.957v26.347q0 44.305-30.848 75.153-30.848 30.849-75.153 30.849H246.783Z"/>
                                 </svg>
                                 <p className="font-lgc text-lg">Pareado com <span className="font-bold">{device.user.name}</span>.</p>
                             </div>
                         ) : (
-                            <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                            <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                                     <path d="M480-271.521q20.603 0 34.541-13.938 13.938-13.938 13.938-34.541v-151.521q0-20.604-13.938-34.541Q500.603-520 480-520q-20.603 0-34.541 13.938-13.938 13.937-13.938 34.541V-320q0 20.603 13.938 34.541 13.938 13.938 34.541 13.938Zm0-317.174q21.805 0 36.555-14.75T531.305-640q0-21.805-14.75-36.555T480-691.305q-21.805 0-36.555 14.75T428.695-640q0 21.805 14.75 36.555T480-588.695Zm0 527.913q-87.522 0-163.906-32.96-76.385-32.96-132.888-89.464-56.504-56.503-89.464-132.888Q60.782-392.478 60.782-480t32.96-163.906q32.96-76.385 89.464-132.888 56.503-56.504 132.888-89.464 76.384-32.96 163.906-32.96t163.906 32.96q76.385 32.96 132.888 89.464 56.504 56.503 89.464 132.888 32.96 76.384 32.96 163.906t-32.96 163.906q-32.96 76.385-89.464 132.888-56.503 56.504-132.888 89.464Q567.522-60.782 480-60.782Z"/>
                                 </svg>
@@ -372,9 +372,9 @@ function Dispositivo({ token }) {
                         )
                     }
 
-                    <div className="w-full flex flex-col xl:flex-row items-center gap-6">
+                    <div className="w-full flex flex-col lg:flex-row items-center gap-6">
 
-                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
+                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
                             <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28">
                                 <path d="M528.479-500.522v-128.173q0-20.604-13.938-34.541-13.938-13.938-34.541-13.938-20.603 0-34.541 13.938-13.938 13.937-13.938 34.541v145.999q0 10.826 3.848 20.345 3.848 9.519 11.544 17.134l122.956 122.956q13.826 13.826 33.652 13.826 19.827 0 34.218-13.826 14.391-13.826 14.391-34.218 0-20.391-14.391-34.783l-109.26-109.26ZM480-60.782q-87.522 0-163.906-32.96-76.385-32.96-132.888-89.464-56.504-56.503-89.464-132.888Q60.782-392.478 60.782-480t32.96-163.906q32.96-76.385 89.464-132.888 56.503-56.504 132.888-89.464 76.384-32.96 163.906-32.96t163.906 32.96q76.385 32.96 132.888 89.464 56.504 56.503 89.464 132.888 32.96 76.384 32.96 163.906t-32.96 163.906q-32.96 76.385-89.464 132.888-56.503 56.504-132.888 89.464Q567.522-60.782 480-60.782ZM480-480Zm-.005 313.217q130.179 0 221.7-91.239Q793.217-349.261 793.217-480T701.7-701.978q-91.516-91.239-221.695-91.239-130.179 0-221.7 91.239Q166.783-610.739 166.783-480T258.3-258.022q91.516 91.239 221.695 91.239Z"/>
                             </svg>
@@ -384,7 +384,7 @@ function Dispositivo({ token }) {
                             </div>
                         </div>
 
-                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                        <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
                             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                                 <path d="M22.477-102.477V-320H120v120h120v97.523H22.477Zm697.523 0V-200h120v-120h97.523v217.523H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM22.477-640v-217.523H240V-760H120v120H22.477ZM840-640v-120H720v-97.523h217.523V-640H840Z"/>
                             </svg>
@@ -411,8 +411,8 @@ function Dispositivo({ token }) {
                                     <p className="font-lgc text-[17px]">Força o dispositivo a desparear com a conta que está pareado, não se esqueça de avisar quem está usando o dispositivo que ele será despareado para evitar confusão.</p>
                                 </div>
 
-                                <div disabled={deviceUnpairLoading} className="w-full xl:w-56 flex flex-row justify-center items-center mt-2">
-                                    <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                                <div className="w-full xl:w-56 flex flex-row justify-center items-center mt-2">
+                                    <button disabled={deviceUnpairLoading} className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
                                         { deviceUnpairLoading ? (
                                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
                                                 <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>

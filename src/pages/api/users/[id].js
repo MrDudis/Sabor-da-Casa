@@ -99,6 +99,12 @@ handler.delete(async (req, res) => {
         return res.status(403).json({ status: 403, message: "Você não pode deletar você mesmo.", code: "UNAUTHORIZED" });
     };
 
+    const user = await usersDb.getById(id);
+
+    if (!user) {
+        return res.status(404).json({ status: 404, message: "Usuário não encontrado.", code: "UNKNOWN_USER" });
+    };
+
     let deleted = usersDb.deleteUser(id);
 
     if (!deleted) {

@@ -76,6 +76,20 @@ export default function Dashboard({ children, activePage }) {
 
                     {
                         user?.role <= Role.MANAGER ? (
+                            <Link href="/painel/cartoes" className={activePage == "Cartões" ? styles.sidebarLinkActive : styles.sidebarLink}>
+
+                                <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 96 960 960" width="22" className="fill-white">
+                                    <path d="M162.87 904.131q-37.783 0-64.392-26.609Q71.87 850.913 71.87 813.13V338.87q0-37.783 26.61-64.392 26.608-26.609 64.391-26.609h634.26q37.783 0 64.392 26.609 26.609 26.609 26.609 64.392v474.26q0 37.783-26.609 64.392-26.609 26.609-64.392 26.609H162.87Zm0-328.848h634.26v-160H162.87v160Z"/>
+                                </svg>
+
+                                <p className={styles.sidebarLinkText}>Cartões</p>
+
+                            </Link>
+                        ) : null
+                    }
+
+                    {
+                        user?.role <= Role.MANAGER ? (
                             <Link href="/painel/dispositivos" className={activePage == "Dispositivos" ? styles.sidebarLinkActive : styles.sidebarLink}>
 
                                 <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" className="fill-white">
@@ -87,16 +101,6 @@ export default function Dashboard({ children, activePage }) {
                             </Link>
                         ) : null
                     }
-
-                    <Link href="/painel/cartoes" className={activePage == "Cartões" ? styles.sidebarLinkActive : styles.sidebarLink}>
-
-                        <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 96 960 960" width="22" className="fill-white">
-                            <path d="M162.87 904.131q-37.783 0-64.392-26.609Q71.87 850.913 71.87 813.13V338.87q0-37.783 26.61-64.392 26.608-26.609 64.391-26.609h634.26q37.783 0 64.392 26.609 26.609 26.609 26.609 64.392v474.26q0 37.783-26.609 64.392-26.609 26.609-64.392 26.609H162.87Zm0-328.848h634.26v-160H162.87v160Z"/>
-                        </svg>
-
-                        <p className={styles.sidebarLinkText}>Cartões</p>
-
-                    </Link>
 
                     <Link href="/painel/conta" className={activePage == "Minha Conta" ? styles.sidebarLinkActiveMobileOnly : styles.sidebarLinkMobileOnly}>
 

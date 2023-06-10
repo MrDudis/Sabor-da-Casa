@@ -93,6 +93,8 @@ function create_db() {
             CREATE TABLE cartao (
                 id INTEGER PRIMARY KEY,
                 id_pessoa INTEGER,
+                data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+                data_edicao DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
             );
         `);

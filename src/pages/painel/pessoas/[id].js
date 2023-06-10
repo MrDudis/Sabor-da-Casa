@@ -14,9 +14,11 @@ import Account from "@/components/painel/Account";
 import { BasicInput, BasicSelect } from "@/components/elements/input/Input";
 import { MessageModal } from "@/components/elements/modal/Modal";
 
+import Card from "@/models/Card";
 import User, { Gender, Role, roleNames } from "@/models/User";
 
 import * as usersLib from "@/lib/users";
+import * as cardsLib from "@/lib/cards";
 
 import { formatTimestamp } from "@/utils/formatting/timestamp";
 import { formatCPF } from "@/utils/formatting/cpf";
@@ -71,6 +73,25 @@ function Pessoa({ token }) {
     };
 
     useEffect(() => { fetchUser(); }, []);
+
+    const [cards, setCards] = useState([]);
+    const [cardsLoadError, setCardsLoadError] = useState(null);
+
+    const fetchCards = async () => {
+
+        const id = router.query?.id;
+
+        let response = await usersLib.getCards(id);
+
+        if (response.status === 200) {
+            setCards(response.cards);
+        } else {
+            setCardsLoadError(response.message ?? "Erro desconhecido.");
+        };
+
+    };
+
+    useEffect(() => { fetchCards(); }, []);
 
     const [userUpdateErrors, setUserUpdateErrors] = useState({});
     const [userUpdateLoading, setUserUpdateLoading] = useState(false);
@@ -191,6 +212,49 @@ function Pessoa({ token }) {
         );
     };
 
+    const [readerActive, setReaderActive] = useState(false);
+
+    useEffect(() => {
+
+        if (!socket) { return; };
+        if (!readerActive) { return; }
+
+        const Action = async (data) => {
+            if (!data?.cardId) { return; };
+
+            const cardId = data.cardId;
+
+            const response = await cardsLib.update(cardId, user?.id);
+
+            if (response.status === 200) {
+
+                let currentCards = cards.filter(card => card.id !== response.card.id);
+                currentCards.push(response.card);
+
+                currentCards.sort((a, b) => { return a.id - b.id; });
+
+                setCards(currentCards);
+    
+            } else {
+
+                showModal(
+                    <MessageModal 
+                        icon="error" title="Falha ao Vincular Cartão" message={response?.message ?? "Erro desconhecido."}
+                        buttons={[ { label: "Fechar", action: closeModal } ]}
+                    ></MessageModal>
+                );
+                
+            };
+        };
+
+        socket.on("ACTION", Action);
+
+        return () => {
+            socket.off("ACTION", Action);
+        };
+
+    }, [socket, readerActive, cards]);
+
     if (!user) {
         if (userLoadError) {
             return (
@@ -202,12 +266,12 @@ function Pessoa({ token }) {
                         <p className="text-black font-lgc font-bold text-2xl slide-up-fade-in opacity-0" style={{ animationDelay: "200ms" }}>Falha ao Carregar Usuário.</p>
                         <p className="text-black font-lgc text-lg slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>{userLoadError}</p>
                     </div>
-                    <Link href="/painel/pessoas" className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                    <div onClick={() => router.back()} className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 cursor-pointer rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                             <path d="M420.869-189.13 166.478-442.956q-7.696-7.696-11.326-17.239-3.631-9.544-3.631-19.805t3.631-19.805q3.63-9.543 11.326-17.239l254.391-254.391q14.957-14.956 36.826-15.174 21.87-.217 37.827 15.739 15.957 15.522 16.457 37.11.5 21.587-15.457 37.544L333.306-533.001h400.65q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457h-400.65l163.216 163.215q14.957 14.957 15.457 37.044.5 22.088-15.457 37.61-15.522 15.956-37.609 15.956-22.087 0-38.044-15.956Z"/>
                         </svg>
                         <p className="font-lgc text-lg">Voltar</p>
-                    </Link>
+                    </div>
                 </div>
             );
         } else {
@@ -232,12 +296,12 @@ function Pessoa({ token }) {
             </Head>
 
             <div className="w-full flex flex-col justify-center items-start gap-6 border-b border-neutral-800 scale-right-to-left">
-                <Link href="/painel/pessoas" className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
+                <div onClick={() => router.back()} className="w-fit flex flex-row items-center gap-2 bg-neutral-100 hover:bg-neutral-200 cursor-pointer rounded-md px-3 py-2 transition-all slide-up-fade-in opacity-0" style={{ animationDelay: "500ms" }}>
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                         <path d="M420.869-189.13 166.478-442.956q-7.696-7.696-11.326-17.239-3.631-9.544-3.631-19.805t3.631-19.805q3.63-9.543 11.326-17.239l254.391-254.391q14.957-14.956 36.826-15.174 21.87-.217 37.827 15.739 15.957 15.522 16.457 37.11.5 21.587-15.457 37.544L333.306-533.001h400.65q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544 0 22.087-15.457 37.544-15.457 15.457-37.544 15.457h-400.65l163.216 163.215q14.957 14.957 15.457 37.044.5 22.088-15.457 37.61-15.522 15.956-37.609 15.956-22.087 0-38.044-15.956Z"/>
                     </svg>
                     <p className="font-lgc text-lg">Voltar</p>
-                </Link>
+                </div>
                 
                 <div className="w-full flex flex-col justify-start items-start pr-4 pb-3 gap-1">
                     <h1 className="font-lgc text-3xl sm:text-4xl slide-up-fade-in opacity-0" style={{ animationDelay: "400ms" }}>{user?.name}</h1>
@@ -373,8 +437,8 @@ function Pessoa({ token }) {
                             <p className="font-lgc text-[17px]">Deleta o usuário, essa ação é irreversível.</p>
                         </div>
 
-                        <div disabled={userDeleteLoading} className="w-full xl:w-56 flex flex-row justify-center items-center mt-2">
-                            <button className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
+                        <div className="w-full xl:w-56 flex flex-row justify-center items-center mt-2">
+                            <button disabled={userDeleteLoading} className="w-full flex flex-row justify-center items-center gap-3 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-600 disabled:cursor-default transition-all" type="submit">
                                 { userDeleteLoading ? (
                                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-white">
                                         <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
@@ -392,7 +456,121 @@ function Pessoa({ token }) {
 
                 </div>
 
-            </div>   
+                <div className="w-full md:w-[40%] md:max-w-md flex flex-col gap-6">
+
+                    <div className="w-full flex flex-row items-center gap-2 smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "600ms" }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                            <path d="M166.783-140.782q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-466.434q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848h626.434q44.305 0 75.153 30.848 30.848 30.848 30.848 75.153v466.434q0 44.305-30.848 75.153-30.848 30.848-75.153 30.848H166.783Zm0-340.914h626.434v-160H166.783v160Z"/>
+                        </svg>
+                        <h1 className="font-lgc text-2xl font-bold">Cartões</h1>
+                    </div>
+
+                    <div className="w-full flex flex-col justify-start items-start p-4 gap-1 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "700ms" }}>
+
+                        <h1 className="font-lgc font-bold text-lg">Cartões Vinculados</h1>
+
+                        {
+                            cards.length > 0 ? (
+                                <div className="w-full flex flex-wrap flex-row justify-start items-start gap-3 mt-1">
+                                    { 
+                                        cards.map((card, index) => (
+                                            <Link href={`/painel/cartoes/${card?.id}`} className="w-fit flex px-3 py-1 bg-neutral-200 border border-neutral-400 cursor-pointer hover:bg-white hover:scale-[102%] hover:shadow-2xl rounded-md transition-all fast-fade-in">
+                                                <p className="font-lgc font-bold text-lg">{card?.id}</p>
+                                            </Link>
+                                        ))
+                                    }
+                                </div>
+                            ) : cards.length == 0 && !cardsLoadError ? (
+                                <div className="w-full flex flex-row justify-start items-center gap-3 mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                        <path d="M574.696-382.61q17 0 29.5-12.5t12.5-29.5q0-17-12.5-29.5t-29.5-12.5q-17 0-29.5 12.5t-12.5 29.5q0 17 12.5 29.5t29.5 12.5Zm0-118.391q11 0 20.5-7.717t13.196-20.717q3.131-10.305 9.631-19.739 6.5-9.435 18.978-21.913 29.434-29.435 39.717-48.5 10.283-19.065 10.283-42.935 0-46.13-31.218-74.065-31.217-27.935-82.782-27.935-33.566 0-60.283 15t-42.717 42.435q-5.435 10-.718 21 4.718 11 16.718 16 11 5 21.5 1t17.5-14q9-13 21.282-19.218 12.283-6.217 26.718-6.217 24.565 0 39.282 13.217 14.718 13.218 14.718 35.087 0 14-8 26.783-8 12.783-28 32.348-24.478 21.608-33.326 35.674-8.848 14.065-11.413 34.978-1.566 11.434 6.934 20.434 8.5 9 21.5 9ZM339.784-233.782q-44.305 0-75.154-30.848-30.848-30.849-30.848-75.154v-466.434q0-44.305 30.848-75.153 30.849-30.848 75.154-30.848h466.434q44.305 0 75.153 30.848 30.848 30.848 30.848 75.153v466.434q0 44.305-30.848 75.154-30.848 30.848-75.153 30.848H339.784ZM153.782-47.781q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-519.435q0-22.087 15.457-37.544 15.456-15.457 37.544-15.457 22.087 0 37.544 15.457 15.456 15.457 15.456 37.544v519.435h519.435q22.087 0 37.544 15.456 15.457 15.457 15.457 37.544 0 22.088-15.457 37.544-15.457 15.457-37.544 15.457H153.782Z"/>
+                                    </svg>
+                                    <p className="font-lgc">Nenhum cartão vinculado.</p>
+                                </div>
+                            ) : cards.length == 0 && cardsLoadError ? (
+                                <div className="w-full flex flex-row justify-start items-center gap-3 mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                        <path d="M676.609-115.478q11.391 0 19.087-7.696 7.695-7.696 7.695-19.087t-7.695-19.37q-7.696-7.978-19.087-7.978-11.392 0-19.088 7.978-7.695 7.979-7.695 19.37 0 11.391 7.695 19.087 7.696 7.696 19.088 7.696Zm0-95.827q9.695 0 17.108-7.413t7.413-17.109v-110.956q0-9.696-7.13-17.109-7.13-7.413-17.391-7.413-9.696 0-17.109 7.413-7.413 7.413-7.413 17.109v110.956q0 9.696 7.13 17.109 7.131 7.413 17.392 7.413Zm-249.61-672.391q24.653-14.392 53.001-14.392t53.001 14.392l273.217 157.043q24.652 14.391 38.826 38.609 14.174 24.218 14.174 53.001v180.87q-36.261-32.479-82.978-50.849-46.718-18.369-99.631-18.369-7.391 0-14.13.652-6.739.652-13.695 2.391l59.389-34.303q18.392-10.261 23.587-31.218 5.196-20.957-6.63-38.913-10.826-17.392-30.283-22.022-19.457-4.631-36.848 5.63L480-537.87 302.001-641.174q-17.391-10.261-36.63-5.63-19.24 4.63-30.501 22.022-11.826 17.956-6.63 38.631 5.195 20.674 23.587 31.5l177.999 103.303v76.392q-16.174 29.739-24.696 62.63-8.521 32.891-8.521 68.935 0 51.043 17.435 96.392 17.435 45.348 48.044 81.174-8.914-1-17.827-3.26-8.913-2.262-17.262-7.219L153.782-233.347q-24.652-14.391-38.826-38.609-14.174-24.218-14.174-53.001v-310.086q0-28.783 14.174-53.001 14.174-24.218 38.826-38.609l273.217-157.043Zm249.61 840.305q-83 0-141.5-58.5t-58.5-141.5q0-83 58.5-141.5t141.5-58.5q83 0 141.5 58.5t58.5 141.5q0 83-58.5 141.5t-141.5 58.5Z"/>
+                                    </svg>
+                                    <div>
+                                        <p className="font-lgc font-bold">Não foi possível carregar os cartões.</p>
+                                        <p className="font-lgc text-sm">{cardsLoadError}</p>
+                                    </div>
+                                </div>
+                            ) : null
+                        }
+
+                    </div>
+
+                    <div className="w-full flex flex-col xl:flex-row justify-start items-center p-4 gap-1 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "800ms" }}>
+                        
+                        <div className="w-full flex flex-col justify-center items-start gap-2">
+                            <div className="w-full flex flex-row justify-start items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                    <path d="M280-260.782q-90.976 0-155.097-64.108-64.121-64.109-64.121-155.066 0-90.957 64.121-155.11Q189.024-699.218 280-699.218h98.521q22.087 0 37.544 15.456 15.456 15.457 15.456 37.544 0 22.088-15.456 37.544-15.457 15.457-37.544 15.457H280q-47.174 0-80.195 33.022-33.022 33.021-33.022 80.195 0 47.174 33.022 80.195 33.021 33.022 80.195 33.022h98.521q22.087 0 37.544 15.457 15.456 15.456 15.456 37.544 0 22.087-15.456 37.544-15.457 15.456-37.544 15.456H280Zm70.391-174.696q-18.922 0-31.722-12.8T305.869-480q0-18.922 12.8-31.722t31.722-12.8h259.218q18.922 0 31.722 12.8t12.8 31.722q0 18.922-12.8 31.722t-31.722 12.8H350.391ZM899.218-480H793.217q0-47.174-33.022-80.195-33.021-33.022-80.195-33.022h-98.521q-22.087 0-37.544-15.457-15.456-15.456-15.456-37.544 0-22.087 15.456-37.544 15.457-15.456 37.544-15.456H680q90.976 0 155.097 64.121Q899.218-570.976 899.218-480ZM734.696-140.782q-18.921 0-31.722-12.8-12.8-12.8-12.8-31.722v-71.521h-70.956q-18.921 0-31.722-12.64-12.8-12.641-12.8-31.327 0-18.685 12.8-31.598 12.801-12.914 31.722-12.914h70.956v-71.521q0-18.682 12.8-31.319 12.801-12.638 31.722-12.638 18.922 0 31.722 12.638 12.8 12.637 12.8 31.319v71.521h70.956q18.922 0 31.722 12.8 12.8 12.801 12.8 31.722 0 18.682-12.8 31.32-12.8 12.637-31.722 12.637h-70.956v71.521q0 18.922-12.8 31.722t-31.722 12.8Z"/>
+                                </svg>
+                                <h1 className="font-lgc font-bold text-lg">Vincular Cartão</h1>
+                            </div>
+
+                            <p className="font-lgc text-[17px] pr-6">{readerActive ? "Aproxime um cartão do leitor para vincula-lo a este usuário." : "Ativar o leitor de cartões para vincular um cartão a este usuário."}</p>
+                        </div>
+
+                        <div className={`w-full xl:w-40 ${!readerActive ? "flex" : "hidden"} flex-row justify-center items-center mt-2`}>
+                            <button onClick={() => { setReaderActive(true); }} className="w-full flex flex-row justify-center items-center gap-2 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 transition-all" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" className="fill-white">
+                                    <path d="M410.826-114.781q-11.827-4.13-19.805-13.891t-7.978-24.153v-207.608h-27q-39.783 0-67.805-28.022-28.022-28.022-28.022-67.805v-334.696q0-44.305 30.849-75.153 30.848-30.848 75.153-30.848h230.608q42.74 0 70.153 33.196 27.414 33.196 14.327 72.805l-49.087 151.389h39.348q46.174 0 65.37 37.652 19.196 37.653-8.587 77.827L455.565-130.172q-8.261 11.826-20.587 15.674-12.326 3.848-24.152-.283Z"/>
+                                </svg>
+                                Ativar
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div className={`w-full h-72 ${readerActive ? "flex" : "hidden"} justify-center items-center bg-neutral-100 rounded-md slide-up-fade-in`}>
+
+                        <div className="scanner w-full h-[96%] flex flex-col justify-center items-center text-center gap-2 m-2 rounded-md">
+
+                            <h1 className="font-lgc text-lg font-bold px-6">PASSE UM CARTÃO NO LEITOR</h1>
+
+                            <p className="font-lgc text-lg max-w-lg px-6">Certifique-se que o dispositivo está pareado com você.</p>
+
+                            <div className="mt-4">  
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-black">
+                                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                </svg>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div className={`w-full ${readerActive ? "flex" : "hidden"} flex-col xl:flex-row justify-start items-center p-4 gap-1 bg-neutral-100 rounded-md slide-up-fade-in opacity-0`} style={{ animationDelay: "200ms" }}>
+                        
+                        <div className="w-full flex flex-col justify-center items-start gap-2">
+                            <div className="w-full flex flex-row justify-start items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                    <path d="M663.914-430.435 260.216-834.133v-2.608q6.783-25.087 34.805-42.651 28.022-17.565 71.197-17.565h230.608q42.74 0 70.153 33.196 27.414 33.196 14.327 72.805l-49.087 151.389h39.348q46.174 0 65.37 37.652 19.196 37.653-8.587 77.827l-64.436 93.653ZM812.479-31.26 561.305-282.434l-105.74 152.262q-8.261 11.826-20.587 15.674-12.326 3.848-24.152-.283-11.827-4.13-19.805-13.891t-7.978-24.153v-207.608h-27q-39.783 0-67.805-28.022-28.022-28.022-28.022-67.805v-127.263L31.26-812.479l62.652-62.653 781.22 781.22-62.653 62.652Z"/>
+                                </svg>
+                                <h1 className="font-lgc font-bold text-lg">Desativar Leitor</h1>
+                            </div>
+
+                            <p className="font-lgc text-[17px] pr-6">Desativa o leitor de cartões, para evitar de vincular outro cartão acidentalmente.</p>
+                        </div>
+
+                        <div className="w-full xl:w-48 flex flex-row justify-center items-center mt-2">
+                            <button onClick={() => { setReaderActive(false); }} className="w-full flex flex-row justify-center items-center gap-2 font-lgc font-bold text-lg p-2 rounded-md text-white bg-red-500 hover:bg-red-600 transition-all" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" className="fill-white">
+                                    <path d="M663.914-430.435 260.216-834.133v-2.608q6.783-25.087 34.805-42.651 28.022-17.565 71.197-17.565h230.608q42.74 0 70.153 33.196 27.414 33.196 14.327 72.805l-49.087 151.389h39.348q46.174 0 65.37 37.652 19.196 37.653-8.587 77.827l-64.436 93.653ZM812.479-31.26 561.305-282.434l-105.74 152.262q-8.261 11.826-20.587 15.674-12.326 3.848-24.152-.283-11.827-4.13-19.805-13.891t-7.978-24.153v-207.608h-27q-39.783 0-67.805-28.022-28.022-28.022-28.022-67.805v-127.263L31.26-812.479l62.652-62.653 781.22 781.22-62.653 62.652Z"/>
+                                </svg>
+                                Desativar
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </>
     );
