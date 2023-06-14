@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -214,6 +214,44 @@ function Pessoa({ token }) {
 
     const [readerActive, setReaderActive] = useState(false);
 
+    const boxTitleRef = useRef(null);
+    const boxIconRef = useRef(null);
+
+    const [boxIcon, setBoxIcon] = useState("loading");
+
+    const changeBoxIcon = (target) => {
+
+        boxIconRef.current.classList.remove("slide-up-fade-in");
+        boxIconRef.current.classList.add("fast-fade-out");
+
+        boxTitleRef.current.classList.remove("smooth-slide-down-fade-in");
+        boxTitleRef.current.classList.add("fast-fade-out");
+
+        setTimeout(() => {
+            setBoxIcon(target);
+
+            if (!boxIconRef.current || !boxTitleRef.current) { return; };
+
+            boxIconRef.current.classList.remove("fast-fade-out");
+            boxIconRef.current.classList.add("slide-up-fade-in");
+
+            boxTitleRef.current.classList.remove("fast-fade-out");
+            boxTitleRef.current.classList.add("smooth-slide-down-fade-in");
+        }, 400);
+
+    };
+
+    useEffect(() => {
+        if (boxIcon != "success") { return; }
+
+        let timeout = setTimeout(() => {
+            changeBoxIcon("loading");
+        }, 5000);
+
+        return () => { clearTimeout(timeout); };
+
+    }, [boxIcon]);
+
     useEffect(() => {
 
         if (!socket) { return; };
@@ -234,6 +272,7 @@ function Pessoa({ token }) {
                 currentCards.sort((a, b) => { return a.id - b.id; });
 
                 setCards(currentCards);
+                changeBoxIcon("success");
     
             } else {
 
@@ -363,7 +402,7 @@ function Pessoa({ token }) {
                             </svg>
                             <div className="flex flex-col lg:flex-row gap-0 lg:gap-1">
                                 <p className="font-lgc text-black font-bold">Última Edição em</p>
-                                <p className="font-lgc text-black">{formatTimestamp(user?.updatedAt)}.</p>
+                                <p className="font-lgc text-black">{formatTimestamp(user?.updatedAt)}</p>
                             </div>
                         </div>
 
@@ -530,14 +569,22 @@ function Pessoa({ token }) {
 
                         <div className="scanner w-full h-[96%] flex flex-col justify-center items-center text-center gap-2 m-2 rounded-md">
 
-                            <h1 className="font-lgc text-lg font-bold px-6">PASSE UM CARTÃO NO LEITOR</h1>
+                            <h1 ref={boxTitleRef} className="font-lgc text-lg font-bold px-6">{ boxIcon == "loading" ? "PASSE UM CARTÃO NO LEITOR" : "CARTÃO VINCULADO" }</h1>
 
                             <p className="font-lgc text-lg max-w-lg px-6">Certifique-se que o dispositivo está pareado com você.</p>
 
-                            <div className="mt-4">  
-                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-black">
-                                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
-                                </svg>
+                            <div ref={boxIconRef} className="mt-4">  
+                                {
+                                    boxIcon == "loading" ? (
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" className="animate-spin fill-black">
+                                            <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"/>
+                                        </svg>
+                                    ) : boxIcon == "success" ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="36" viewBox="0 -960 960 960" width="36">
+                                            <path d="M379.333-246.927q-8.551 0-16.384-3.109t-14.485-9.761l-178.001-178q-12.869-12.87-12.703-31.703.167-18.833 13.037-31.703 12.869-12.87 31.246-12.87t31.624 12.87l145.666 145.666L726.044-701.87q12.869-12.87 31.369-13.152 18.5-.283 31.558 13.152 12.87 12.87 12.87 31.652 0 18.783-12.87 31.653L410.203-259.797q-6.652 6.652-14.486 9.761-7.833 3.109-16.384 3.109Z"/>
+                                        </svg>
+                                    ) : null
+                                }
                             </div>
 
                         </div>

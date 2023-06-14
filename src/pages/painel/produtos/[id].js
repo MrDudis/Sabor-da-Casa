@@ -304,7 +304,7 @@ function Produto({ token }) {
                             </svg>
                             <div className="flex flex-col lg:flex-row gap-0 lg:gap-1">
                                 <p className="font-lgc text-black font-bold">Última Edição em</p>
-                                <p className="font-lgc text-black">{formatTimestamp(product?.updatedAt)}.</p>
+                                <p className="font-lgc text-black">{formatTimestamp(product?.updatedAt)}</p>
                             </div>
                         </div>
 

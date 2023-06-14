@@ -4,7 +4,7 @@ import authentication from "@/middlewares/authentication";
 
 import { Role } from "@/models/User";
 
-import * as cardsDb from "@/database/managers/cards";
+import * as ticketsDb from "@/database/managers/tickets";
 import * as usersDb from "@/database/managers/users";
 
 const handler = nextConnect({
@@ -21,7 +21,7 @@ handler.use(authentication);
 
 handler.get(async (req, res) => {
 
-    if (req.user.role > Role.CASHIER) {
+    if (req.user.role > Role.EMPLOYEE) {
         return res.status(403).json({ status: 403, message: "Você não tem permissão para buscar cartões de usuários.", code: "UNAUTHORIZED" });
     };
     
@@ -33,25 +33,25 @@ handler.get(async (req, res) => {
         return res.status(404).json({ status: 404, message: "Usuário não encontrado.", code: "NOT_FOUND" });
     };
 
-    const cards = await cardsDb.getByUserId(id);
+    const tickets = await ticketsDb.getByUserId(id);
 
-    if (cards == null) {
+    if (tickets == null) {
         return res.status(500).json({ status: 500, message: "Erro interno.", code: "INTERNAL_SERVER_ERROR" });
     };
 
-    for (let card of cards) {
+    for (let ticket of tickets) {
 
-        if (card.userId != null && card.userId == id) {
-            card.user = user;
-        } else {
-            card.user = await usersDb.getById(card.userId);
+        if (ticket.userId != null) {
+            ticket.user = await usersDb.getById(ticket.userId);
         };
 
-        card.user ??= null;
+        if (ticket.employeeId != null) {
+            ticket.employee = await usersDb.getById(ticket.employeeId);
+        };
 
     };
 
-    res.status(200).json({ status: 200, message: "OK", code: "OK", cards });
+    res.status(200).json({ status: 200, message: "OK", code: "OK", tickets });
 
 });
 

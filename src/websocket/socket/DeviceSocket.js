@@ -94,15 +94,16 @@ export default class DeviceSocket {
         if (!cardId) { return; }
         if (this.userId == null) { return; }
 
-        const userId = await cardsDb.get(cardId);
+        const card = await cardsDb.get(cardId);
 
+        let userId = card != null && card.userId != null ? card.userId : null;
         let user = null;
 
         if (userId != null) {
             user = await usersDb.getById(userId);
         };
 
-        UserSocket.emitToUserId(this.userId, { operation: "ACTION", data: { deviceId: this.id, user, userId, cardId }});
+        UserSocket.emitToUserId(this.userId, { operation: "ACTION", data: { deviceId: this.id, cardId, userId, user }});
     };
 
     forceDisconnect() {

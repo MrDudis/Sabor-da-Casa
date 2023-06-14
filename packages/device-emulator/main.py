@@ -24,6 +24,8 @@ def send_actions():
         cardId = input("Digite o ID do cartão: ")
         
         flags = [flag for flag in cardId.split() if flag.startswith("-")]
+        if len(flags) == 0: flags.append("-a")
+        
         cardId = cardId.replace(flags[0], "").strip()
 
         if len(cardId) == 0:

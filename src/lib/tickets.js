@@ -1,13 +1,13 @@
-export async function register(user) {
+export async function register(userId) {
 
     try {
 
-        const response = await fetch("/api/users/register", {
+        const response = await fetch("/api/tickets/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ user })
+            body: JSON.stringify({ userId })
         });
     
         let data = await response.json();
@@ -23,59 +23,36 @@ export async function register(user) {
 
 };
 
+export async function insertProducts(id, products) {
+
+    try {
+
+        const response = await fetch(`/api/tickets/${id}/products`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ products })
+        });
+
+        const data = await response.json();
+        return data
+
+    } catch (error) {
+        return {
+            status: 400,
+            message: "Falha ao buscar informações.",
+            code: "FETCH_ERROR"
+        };
+    };
+
+};
+
 export async function get(id) {
 
     try {
 
-        const response = await fetch(`/api/users/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-
-        const data = await response.json();
-        return data
-
-    } catch (error) {
-        return {
-            status: 400,
-            message: "Falha ao buscar informações.",
-            code: "FETCH_ERROR"
-        };
-    };
-
-};
-
-export async function getCards(id) {
-
-    try {
-
-        const response = await fetch(`/api/users/${id}/cards`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-
-        const data = await response.json();
-        return data
-
-    } catch (error) {
-        return {
-            status: 400,
-            message: "Falha ao buscar informações.",
-            code: "FETCH_ERROR"
-        };
-    };
-
-};
-
-export async function getTickets(id) {
-
-    try {
-
-        const response = await fetch(`/api/users/${id}/tickets`, {
+        const response = await fetch(`/api/tickets/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -99,7 +76,7 @@ export async function getAll() {
 
     try {
 
-        const response = await fetch("/api/users/all", {
+        const response = await fetch("/api/tickets/all", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -119,16 +96,16 @@ export async function getAll() {
 
 };
 
-export async function update(id, user) {
+export async function updateProduct(id, productId, quantity) {
 
     try {
 
-        const response = await fetch(`/api/users/${id}`, {
+        const response = await fetch(`/api/tickets/${id}/products`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ user })
+            body: JSON.stringify({ productId, quantity })
         });
 
         const data = await response.json();
@@ -137,18 +114,18 @@ export async function update(id, user) {
     } catch (error) {
         return {
             status: 400,
-            message: "Falha ao enviar requisição.",
+            message: "Falha ao buscar informações.",
             code: "FETCH_ERROR"
         };
     };
 
 };
 
-export async function deleteUser(id) {
+export async function deleteTicket(id) {
 
     try {
 
-        const response = await fetch(`/api/users/${id}`, {
+        const response = await fetch(`/api/tickets/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -161,7 +138,7 @@ export async function deleteUser(id) {
     } catch (error) {
         return {
             status: 400,
-            message: "Falha ao enviar requisição.",
+            message: "Falha ao buscar informações.",
             code: "FETCH_ERROR"
         };
     };

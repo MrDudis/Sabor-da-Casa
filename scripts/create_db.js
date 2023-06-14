@@ -100,6 +100,30 @@ function create_db() {
         `);
 
         db.run(`
+            CREATE TABLE comanda (
+                id INTEGER PRIMARY KEY,
+                id_cliente INTEGER,
+                id_funcionario INTEGER,
+                ativa INTEGER NOT NULL DEFAULT 1,
+                data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+                data_edicao DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (id_cliente) REFERENCES cliente(id_pessoa),
+                FOREIGN KEY (id_funcionario) REFERENCES funcionario(id_pessoa)
+            );
+        `);
+
+        db.run(`
+            CREATE TABLE comanda_produtos (
+                id_comanda INTEGER,
+                id_produto INTEGER,
+                quantidade INTEGER NOT NULL,
+                FOREIGN KEY (id_comanda) REFERENCES comanda(id),
+                FOREIGN KEY (id_produto) REFERENCES produto(id),
+                PRIMARY KEY (id_comanda, id_produto)
+            );
+        `);
+
+        db.run(`
             INSERT INTO pessoa (cpf, nome, data_nasc, sexo, telefone, email, senha) VALUES 
             ("00000000000", "Administrador", "2000-01-01", 0, "00000000000", "admin", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");
         `);

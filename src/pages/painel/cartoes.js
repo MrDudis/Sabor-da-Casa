@@ -2,7 +2,9 @@ import { useState, useEffect, useContext, useRef } from "react";
 
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
+import ModalContext from "@/providers/modal/ModalContext";
 import UserContext from "@/providers/user/UserContext";
 import WebSocketContext from "@/providers/websocket/WebSocketContext";
 
@@ -12,8 +14,8 @@ import Account from "@/components/painel/Account";
 import CardBox from "@/components/painel/cartoes/CardBox";
 import CardSortDropdown from "@/components/painel/cartoes/CardSortDropdown";
 
-import { FilterRadioInput } from "@/components/elements/input/Input";
 import { MessageModal } from "@/components/elements/modal/Modal";
+import { FilterRadioInput } from "@/components/elements/input/Input";
 
 import * as cardsLib from "@/lib/cards";
 
@@ -47,6 +49,9 @@ const sortOptionsLabels = {
 
 function Cartoes({ token }) {
 
+    const router = useRouter();
+
+    const { showModal, closeModal } = useContext(ModalContext);
     const { user } = useContext(UserContext);
 
     const { connect, socket } = useContext(WebSocketContext);
@@ -160,7 +165,7 @@ function Cartoes({ token }) {
 
                     <Link href="/painel/cartoes/registrar" className="w-full min-w-[190px] sm:w-[30%] flex flex-row justify-start items-center gap-3 bg-neutral-100 hover:bg-neutral-200 cursor-pointer rounded-md px-4 py-3 transition-all smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                            <path d="M565.5-405.5q17 0 28.5-11.5t11.5-28.5v-80h80q17 0 28.5-11.5t11.5-28.5q0-17-11.5-28.5t-28.5-11.5h-80v-80q0-17-11.5-28.5t-28.5-11.5q-17 0-28.5 11.5t-11.5 28.5v80h-80q-17 0-28.5 11.5t-11.5 28.5q0 17 11.5 28.5t28.5 11.5h80v80q0 17 11.5 28.5t28.5 11.5ZM328.37-237.37q-37.783 0-64.392-26.608-26.608-26.609-26.608-64.392v-474.26q0-37.783 26.608-64.392 26.609-26.609 64.392-26.609h474.26q37.783 0 64.392 26.609 26.609 26.609 26.609 64.392v474.26q0 37.783-26.609 64.392-26.609 26.608-64.392 26.608H328.37Zm-171 171q-37.783 0-64.392-26.608-26.609-26.609-26.609-64.392v-519.76q0-19.153 13.174-32.327 13.174-13.173 32.326-13.173 19.153 0 32.327 13.173 13.174 13.174 13.174 32.327v519.76h519.76q19.153 0 32.327 13.174 13.173 13.174 13.173 32.327 0 19.152-13.173 32.326Q696.283-66.37 677.13-66.37H157.37Z"/>
+                            <path d="M757.174-197.174h-69.261q-18.201 0-30.513-12.298-12.313-12.298-12.313-30.478t12.313-30.528q12.312-12.348 30.513-12.348h69.261v-69.261q0-18.201 12.298-30.513 12.298-12.313 30.478-12.313t30.528 12.313q12.348 12.312 12.348 30.513v69.261h69.261q18.201 0 30.513 12.298 12.313 12.298 12.313 30.478T942.6-209.522q-12.312 12.348-30.513 12.348h-69.261v69.261q0 18.201-12.298 30.513-12.298 12.313-30.478 12.313T769.522-97.4q-12.348-12.312-12.348-30.513v-69.261ZM166.783-481.696h626.434v-160H166.783v160Zm0 340.914q-44.305 0-75.153-30.848-30.848-30.848-30.848-75.153v-466.434q0-44.305 30.848-75.153 30.848-30.848 75.153-30.848h626.434q44.305 0 75.153 30.848 30.848 30.848 30.848 75.153v238.304H757.174q-79.716 0-135.901 56.186-56.186 56.185-56.186 135.901v142.044H166.783Z"/>
                         </svg>
                         <p className="text-black font-lgc font-bold text-xl">Registrar Cartões</p>
                     </Link>

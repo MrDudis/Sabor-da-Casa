@@ -4,7 +4,7 @@ export default function CardBox({ card, animationDelay }) {
 
     if (!card) {
         return (
-            <div className="w-full min-w-[124px] h-52 flex flex-col xs:flex-row items-center px-4 py-4 border border-neutral-400 transition-all bg-neutral-100 gap-6 rounded-lg shimmer smooth-slide-down-fade-in opacity-0" style={{ animationDelay: `${animationDelay}ms` }}>
+            <div className="w-full min-w-[86px] h-52 flex flex-col xs:flex-row items-center px-4 py-4 border border-neutral-400 transition-all bg-neutral-100 gap-6 rounded-lg shimmer smooth-slide-down-fade-in opacity-0" style={{ animationDelay: `${animationDelay}ms` }}>
     
             </div>
         );

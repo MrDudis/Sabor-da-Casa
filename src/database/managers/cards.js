@@ -53,7 +53,7 @@ export async function get(id) {
 
 };
 
-export async function getCardsByUserId(userId) {
+export async function getByUserId(userId) {
 
     const query = `
         SELECT *

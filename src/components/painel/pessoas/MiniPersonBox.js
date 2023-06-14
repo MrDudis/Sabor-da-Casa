@@ -11,7 +11,7 @@ export default function MiniPersonBox({ user, selectedUser, setSelectedUser }) {
     };
 
     return (
-        <div onClick={() => { setSelectedUser(user?.id); }} className={`w-full min-w-[96px] h-20 flex flex-row items-center gap-4 p-4 ${selectedUser == user?.id ? "border-2 border-red-500" : "border border-neutral-300"} cursor-pointer transition-all bg-neutral-100 hover:bg-neutral-50 rounded-lg fast-fade-in`}>
+        <div onClick={() => { setSelectedUser(selectedUser == user?.id ? null : user?.id); }} className={`w-full min-w-[96px] h-20 flex flex-row items-center gap-4 p-4 ${selectedUser == user?.id ? "border-2 border-red-500" : "border border-neutral-300"} cursor-pointer transition-all bg-neutral-100 hover:bg-neutral-50 rounded-lg fast-fade-in`}>
 
                 <div className="flex justify-center items-center">
                     <img className="h-12 w-12 min-w-[48px] xs:h-12 xs:w-12 rounded-full" src="/images/profile.jpg"></img>

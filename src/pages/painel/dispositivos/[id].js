@@ -360,7 +360,13 @@ function Dispositivo({ token }) {
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                                     <path d="M480-489.609q-74.479 0-126.849-52.37-52.369-52.37-52.369-126.849 0-74.478 52.369-126.565 52.37-52.088 126.849-52.088 74.479 0 126.849 52.088 52.369 52.087 52.369 126.565 0 74.479-52.369 126.849-52.37 52.37-126.849 52.37ZM246.783-131.172q-44.305 0-75.153-30.849-30.848-30.848-30.848-75.153v-26.347q0-39.088 20.326-72.109 20.326-33.022 54.413-50.283 63.696-31.566 129.957-47.631T480-449.609q69.391 0 135.652 15.782 66.261 15.783 128.827 47.348 34.087 17.261 54.413 50.001 20.326 32.739 20.326 72.957v26.347q0 44.305-30.848 75.153-30.848 30.849-75.153 30.849H246.783Z"/>
                                 </svg>
-                                <p className="font-lgc text-lg">Pareado com <span className="font-bold">{device.user.name}</span>.</p>
+                                <p className="w-full font-lgc text-lg">Pareado com <span className="font-bold">{device.user?.name}</span></p>
+
+                                <Link href={`/painel/pessoas/${device.user?.id}`} className="bg-neutral-100 hover:bg-neutral-200 cursor-pointer p-2 rounded-md transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                        <path d="M178.956-178.956Q163.999-193.913 163.999-216q0-22.087 14.957-37.044l413.955-413.955H400q-22.087 0-37.544-15.457-15.457-15.457-15.457-37.544 0-22.087 15.457-37.544 15.457-15.457 37.544-15.457h320q22.087 0 37.544 15.457 15.457 15.457 15.457 37.544v320q0 22.087-15.457 37.544-15.457 15.457-37.544 15.457-22.087 0-37.544-15.457-15.457-15.457-15.457-37.544v-192.911l-413.39 413.955q-14.957 14.957-37.326 14.957-22.37 0-37.327-14.957Z"/>
+                                    </svg>
+                                </Link>
                             </div>
                         ) : (
                             <div className="w-full flex flex-row items-center px-4 py-3 gap-4 bg-neutral-100 rounded-md smooth-slide-down-fade-in opacity-0" style={{ animationDelay: "400ms" }}>
